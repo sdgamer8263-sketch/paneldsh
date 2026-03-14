@@ -78,7 +78,7 @@ body {
 .cmd-table th { background: rgba(0,0,0,0.6); position: sticky; top: 0;}
 .cmd-table tr:hover { background: rgba(255,255,255,0.05); }
 
-/* Badges */
+/* ALL BADGES (Including New Ones) */
 .badge { padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; display: inline-block; width: 100px; text-align: center;}
 .linux { background: rgba(255, 165, 0, 0.2); color: orange; border: 1px solid rgba(255, 165, 0, 0.5);}
 .docker { background: rgba(0, 150, 255, 0.2); color: #0096ff; border: 1px solid rgba(0, 150, 255, 0.5);}
@@ -86,6 +86,10 @@ body {
 .vps { background: rgba(138, 43, 226, 0.2); color: #8a2be2; border: 1px solid rgba(138, 43, 226, 0.5);}
 .networking { background: rgba(32, 178, 170, 0.2); color: #20b2aa; border: 1px solid rgba(32, 178, 170, 0.5);}
 .system { background: rgba(220, 20, 60, 0.2); color: #dc143c; border: 1px solid rgba(220, 20, 60, 0.5);}
+.auto { background: rgba(0, 255, 255, 0.2); color: #00ffff; border: 1px solid rgba(0, 255, 255, 0.5);}
+.useful { background: rgba(144, 238, 144, 0.2); color: #90ee90; border: 1px solid rgba(144, 238, 144, 0.5);}
+.suggestion { background: rgba(255, 105, 180, 0.2); color: #ff69b4; border: 1px solid rgba(255, 105, 180, 0.5);}
+.review { background: rgba(218, 112, 214, 0.2); color: #da70d6; border: 1px solid rgba(218, 112, 214, 0.5);}
 
 .cmd-table code { background: rgba(0,0,0,0.8); padding: 5px 10px; border-radius: 4px; color: #00ffcc; font-family: monospace; border: 1px solid #333;}
 
@@ -98,7 +102,7 @@ body {
 /* Responsive */
 @media(max-width: 768px) {
     .dashboard-grid, .stats-cards { grid-template-columns: 1fr; }
-    .nav-links { display: none; } /* Mobile menu simplified */
+    .nav-links { display: none; }
     .hero-box h1 { font-size: 2.5rem; }
     .cmd-box { flex-direction: column; gap: 10px; }
     .cmd-box code { margin-right: 0; font-size: 0.9rem; word-break: break-all;}
