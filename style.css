@@ -86,7 +86,7 @@ body {
 /* Video Grid */
 .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; }
 
-/* Commands */
+/* Commands Table */
 .table-container { overflow-x: auto; max-height: 500px; }
 .cmd-table { width: 100%; border-collapse: collapse; }
 .cmd-table th, .cmd-table td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
@@ -94,7 +94,33 @@ body {
 .badge { padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; display: inline-block; width: 100px; text-align: center;}
 .linux { background: rgba(255, 165, 0, 0.2); color: orange; border: 1px solid rgba(255, 165, 0, 0.4);}
 .docker { background: rgba(0, 150, 255, 0.2); color: #0096ff; border: 1px solid rgba(0, 150, 255, 0.4);}
+.git { background: rgba(255, 50, 50, 0.2); color: #ff3232; border: 1px solid rgba(255, 50, 50, 0.4);}
+.vps { background: rgba(138, 43, 226, 0.2); color: #8a2be2; border: 1px solid rgba(138, 43, 226, 0.4);}
+.networking { background: rgba(32, 178, 170, 0.2); color: #20b2aa; border: 1px solid rgba(32, 178, 170, 0.4);}
+.system { background: rgba(220, 20, 60, 0.2); color: #dc143c; border: 1px solid rgba(220, 20, 60, 0.4);}
+.auto { background: rgba(0, 255, 255, 0.2); color: #00ffff; border: 1px solid rgba(0, 255, 255, 0.4);}
+.useful { background: rgba(144, 238, 144, 0.2); color: #90ee90; border: 1px solid rgba(144, 238, 144, 0.4);}
+.suggestion { background: rgba(255, 105, 180, 0.2); color: #ff69b4; border: 1px solid rgba(255, 105, 180, 0.4);}
+.review { background: rgba(218, 112, 214, 0.2); color: #da70d6; border: 1px solid rgba(218, 112, 214, 0.4);}
+
 .cmd-table code { background: rgba(0,0,0,0.8); padding: 6px 12px; border-radius: 6px; color: #00ffcc; font-family: monospace;}
+
+/* Command Table Individual Copy Button */
+.tbl-copy-btn {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #aaa;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: 0.3s;
+    font-size: 1rem;
+}
+.tbl-copy-btn:hover {
+    background: rgba(0, 210, 255, 0.2);
+    color: #00d2ff;
+    border-color: #00d2ff;
+}
 
 /* Stats */
 .stats-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
