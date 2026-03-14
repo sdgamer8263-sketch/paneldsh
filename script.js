@@ -11,7 +11,7 @@ function showSection(sectionId, element) {
     if(sectionId === 'team') fetchDiscordTeam();
 }
 
-// Command Copy
+// Master Command Copy
 function copyCmd() {
     const codeText = "bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)";
     navigator.clipboard.writeText(codeText).then(() => {
@@ -26,6 +26,56 @@ setInterval(() => {
     document.getElementById('live-net').innerText = (Math.floor(Math.random() * 50) + 40) + ' Mbps';
     document.getElementById('fake-ping').innerText = (Math.floor(Math.random() * 5) + 20) + 'ms';
 }, 2500);
+
+// ==========================================
+// TABLE COPY BUTTON AUTOMATION
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    const table = document.getElementById('cmdTable');
+    if(!table) return;
+
+    const headerRow = table.querySelector('tr');
+    if(headerRow) {
+        const actionTh = document.createElement('th');
+        actionTh.innerText = 'ACTION';
+        actionTh.style.textAlign = 'right';
+        headerRow.appendChild(actionTh);
+    }
+
+    const rows = table.querySelectorAll('tr:not(:first-child)');
+    rows.forEach(row => {
+        const codeCell = row.querySelectorAll('td')[2];
+        if(codeCell) {
+            const codeText = codeCell.querySelector('code').innerText;
+            const actionTd = document.createElement('td');
+            actionTd.style.textAlign = 'right';
+            
+            const copyBtn = document.createElement('button');
+            copyBtn.className = 'tbl-copy-btn';
+            copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+            copyBtn.title = "Copy Command";
+            
+            copyBtn.onclick = function() {
+                navigator.clipboard.writeText(codeText).then(() => {
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i>';
+                    copyBtn.style.background = 'rgba(0, 255, 136, 0.2)';
+                    copyBtn.style.color = '#00ff88';
+                    copyBtn.style.borderColor = '#00ff88';
+                    
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-copy"></i>';
+                        copyBtn.style.background = '';
+                        copyBtn.style.color = '';
+                        copyBtn.style.borderColor = '';
+                    }, 2000);
+                });
+            };
+            
+            actionTd.appendChild(copyBtn);
+            row.appendChild(actionTd);
+        }
+    });
+});
 
 // ==========================================
 // REAL LIVE DISCORD API FETCH
@@ -74,7 +124,6 @@ async function checkMCStatus() {
         return resultDiv.innerText = "Please enter Server IP.";
     }
 
-    // Format IP:Port
     let fullAddress = port ? `${ip}:${port}` : ip;
     
     resultDiv.style.display = "block";
@@ -85,9 +134,7 @@ async function checkMCStatus() {
         let data = await res.json();
         
         if(data.online) {
-            // Remove Minecraft color codes from MOTD
             let cleanMotd = data.motd.clean.join('<br>');
-            
             resultDiv.innerHTML = `
                 <div style="margin-bottom: 8px;"><strong>Status:</strong> <span style="color:#00ff88;">ONLINE</span></div>
                 <div style="margin-bottom: 8px;"><strong>IP:</strong> <span style="color:#00d2ff;">${data.ip}:${data.port}</span></div>
@@ -103,7 +150,7 @@ async function checkMCStatus() {
             resultDiv.innerHTML = `<strong>Status:</strong> <span style="color:#ff3232;">OFFLINE or INVALID</span>`;
         }
     } catch(e) {
-        resultDiv.innerHTML = "<span style="color:red;">Error connecting to API.</span>";
+        resultDiv.innerHTML = "<span style='color:red;'>Error connecting to API.</span>";
     }
 }
 
