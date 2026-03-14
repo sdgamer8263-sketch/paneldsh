@@ -3,16 +3,12 @@ function showSection(sectionId, element) {
     document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
     document.getElementById(sectionId).style.display = 'block';
     
-    // Update active tab style
     if(element) {
         document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active-tab'));
         element.classList.add('active-tab');
     }
 
-    // Load Discord Team Data dynamically when Team tab is clicked
-    if(sectionId === 'team') {
-        fetchDiscordTeam();
-    }
+    if(sectionId === 'team') fetchDiscordTeam();
 }
 
 // Command Copy
@@ -32,7 +28,7 @@ setInterval(() => {
 }, 2500);
 
 // ==========================================
-// REAL LIVE DISCORD API FETCH (For Team Page)
+// REAL LIVE DISCORD API FETCH
 // ==========================================
 async function fetchDiscordTeam() {
     const container = document.getElementById('team-container');
@@ -40,10 +36,7 @@ async function fetchDiscordTeam() {
         const res = await fetch('https://discord.com/api/guilds/1472601008998846576/widget.json');
         const data = await res.json();
         
-        container.innerHTML = ''; // Clear loading text
-
-        // Add Hardcoded Owner First
-        container.innerHTML += `
+        container.innerHTML = `
             <div class="member-card">
                 <img src="ttttttttttttttttttttttttttttt.png" alt="SDGAMER">
                 <h3 style="color: #fff;">SDGAMER</h3>
@@ -51,51 +44,66 @@ async function fetchDiscordTeam() {
             </div>
         `;
 
-        // Loop through real online members from JSON
         if(data.members && data.members.length > 0) {
             data.members.forEach(member => {
                 let statusClass = member.status === 'online' ? 'status-online' : (member.status === 'idle' ? 'status-idle' : 'status-dnd');
-                
-                // Discord Widget API doesn't provide exact roles, so we label them automatically based on the community.
-                let roleLabel = "Community Member"; 
-                let roleColor = "#aaa";
-
                 container.innerHTML += `
                     <div class="member-card">
                         <img src="${member.avatar_url}" alt="${member.username}">
                         <h4 style="color: #fff;"><span class="status-dot ${statusClass}"></span> ${member.username}</h4>
-                        <p style="color: ${roleColor}; font-size: 0.8rem; margin-top: 5px;">${roleLabel}</p>
+                        <p style="color: #aaa; font-size: 0.8rem; margin-top: 5px;">Community Member</p>
                     </div>
                 `;
             });
-        } else {
-            container.innerHTML += `<p style="grid-column: 1/-1; color:#aaa;">No other members online right now.</p>`;
         }
     } catch (e) {
-        container.innerHTML = `<p style="color:red;">Error fetching team data. Make sure Widget is Enabled in Server Settings.</p>`;
+        container.innerHTML = `<p style="color:red;">Error fetching team data.</p>`;
     }
 }
 
 // ==========================================
-// REAL MINECRAFT SERVER STATUS (API)
+// ADVANCED MINECRAFT SERVER STATUS (IP + PORT)
 // ==========================================
 async function checkMCStatus() {
     let ip = document.getElementById("mc-ip").value;
+    let port = document.getElementById("mc-port").value;
     let resultDiv = document.getElementById("mc-result");
-    if(!ip) return resultDiv.innerText = "Please enter an IP.";
     
-    resultDiv.innerHTML = "Checking...";
+    if(!ip) {
+        resultDiv.style.display = "block";
+        return resultDiv.innerText = "Please enter Server IP.";
+    }
+
+    // Format IP:Port
+    let fullAddress = port ? `${ip}:${port}` : ip;
+    
+    resultDiv.style.display = "block";
+    resultDiv.innerHTML = "Fetching Server Data... <i class='fas fa-spinner fa-spin'></i>";
+    
     try {
-        let res = await fetch(`https://api.mcsrvstat.us/3/${ip}`);
+        let res = await fetch(`https://api.mcsrvstat.us/3/${fullAddress}`);
         let data = await res.json();
         
         if(data.online) {
-            resultDiv.innerHTML = `<span style="color:#00ff88;">ONLINE</span> | Players: ${data.players.online}/${data.players.max} <br> Version: ${data.version}`;
+            // Remove Minecraft color codes from MOTD
+            let cleanMotd = data.motd.clean.join('<br>');
+            
+            resultDiv.innerHTML = `
+                <div style="margin-bottom: 8px;"><strong>Status:</strong> <span style="color:#00ff88;">ONLINE</span></div>
+                <div style="margin-bottom: 8px;"><strong>IP:</strong> <span style="color:#00d2ff;">${data.ip}:${data.port}</span></div>
+                <div style="margin-bottom: 8px;"><strong>Players:</strong> <span style="color:#ffcc00;">${data.players.online} / ${data.players.max}</span></div>
+                <div style="margin-bottom: 8px;"><strong>Version:</strong> <span style="color:#fff;">${data.version}</span></div>
+                ${data.software ? `<div style="margin-bottom: 8px;"><strong>Software:</strong> <span style="color:#aaa;">${data.software}</span></div>` : ''}
+                <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.1);">
+                    <strong>MOTD:</strong><br>
+                    <span style="color: #ccc; font-family: monospace; font-size: 0.85rem;">${cleanMotd}</span>
+                </div>
+            `;
         } else {
-            resultDiv.innerHTML = `<span style="color:#ff3232;">OFFLINE</span>`;
+            resultDiv.innerHTML = `<strong>Status:</strong> <span style="color:#ff3232;">OFFLINE or INVALID</span>`;
         }
     } catch(e) {
-        resultDiv.innerHTML = "Error fetching status.";
+        resultDiv.innerHTML = "<span style="color:red;">Error connecting to API.</span>";
     }
 }
 
@@ -107,12 +115,11 @@ async function checkPaperBuild() {
     let resultDiv = document.getElementById("paper-result");
     if(!ver) return resultDiv.innerText = "Please enter version (e.g., 1.20.4).";
 
+    resultDiv.style.display = "block";
     resultDiv.innerHTML = "Fetching...";
     try {
         let res = await fetch(`https://api.papermc.io/v2/projects/paper/versions/${ver}`);
-        if(res.status === 404) {
-            return resultDiv.innerHTML = `<span style="color:#ff3232;">Version not found.</span>`;
-        }
+        if(res.status === 404) return resultDiv.innerHTML = `<span style="color:#ff3232;">Version not found.</span>`;
         let data = await res.json();
         let latestBuild = data.builds[data.builds.length - 1];
         resultDiv.innerHTML = `Latest Build for ${ver}: <span style="color:#00ffcc; font-weight:bold;">#${latestBuild}</span>`;
@@ -130,16 +137,16 @@ async function runPingTest() {
     if(!url) return resultDiv.innerText = "Enter URL (https://...)";
     if(!url.startsWith('http')) url = 'https://' + url;
 
+    resultDiv.style.display = "block";
     resultDiv.innerHTML = "Pinging...";
     let start = Date.now();
     try {
-        // We use mode: 'no-cors' to ping any website without browser blocking it
         await fetch(url, { mode: 'no-cors', cache: 'no-store' });
         let latency = Date.now() - start;
         let color = latency < 100 ? '#00ff88' : (latency < 300 ? 'orange' : '#ff3232');
         resultDiv.innerHTML = `Response Time: <span style="color:${color}; font-weight:bold;">${latency}ms</span>`;
     } catch(e) {
-        resultDiv.innerHTML = `<span style="color:#ff3232;">Ping Failed (Host unreachable or invalid).</span>`;
+        resultDiv.innerHTML = `<span style="color:#ff3232;">Ping Failed.</span>`;
     }
 }
 
