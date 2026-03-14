@@ -14,11 +14,16 @@
             <span>SKA HOST (SDGAMER)</span>
         </div>
         <ul class="nav-links">
-            <li><a href="#" onclick="showSection('home')"><i class="fas fa-home"></i> Home</a></li>
-            <li><a href="#" onclick="showSection('commands')"><i class="fas fa-terminal"></i> Commands</a></li>
-            <li><a href="#" onclick="showSection('stats')"><i class="fas fa-chart-line"></i> Stats</a></li>
-            <li><a href="#" onclick="showSection('about')"><i class="fas fa-info-circle"></i> About</a></li>
+            <li><a href="#" class="active-tab" onclick="showSection('home', this)"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="#" onclick="showSection('team', this)"><i class="fas fa-users"></i> Team</a></li>
+            <li><a href="#" onclick="showSection('tools', this)"><i class="fas fa-wrench"></i> Tools</a></li>
+            <li><a href="#" onclick="showSection('tutorials', this)"><i class="fas fa-video"></i> Tutorials</a></li>
+            <li><a href="#" onclick="showSection('commands', this)"><i class="fas fa-terminal"></i> Commands</a></li>
+            <li><a href="#" onclick="showSection('stats', this)"><i class="fas fa-chart-line"></i> Stats</a></li>
         </ul>
+        <div class="user-profile">
+            <img src="ttttttttttttttttttttttttttttt.png" alt="User">
+        </div>
     </nav>
 
     <div class="main-container">
@@ -35,37 +40,95 @@
                 </div>
             </div>
 
-            <div class="dashboard-grid">
-                <div class="glass-panel text-center" style="padding: 15px;">
-                    <h3 style="margin-bottom: 10px; color: #5865F2;"><i class="fab fa-discord"></i> Live Discord Community</h3>
-                    <iframe src="https://discord.com/widget?id=1472601008998846576&theme=dark" width="100%" height="350" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" style="border-radius: 8px;"></iframe>
+            <div class="dashboard-split">
+                
+                <div class="left-panel glass-panel">
+                    <h3 style="margin-bottom: 15px; color: #5865F2; display: flex; align-items: center; gap: 10px;">
+                        <i class="fab fa-discord fa-lg"></i> Live Discord Community
+                    </h3>
+                    <iframe src="https://discord.com/widget?id=1472601008998846576&theme=dark" width="100%" height="450" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" style="border-radius: 8px;"></iframe>
                 </div>
 
-                <div class="status-panel glass-panel">
-                    <h3>SYSTEM STATUS</h3>
-                    <div class="status-grid">
-                        <div class="stat-item">
-                            <span class="label">Latency</span>
-                            <span class="value success" id="fake-ping">24ms</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="label">Uptime</span>
-                            <span class="value">99.9%</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="label">Users</span>
-                            <span class="value" id="fake-users">1.2K</span>
+                <div class="right-panel">
+                    <div class="status-panel glass-panel">
+                        <h3>SYSTEM STATUS</h3>
+                        <div class="status-grid">
+                            <div class="stat-item">
+                                <span class="label">Latency</span>
+                                <span class="value success" id="fake-ping">24ms</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Uptime</span>
+                                <span class="value">99.9%</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="label">Users</span>
+                                <span class="value" id="fake-users">1.2K</span>
+                            </div>
                         </div>
                     </div>
 
-                    <div style="margin-top: 40px;">
-                        <a href="https://youtube.com/@skahosting?si=Mu6rIYL6RQv8x-U5" target="_blank" class="social-card yt">
-                            <i class="fab fa-youtube" style="font-size: 2rem; color: #ff0000;"></i>
-                            <div>
-                                <h3>YouTube Channel</h3>
-                                <p>Watch Hosting Tutorials</p>
-                            </div>
-                        </a>
+                    <a href="https://youtube.com/@skahosting?si=Mu6rIYL6RQv8x-U5" target="_blank" class="social-card yt glass-panel mt-20">
+                        <i class="fab fa-youtube" style="font-size: 2.5rem; color: #ff0000;"></i>
+                        <div>
+                            <h3>YouTube Channel</h3>
+                            <p style="color: #aaa; font-size: 0.9rem;">Watch Hosting Tutorials</p>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section id="team" style="display: none;">
+            <div class="glass-panel">
+                <h2><i class="fas fa-users"></i> Core Team & Online Members</h2>
+                <p style="color: #aaa; margin-bottom: 20px;">Live members fetched directly from our Discord Server.</p>
+                
+                <div class="team-grid" id="team-container">
+                    <p>Loading members...</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="tools" style="display: none;">
+            <div class="glass-panel">
+                <h2><i class="fas fa-wrench"></i> Server Tools</h2>
+                <p style="color: #aaa; margin-bottom: 20px;">Real-time API tools for your servers.</p>
+
+                <div class="tools-grid">
+                    <div class="tool-card glass-panel text-center">
+                        <h3><i class="fas fa-gamepad" style="color:#00ff88;"></i> Minecraft Status</h3>
+                        <input type="text" id="mc-ip" placeholder="e.g., mc.hypixel.net" class="search-bar mt-10">
+                        <button class="tool-btn" onclick="checkMCStatus()">Check Status</button>
+                        <div id="mc-result" class="tool-result"></div>
+                    </div>
+
+                    <div class="tool-card glass-panel text-center">
+                        <h3><i class="fas fa-file-code" style="color:#00d2ff;"></i> Paper Latest Build</h3>
+                        <input type="text" id="paper-ver" placeholder="e.g., 1.20.4" class="search-bar mt-10">
+                        <button class="tool-btn" onclick="checkPaperBuild()">Get Build</button>
+                        <div id="paper-result" class="tool-result"></div>
+                    </div>
+
+                    <div class="tool-card glass-panel text-center">
+                        <h3><i class="fas fa-network-wired" style="color:#ff3232;"></i> Web Ping Test</h3>
+                        <input type="text" id="ping-ip" placeholder="e.g., https://google.com" class="search-bar mt-10">
+                        <button class="tool-btn" onclick="runPingTest()">Ping</button>
+                        <div id="ping-result" class="tool-result"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="tutorials" style="display: none;">
+            <div class="glass-panel">
+                <h2><i class="fas fa-video"></i> Latest Tutorials</h2>
+                <p style="color: #aaa; margin-bottom: 20px;">Watch our guides directly here without leaving the page.</p>
+                
+                <div class="video-grid">
+                    <div class="video-embed">
+                        <iframe width="100%" height="250" src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=Mu6rIYL6RQv8x-U5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px;"></iframe>
+                        <h4 style="margin-top: 10px;">SKA Hosting Full Setup Guide</h4>
                     </div>
                 </div>
             </div>
@@ -74,10 +137,10 @@
         <section id="commands" style="display: none;">
             <div class="glass-panel">
                 <h2>Command Library</h2>
-                <p>Access our vast library of over 600+ system commands.</p>
-                <input type="text" id="cmdSearch" placeholder="Search commands (e.g., 'docker', 'update', 'auto')..." onkeyup="searchCommands()" class="search-bar">
+                <p style="color: #aaa; margin-bottom: 20px;">Access our vast library of over 600+ system commands.</p>
+                <input type="text" id="cmdSearch" placeholder="Search commands (e.g., 'docker', 'update', 'auto')..." onkeyup="searchCommands()" class="search-bar mt-10">
                 
-                <div class="table-container">
+                <div class="table-container mt-20">
                     <table class="cmd-table" id="cmdTable">
                         <tr>
                             <th>CATEGORY</th>
@@ -201,4 +264,32 @@
                         <tr><td><span class="badge useful">USEFUL</span></td><td>Command History</td><td><code>history</code></td></tr>
                         <tr><td><span class="badge useful">USEFUL</span></td><td>User ID</td><td><code>id</code></td></tr>
                         <tr><td><span class="badge useful">USEFUL</span></td><td>CPU Temp</td><td><code>sensors | grep -i temp</code></td></tr>
-                        <tr><td><span
+                        <tr><td><span class="badge useful">USEFUL</span></td><td>Monitor Processes</td><td><code>htop</code></td></tr>
+
+                        <tr><td><span class="badge suggestion">SUGGESTION</span></td><td>MySQL Tuner</td><td><code>mysqltuner</code></td></tr>
+                        <tr><td><span class="badge suggestion">SUGGESTION</span></td><td>Memory Suggestion</td><td><code>vmstat -s</code></td></tr>
+                        <tr><td><span class="badge suggestion">SUGGESTION</span></td><td>Power Top</td><td><code>powertop --auto-tune</code></td></tr>
+                        <tr><td><span class="badge suggestion">SUGGESTION</span></td><td>Analyze Boot</td><td><code>systemd-analyze blame</code></td></tr>
+                        <tr><td><span class="badge review">REVIEW</span></td><td>Git Diff</td><td><code>git diff HEAD~1 HEAD</code></td></tr>
+                        <tr><td><span class="badge review">REVIEW</span></td><td>ShellCheck</td><td><code>shellcheck script.sh</code></td></tr>
+                        <tr><td><span class="badge review">REVIEW</span></td><td>NPM Audit</td><td><code>npm audit</code></td></tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <section id="stats" style="display: none;">
+            <div class="glass-panel">
+                <h2>Live Analytics</h2>
+                <div class="stats-cards mt-20">
+                    <div class="stat-box text-center"><h4>CPU Usage</h4><h2 id="live-cpu">23%</h2></div>
+                    <div class="stat-box text-center"><h4>RAM Usage</h4><h2 id="live-ram">5.9GB <small>/ 32GB</small></h2></div>
+                    <div class="stat-box text-center"><h4>Network</h4><h2 id="live-net">67 Mbps</h2></div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
