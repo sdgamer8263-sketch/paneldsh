@@ -14,12 +14,12 @@
             <span>SKA HOST (SDGAMER)</span>
         </div>
         <ul class="nav-links">
-            <li><a href="#" class="active-tab" onclick="showSection('home', this)"><i class="fas fa-home"></i> Home</a></li>
-            <li><a href="#" onclick="showSection('team', this)"><i class="fas fa-users"></i> Team</a></li>
-            <li><a href="#" onclick="showSection('tools', this)"><i class="fas fa-wrench"></i> Tools</a></li>
-            <li><a href="#" onclick="showSection('tutorials', this)"><i class="fas fa-video"></i> Tutorials</a></li>
-            <li><a href="#" onclick="showSection('commands', this)"><i class="fas fa-terminal"></i> Commands</a></li>
-            <li><a href="#" onclick="showSection('stats', this)"><i class="fas fa-chart-line"></i> Stats</a></li>
+            <li><a class="active-tab" onclick="showSection('home', this)"><i class="fas fa-home"></i> Home</a></li>
+            <li><a onclick="showSection('team', this)"><i class="fas fa-users"></i> Team</a></li>
+            <li><a onclick="showSection('tools', this)"><i class="fas fa-wrench"></i> Tools</a></li>
+            <li><a onclick="showSection('tutorials', this)"><i class="fas fa-video"></i> Tutorials</a></li>
+            <li><a onclick="showSection('commands', this)"><i class="fas fa-terminal"></i> Commands</a></li>
+            <li><a onclick="showSection('stats', this)"><i class="fas fa-chart-line"></i> Stats</a></li>
         </ul>
         <div class="user-profile">
             <img src="ttttttttttttttttttttttttttttt.png" alt="User">
@@ -41,7 +41,6 @@
             </div>
 
             <div class="dashboard-split">
-                
                 <div class="left-panel glass-panel">
                     <h3 style="margin-bottom: 15px; color: #5865F2; display: flex; align-items: center; gap: 10px;">
                         <i class="fab fa-discord fa-lg"></i> Live Discord Community
@@ -53,18 +52,9 @@
                     <div class="status-panel glass-panel">
                         <h3>SYSTEM STATUS</h3>
                         <div class="status-grid">
-                            <div class="stat-item">
-                                <span class="label">Latency</span>
-                                <span class="value success" id="fake-ping">24ms</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="label">Uptime</span>
-                                <span class="value">99.9%</span>
-                            </div>
-                            <div class="stat-item">
-                                <span class="label">Users</span>
-                                <span class="value" id="fake-users">1.2K</span>
-                            </div>
+                            <div class="stat-item"><span class="label">Latency</span><span class="value success" id="fake-ping">24ms</span></div>
+                            <div class="stat-item"><span class="label">Uptime</span><span class="value">99.9%</span></div>
+                            <div class="stat-item"><span class="label">Users</span><span class="value" id="fake-users">1.2K</span></div>
                         </div>
                     </div>
 
@@ -82,38 +72,30 @@
         <section id="team" style="display: none;">
             <div class="glass-panel">
                 <h2><i class="fas fa-users"></i> Core Team & Online Members</h2>
-                <p style="color: #aaa; margin-bottom: 20px;">Live members fetched directly from our Discord Server.</p>
-                
-                <div class="team-grid" id="team-container">
-                    <p>Loading members...</p>
-                </div>
+                <div class="team-grid" id="team-container"><p>Loading members...</p></div>
             </div>
         </section>
 
         <section id="tools" style="display: none;">
             <div class="glass-panel">
                 <h2><i class="fas fa-wrench"></i> Server Tools</h2>
-                <p style="color: #aaa; margin-bottom: 20px;">Real-time API tools for your servers.</p>
-
                 <div class="tools-grid">
                     <div class="tool-card glass-panel text-center">
                         <h3><i class="fas fa-gamepad" style="color:#00ff88;"></i> Minecraft Status</h3>
-                        <input type="text" id="mc-ip" placeholder="Server IP (e.g. mc.hypixel.net)" class="search-bar mt-10">
-                        <input type="number" id="mc-port" placeholder="Port (Leave blank for 25565)" class="search-bar mt-10">
+                        <input type="text" id="mc-ip" placeholder="Server IP (mc.hypixel.net)" class="search-bar mt-10">
+                        <input type="number" id="mc-port" placeholder="Port (Blank=25565)" class="search-bar mt-10">
                         <button class="tool-btn" onclick="checkMCStatus()">Check Details</button>
                         <div id="mc-result" class="tool-result" style="text-align: left; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px; display: none;"></div>
                     </div>
-
                     <div class="tool-card glass-panel text-center">
                         <h3><i class="fas fa-file-code" style="color:#00d2ff;"></i> Paper Latest Build</h3>
                         <input type="text" id="paper-ver" placeholder="e.g., 1.20.4" class="search-bar mt-10">
                         <button class="tool-btn" onclick="checkPaperBuild()">Get Build</button>
                         <div id="paper-result" class="tool-result"></div>
                     </div>
-
                     <div class="tool-card glass-panel text-center">
                         <h3><i class="fas fa-network-wired" style="color:#ff3232;"></i> Web Ping Test</h3>
-                        <input type="text" id="ping-ip" placeholder="e.g., https://google.com" class="search-bar mt-10">
+                        <input type="text" id="ping-ip" placeholder="https://google.com" class="search-bar mt-10">
                         <button class="tool-btn" onclick="runPingTest()">Ping</button>
                         <div id="ping-result" class="tool-result"></div>
                     </div>
@@ -124,21 +106,10 @@
         <section id="tutorials" style="display: none;">
             <div class="glass-panel">
                 <h2><i class="fas fa-video"></i> Latest Tutorials</h2>
-                <p style="color: #aaa; margin-bottom: 20px;">Watch our guides directly here without leaving the page.</p>
-                
                 <div class="video-grid">
-                    <div class="video-embed">
-                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/Pj1Gg0l86YI" title="YouTube video 1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px;"></iframe>
-                        <h4 style="margin-top: 10px;">How to Setup Free Hosting</h4>
-                    </div>
-                    <div class="video-embed">
-                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/5D3n08Q5N84" title="YouTube video 2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px;"></iframe>
-                        <h4 style="margin-top: 10px;">Pterodactyl Installation Guide</h4>
-                    </div>
-                    <div class="video-embed">
-                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/k-p8z3oR1aU" title="YouTube video 3" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px;"></iframe>
-                        <h4 style="margin-top: 10px;">Fix Wings Errors Easily</h4>
-                    </div>
+                    <div class="video-embed"><iframe width="100%" height="200" src="https://www.youtube.com/embed/Pj1Gg0l86YI" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe><h4 class="mt-10">How to Setup Free Hosting</h4></div>
+                    <div class="video-embed"><iframe width="100%" height="200" src="https://www.youtube.com/embed/5D3n08Q5N84" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe><h4 class="mt-10">Pterodactyl Installation Guide</h4></div>
+                    <div class="video-embed"><iframe width="100%" height="200" src="https://www.youtube.com/embed/k-p8z3oR1aU" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe><h4 class="mt-10">Fix Wings Errors Easily</h4></div>
                 </div>
             </div>
         </section>
@@ -146,13 +117,10 @@
         <section id="commands" style="display: none;">
             <div class="glass-panel">
                 <h2>Command Library</h2>
-                <p style="color: #aaa; margin-bottom: 20px;">Access our vast library of over 600+ system commands.</p>
-                <input type="text" id="cmdSearch" placeholder="Search commands (e.g., 'docker', 'update', 'auto')..." onkeyup="searchCommands()" class="search-bar mt-10">
-                
+                <input type="text" id="cmdSearch" placeholder="Search commands..." onkeyup="searchCommands()" class="search-bar mt-10">
                 <div class="table-container mt-20">
                     <table class="cmd-table" id="cmdTable">
                         <tr><th>CATEGORY</th><th>TITLE</th><th>COMMAND</th></tr>
-
                         <tr><td><span class="badge auto">AUTO</span></td><td>Docker Scan</td><td><code>docker scan image_name</code></td></tr>
                         <tr><td><span class="badge auto">AUTO</span></td><td>Log Review</td><td><code>journalctl -p err -e</code></td></tr>
                         <tr><td><span class="badge auto">AUTO</span></td><td>Lynis Audit</td><td><code>lynis audit system</code></td></tr>
@@ -227,14 +195,15 @@
                 <h2>Live Analytics</h2>
                 <div class="stats-cards mt-20">
                     <div class="stat-box text-center"><h4>CPU Usage</h4><h2 id="live-cpu">23%</h2></div>
-                    <div class="stat-box text-center"><h4>RAM Usage</h4><h2 id="live-ram">5.9GB <small>/ 32GB</small></h2></div>
+                    <div class="stat-box text-center"><h4>RAM Usage</h4><h2 id="live-ram">5.9GB</h2></div>
                     <div class="stat-box text-center"><h4>Network</h4><h2 id="live-net">67 Mbps</h2></div>
                 </div>
             </div>
         </section>
 
     </div>
+
     <script src="script.js"></script>
 </body>
-                                </html>
-
+    </html>
+                                    
