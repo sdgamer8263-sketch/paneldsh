@@ -1,10 +1,8 @@
 // Function to switch between sections (Tabs)
 function showSection(sectionId) {
-    // Hide all sections
     const sections = document.querySelectorAll('section');
     sections.forEach(sec => sec.style.display = 'none');
     
-    // Show the targeted section
     document.getElementById(sectionId).style.display = 'block';
 }
 
@@ -58,4 +56,3 @@ setInterval(() => {
     document.getElementById('fake-ping').innerText = ping + 'ms';
     
 }, 2500); // Updates every 2.5 seconds
-
