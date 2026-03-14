@@ -46,7 +46,7 @@
                     <h3 style="margin-bottom: 15px; color: #5865F2; display: flex; align-items: center; gap: 10px;">
                         <i class="fab fa-discord fa-lg"></i> Live Discord Community
                     </h3>
-                    <iframe src="https://discord.com/widget?id=1472601008998846576&theme=dark" width="100%" height="450" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" style="border-radius: 8px;"></iframe>
+                    <iframe src="https://e.widgetbot.io/channels/1472601008998846576" width="100%" height="450" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" style="border-radius: 8px;"></iframe>
                 </div>
 
                 <div class="right-panel">
@@ -98,9 +98,10 @@
                 <div class="tools-grid">
                     <div class="tool-card glass-panel text-center">
                         <h3><i class="fas fa-gamepad" style="color:#00ff88;"></i> Minecraft Status</h3>
-                        <input type="text" id="mc-ip" placeholder="e.g., mc.hypixel.net" class="search-bar mt-10">
-                        <button class="tool-btn" onclick="checkMCStatus()">Check Status</button>
-                        <div id="mc-result" class="tool-result"></div>
+                        <input type="text" id="mc-ip" placeholder="Server IP (e.g. mc.hypixel.net)" class="search-bar mt-10">
+                        <input type="number" id="mc-port" placeholder="Port (Leave blank for 25565)" class="search-bar mt-10">
+                        <button class="tool-btn" onclick="checkMCStatus()">Check Details</button>
+                        <div id="mc-result" class="tool-result" style="text-align: left; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px; display: none;"></div>
                     </div>
 
                     <div class="tool-card glass-panel text-center">
@@ -127,8 +128,18 @@
                 
                 <div class="video-grid">
                     <div class="video-embed">
-                        <iframe width="100%" height="250" src="https://www.youtube.com/embed/dQw4w9WgXcQ?si=Mu6rIYL6RQv8x-U5" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px;"></iframe>
-                        <h4 style="margin-top: 10px;">SKA Hosting Full Setup Guide</h4>
+                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/Pj1Gg0l86YI" title="YouTube video 1" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px;"></iframe>
+                        <h4 style="margin-top: 10px;">How to Setup Free Hosting (Video 1)</h4>
+                    </div>
+
+                    <div class="video-embed">
+                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/5D3n08Q5N84" title="YouTube video 2" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px;"></iframe>
+                        <h4 style="margin-top: 10px;">Pterodactyl Installation Guide (Video 2)</h4>
+                    </div>
+
+                    <div class="video-embed">
+                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/k-p8z3oR1aU" title="YouTube video 3" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="border-radius: 8px;"></iframe>
+                        <h4 style="margin-top: 10px;">Fix Wings Errors Easily (Video 3)</h4>
                     </div>
                 </div>
             </div>
@@ -142,11 +153,7 @@
                 
                 <div class="table-container mt-20">
                     <table class="cmd-table" id="cmdTable">
-                        <tr>
-                            <th>CATEGORY</th>
-                            <th>TITLE</th>
-                            <th>COMMAND</th>
-                        </tr>
+                        <tr><th>CATEGORY</th><th>TITLE</th><th>COMMAND</th></tr>
 
                         <tr><td><span class="badge auto">AUTO</span></td><td>Docker Scan</td><td><code>docker scan image_name</code></td></tr>
                         <tr><td><span class="badge auto">AUTO</span></td><td>Log Review</td><td><code>journalctl -p err -e</code></td></tr>
@@ -156,67 +163,33 @@
                         <tr><td><span class="badge auto">AUTO</span></td><td>Git Blame</td><td><code>git blame filename</code></td></tr>
                         <tr><td><span class="badge auto">AUTO</span></td><td>Watch Command</td><td><code>watch -n 5 "ls -la"</code></td></tr>
                         <tr><td><span class="badge auto">AUTO</span></td><td>Auto Remove</td><td><code>apt autoremove -y</code></td></tr>
-                        <tr><td><span class="badge auto">AUTO</span></td><td>Systemd Timer</td><td><code>systemctl list-timers</code></td></tr>
-                        <tr><td><span class="badge auto">AUTO</span></td><td>Log Rotate</td><td><code>logrotate -f /etc/logrotate.conf</code></td></tr>
 
                         <tr><td><span class="badge linux">LINUX</span></td><td>Update System</td><td><code>sudo apt update && sudo apt upgrade -y</code></td></tr>
                         <tr><td><span class="badge linux">LINUX</span></td><td>Check Disk Usage</td><td><code>df -h</code></td></tr>
                         <tr><td><span class="badge linux">LINUX</span></td><td>Check Memory Usage</td><td><code>free -h</code></td></tr>
                         <tr><td><span class="badge linux">LINUX</span></td><td>List Files</td><td><code>ls -la</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>Find Files</td><td><code>find /path -name "filename"</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>Search in Files</td><td><code>grep -r "pattern" /path</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>Process List</td><td><code>ps aux</code></td></tr>
                         <tr><td><span class="badge linux">LINUX</span></td><td>Kill Process</td><td><code>kill -9 PID</code></td></tr>
                         <tr><td><span class="badge linux">LINUX</span></td><td>Top Processes</td><td><code>top</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>System Info</td><td><code>uname -a</code></td></tr>
                         <tr><td><span class="badge linux">LINUX</span></td><td>File Permissions</td><td><code>chmod 755 filename</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>Change Owner</td><td><code>chown user:group filename</code></td></tr>
                         <tr><td><span class="badge linux">LINUX</span></td><td>Create Directory</td><td><code>mkdir -p /path/to/dir</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>Remove Directory</td><td><code>rm -rf directory</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>Copy Files</td><td><code>cp -r source destination</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>Move Files</td><td><code>mv source destination</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>Compress Files</td><td><code>tar -czf archive.tar.gz folder/</code></td></tr>
                         <tr><td><span class="badge linux">LINUX</span></td><td>Extract Archive</td><td><code>tar -xzf archive.tar.gz</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>Count Lines</td><td><code>wc -l filename</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>View File Beginning</td><td><code>head -n 10 filename</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>View File End</td><td><code>tail -n 10 filename</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>Remove Duplicates</td><td><code>sort filename | uniq</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>Replace Text</td><td><code>sed 's/old/new/g' filename</code></td></tr>
 
                         <tr><td><span class="badge vps">VPS</span></td><td>Check System Load</td><td><code>uptime</code></td></tr>
                         <tr><td><span class="badge vps">VPS</span></td><td>Check CPU Info</td><td><code>lscpu</code></td></tr>
-                        <tr><td><span class="badge vps">VPS</span></td><td>Check RAM Info</td><td><code>lsmem</code></td></tr>
                         <tr><td><span class="badge vps">VPS</span></td><td>Check Disk Info</td><td><code>lsblk</code></td></tr>
                         <tr><td><span class="badge vps">VPS</span></td><td>Check Network Info</td><td><code>ip addr</code></td></tr>
-                        <tr><td><span class="badge vps">VPS</span></td><td>Check Network Stats</td><td><code>nload</code></td></tr>
-                        <tr><td><span class="badge vps">VPS</span></td><td>Restart Network</td><td><code>sudo systemctl restart networking</code></td></tr>
                         <tr><td><span class="badge vps">VPS</span></td><td>Check Firewall</td><td><code>sudo ufw status</code></td></tr>
                         <tr><td><span class="badge vps">VPS</span></td><td>Enable Firewall</td><td><code>sudo ufw enable</code></td></tr>
                         <tr><td><span class="badge vps">VPS</span></td><td>Allow Port</td><td><code>sudo ufw allow 80</code></td></tr>
-                        <tr><td><span class="badge vps">VPS</span></td><td>Check SSH Status</td><td><code>sudo systemctl status ssh</code></td></tr>
-                        <tr><td><span class="badge vps">VPS</span></td><td>Check Cron Jobs</td><td><code>crontab -l</code></td></tr>
-                        <tr><td><span class="badge vps">VPS</span></td><td>Check Users</td><td><code>who</code></td></tr>
-                        <tr><td><span class="badge vps">VPS</span></td><td>Add User</td><td><code>sudo adduser username</code></td></tr>
-                        <tr><td><span class="badge vps">VPS</span></td><td>Check Bandwidth</td><td><code>vnstat</code></td></tr>
-                        <tr><td><span class="badge vps">VPS</span></td><td>Check Open Files</td><td><code>lsof</code></td></tr>
-
+                        
                         <tr><td><span class="badge docker">DOCKER</span></td><td>Run Container</td><td><code>docker run -d --name img_name</code></td></tr>
                         <tr><td><span class="badge docker">DOCKER</span></td><td>Stop Container</td><td><code>docker stop container_id</code></td></tr>
                         <tr><td><span class="badge docker">DOCKER</span></td><td>Start Container</td><td><code>docker start container_id</code></td></tr>
-                        <tr><td><span class="badge docker">DOCKER</span></td><td>Remove Container</td><td><code>docker rm container_id</code></td></tr>
-                        <tr><td><span class="badge docker">DOCKER</span></td><td>Remove Image</td><td><code>docker rmi image_id</code></td></tr>
-                        <tr><td><span class="badge docker">DOCKER</span></td><td>Build Image</td><td><code>docker build -t image_name .</code></td></tr>
-                        <tr><td><span class="badge docker">DOCKER</span></td><td>Pull Image</td><td><code>docker pull image_name</code></td></tr>
+                        <tr><td><span class="badge docker">DOCKER</span></td><td>System Prune</td><td><code>docker system prune -a</code></td></tr>
                         <tr><td><span class="badge docker">DOCKER</span></td><td>Container Logs</td><td><code>docker logs container_id</code></td></tr>
                         <tr><td><span class="badge docker">DOCKER</span></td><td>Exec Command</td><td><code>docker exec -it container_id /bin/bash</code></td></tr>
                         <tr><td><span class="badge docker">DOCKER</span></td><td>Docker Stats</td><td><code>docker stats</code></td></tr>
-                        <tr><td><span class="badge docker">DOCKER</span></td><td>System Info</td><td><code>docker info</code></td></tr>
-                        <tr><td><span class="badge docker">DOCKER</span></td><td>Docker Version</td><td><code>docker --version</code></td></tr>
-                        <tr><td><span class="badge docker">DOCKER</span></td><td>Docker Compose Up</td><td><code>docker-compose up -d</code></td></tr>
-                        <tr><td><span class="badge docker">DOCKER</span></td><td>Docker Compose Down</td><td><code>docker-compose down</code></td></tr>
-                        <tr><td><span class="badge docker">DOCKER</span></td><td>System Prune</td><td><code>docker system prune -a</code></td></tr>
                         <tr><td><span class="badge docker">DOCKER</span></td><td>Volume List</td><td><code>docker volume ls</code></td></tr>
-                        <tr><td><span class="badge docker">DOCKER</span></td><td>Network List</td><td><code>docker network ls</code></td></tr>
 
                         <tr><td><span class="badge git">GIT</span></td><td>Initialize Repo</td><td><code>git init</code></td></tr>
                         <tr><td><span class="badge git">GIT</span></td><td>Clone Repo</td><td><code>git clone url</code></td></tr>
@@ -225,54 +198,27 @@
                         <tr><td><span class="badge git">GIT</span></td><td>Commit Changes</td><td><code>git commit -m "message"</code></td></tr>
                         <tr><td><span class="badge git">GIT</span></td><td>Push Changes</td><td><code>git push origin branch</code></td></tr>
                         <tr><td><span class="badge git">GIT</span></td><td>Pull Changes</td><td><code>git pull origin branch</code></td></tr>
-                        <tr><td><span class="badge git">GIT</span></td><td>Create Branch</td><td><code>git branch branch_name</code></td></tr>
-                        <tr><td><span class="badge git">GIT</span></td><td>Switch Branch</td><td><code>git checkout branch_name</code></td></tr>
-                        <tr><td><span class="badge git">GIT</span></td><td>Log Compact</td><td><code>git log --oneline</code></td></tr>
-                        <tr><td><span class="badge git">GIT</span></td><td>Diff Changes</td><td><code>git diff</code></td></tr>
-                        <tr><td><span class="badge git">GIT</span></td><td>Undo Last Commit</td><td><code>git reset --soft HEAD~1</code></td></tr>
-                        <tr><td><span class="badge git">GIT</span></td><td>Remove From Staging</td><td><code>git reset HEAD filename</code></td></tr>
 
                         <tr><td><span class="badge networking">NETWORKING</span></td><td>Ping Host</td><td><code>ping hostname</code></td></tr>
                         <tr><td><span class="badge networking">NETWORKING</span></td><td>Trace Route</td><td><code>traceroute hostname</code></td></tr>
                         <tr><td><span class="badge networking">NETWORKING</span></td><td>DNS Lookup</td><td><code>nslookup hostname</code></td></tr>
-                        <tr><td><span class="badge networking">NETWORKING</span></td><td>Detailed DNS</td><td><code>dig hostname</code></td></tr>
                         <tr><td><span class="badge networking">NETWORKING</span></td><td>Check Port</td><td><code>telnet hostname port</code></td></tr>
                         <tr><td><span class="badge networking">NETWORKING</span></td><td>Download File</td><td><code>curl -O file_url</code></td></tr>
-                        <tr><td><span class="badge networking">NETWORKING</span></td><td>HTTP Request</td><td><code>curl -X GET url</code></td></tr>
-                        <tr><td><span class="badge networking">NETWORKING</span></td><td>Check Interfaces</td><td><code>ifconfig</code></td></tr>
-                        <tr><td><span class="badge networking">NETWORKING</span></td><td>Check ARP Table</td><td><code>arp -a</code></td></tr>
-                        <tr><td><span class="badge networking">NETWORKING</span></td><td>Flush DNS</td><td><code>sudo systemctl restart systemd-resolved</code></td></tr>
                         <tr><td><span class="badge networking">NETWORKING</span></td><td>Check Listening Ports</td><td><code>sudo netstat -tulpn</code></td></tr>
                         <tr><td><span class="badge networking">NETWORKING</span></td><td>Speed Test</td><td><code>speedtest-cli</code></td></tr>
 
-                        <tr><td><span class="badge system">SYSTEM</span></td><td>Check Date</td><td><code>date</code></td></tr>
                         <tr><td><span class="badge system">SYSTEM</span></td><td>Set Timezone</td><td><code>sudo timedatectl set-timezone Region/City</code></td></tr>
-                        <tr><td><span class="badge system">SYSTEM</span></td><td>Check Uptime</td><td><code>uptime</code></td></tr>
                         <tr><td><span class="badge system">SYSTEM</span></td><td>Shutdown</td><td><code>sudo shutdown -h now</code></td></tr>
                         <tr><td><span class="badge system">SYSTEM</span></td><td>Reboot</td><td><code>sudo reboot</code></td></tr>
                         <tr><td><span class="badge system">SYSTEM</span></td><td>Stop Service</td><td><code>sudo systemctl stop service_name</code></td></tr>
                         <tr><td><span class="badge system">SYSTEM</span></td><td>Restart Service</td><td><code>sudo systemctl restart service_name</code></td></tr>
-                        <tr><td><span class="badge system">SYSTEM</span></td><td>Enable Service</td><td><code>sudo systemctl enable service_name</code></td></tr>
                         <tr><td><span class="badge system">SYSTEM</span></td><td>Check Service Status</td><td><code>systemctl status service_name</code></td></tr>
 
                         <tr><td><span class="badge useful">USEFUL</span></td><td>Kill by Name</td><td><code>sudo pkill process_name</code></td></tr>
-                        <tr><td><span class="badge useful">USEFUL</span></td><td>Check Disk Usage</td><td><code>du -sh /path</code></td></tr>
-                        <tr><td><span class="badge useful">USEFUL</span></td><td>Find Large Files</td><td><code>find /path -type f -size +100M</code></td></tr>
                         <tr><td><span class="badge useful">USEFUL</span></td><td>Update All</td><td><code>apt update && apt upgrade -y</code></td></tr>
-                        <tr><td><span class="badge useful">USEFUL</span></td><td>Install Basic</td><td><code>apt install curl wget git sudo -y</code></td></tr>
                         <tr><td><span class="badge useful">USEFUL</span></td><td>Find Executable</td><td><code>which command</code></td></tr>
                         <tr><td><span class="badge useful">USEFUL</span></td><td>Command History</td><td><code>history</code></td></tr>
-                        <tr><td><span class="badge useful">USEFUL</span></td><td>User ID</td><td><code>id</code></td></tr>
-                        <tr><td><span class="badge useful">USEFUL</span></td><td>CPU Temp</td><td><code>sensors | grep -i temp</code></td></tr>
                         <tr><td><span class="badge useful">USEFUL</span></td><td>Monitor Processes</td><td><code>htop</code></td></tr>
-
-                        <tr><td><span class="badge suggestion">SUGGESTION</span></td><td>MySQL Tuner</td><td><code>mysqltuner</code></td></tr>
-                        <tr><td><span class="badge suggestion">SUGGESTION</span></td><td>Memory Suggestion</td><td><code>vmstat -s</code></td></tr>
-                        <tr><td><span class="badge suggestion">SUGGESTION</span></td><td>Power Top</td><td><code>powertop --auto-tune</code></td></tr>
-                        <tr><td><span class="badge suggestion">SUGGESTION</span></td><td>Analyze Boot</td><td><code>systemd-analyze blame</code></td></tr>
-                        <tr><td><span class="badge review">REVIEW</span></td><td>Git Diff</td><td><code>git diff HEAD~1 HEAD</code></td></tr>
-                        <tr><td><span class="badge review">REVIEW</span></td><td>ShellCheck</td><td><code>shellcheck script.sh</code></td></tr>
-                        <tr><td><span class="badge review">REVIEW</span></td><td>NPM Audit</td><td><code>npm audit</code></td></tr>
                     </table>
                 </div>
             </div>
@@ -292,4 +238,5 @@
     </div>
     <script src="script.js"></script>
 </body>
-</html>
+                                    </html>
+                                    
