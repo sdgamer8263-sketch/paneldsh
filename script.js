@@ -72,40 +72,6 @@ function copyTableCmd(btn, cmd) {
         }, 2000);
     });
 }
-
-// ==========================================
-// 📺 YOUTUBE VIDEOS (FIXED FOR DDOS PROTECTION)
-// ==========================================
-async function loadYouTubeVideos() {
-    const container = document.getElementById('yt-container');
-    if(!container) return;
-    
-    container.innerHTML = '<p style="color: #aaa;">Fetching videos... <i class="fas fa-spinner fa-spin"></i></p>';
-    
-    try {
-        const channelId = 'UCCGkhiwOobIoOqvGSlB1v8Q'; 
-        const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
-        
-        // DDOS Protection bypass korar jonno Proxy API use kora hoyeche
-        const finalUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&api_key=00000000000000000000000000000000&_=${Math.random()}`;
-
-        const res = await fetch(finalUrl);
-        const data = await res.json();
-        
-        if(data.status === 'ok' && data.items.length > 0) {
-            container.innerHTML = ''; 
-            // Gets max 15 videos (Free RSS Limit)
-            data.items.slice(0, 15).forEach(video => {
-                let videoId = video.link.split('v=')[1];
-                if(videoId && videoId.includes('&')) videoId = videoId.split('&')[0]; 
-                
-                if(videoId) {
-                    container.innerHTML += `<div class="video-embed">
-                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe>
-                        <h4 class="mt-10" style="color: #fff; font-size: 0.95rem;">${video.title}</h4>
-                    </div>`;
-                }
-            });
         } else { 
             container.innerHTML = '<p style="color: #aaa;">No videos found.</p>'; 
         }
