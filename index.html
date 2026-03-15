@@ -33,7 +33,6 @@
                 <h4>AUTOMATED SCRIPT</h4>
                 <h1>ALL IN ONE <span class="highlight">CMD</span></h1>
                 <p>Execute the master script to install all dependencies instantly.</p>
-                
                 <div class="cmd-box">
                     <code>$ bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)</code>
                     <button class="copy-btn" onclick="copyCmd()">COPY</button>
@@ -45,7 +44,14 @@
                     <h3 style="margin-bottom: 15px; color: #5865F2; display: flex; align-items: center; gap: 10px;">
                         <i class="fab fa-discord fa-lg"></i> Live Discord Community
                     </h3>
-                    <iframe src="https://discord.com/widget?id=1472601008998846576&theme=dark" width="100%" height="450" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts" style="border-radius: 8px;"></iframe>
+                    
+                    <widgetbot 
+                        server="1472601008998846576" 
+                        channel="1472601307520172275" 
+                        width="100%" 
+                        height="450" 
+                        style="border-radius: 8px; overflow: hidden; display: block;">
+                    </widgetbot>
                 </div>
 
                 <div class="right-panel">
@@ -57,7 +63,6 @@
                             <div class="stat-item"><span class="label">Users</span><span class="value" id="fake-users">1.2K</span></div>
                         </div>
                     </div>
-
                     <a href="https://youtube.com/@skahosting?si=Mu6rIYL6RQv8x-U5" target="_blank" class="social-card yt glass-panel mt-20">
                         <i class="fab fa-youtube" style="font-size: 2.5rem; color: #ff0000;"></i>
                         <div>
@@ -106,10 +111,8 @@
         <section id="tutorials" style="display: none;">
             <div class="glass-panel">
                 <h2><i class="fas fa-video"></i> Latest Tutorials</h2>
-                <div class="video-grid">
-                    <div class="video-embed"><iframe width="100%" height="200" src="https://www.youtube.com/embed/Pj1Gg0l86YI" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe><h4 class="mt-10">How to Setup Free Hosting</h4></div>
-                    <div class="video-embed"><iframe width="100%" height="200" src="https://www.youtube.com/embed/5D3n08Q5N84" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe><h4 class="mt-10">Pterodactyl Installation Guide</h4></div>
-                    <div class="video-embed"><iframe width="100%" height="200" src="https://www.youtube.com/embed/k-p8z3oR1aU" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe><h4 class="mt-10">Fix Wings Errors Easily</h4></div>
+                <div class="video-grid" id="yt-container">
+                    <p style="color: #aaa;">Fetching latest videos directly from SKA HOSTING... <i class="fas fa-spinner fa-spin"></i></p>
                 </div>
             </div>
         </section>
@@ -117,75 +120,21 @@
         <section id="commands" style="display: none;">
             <div class="glass-panel">
                 <h2>Command Library</h2>
+                <div class="category-filters">
+                    <button class="filter-btn active" onclick="filterCategory('ALL', this)">ALL COMMANDS</button>
+                    <button class="filter-btn" onclick="filterCategory('USEFUL', this)">Useful</button>
+                    <button class="filter-btn" onclick="filterCategory('LINUX', this)">Linux</button>
+                    <button class="filter-btn" onclick="filterCategory('VPS', this)">VPS</button>
+                    <button class="filter-btn" onclick="filterCategory('DOCKER', this)">Docker</button>
+                    <button class="filter-btn" onclick="filterCategory('GIT', this)">Git</button>
+                    <button class="filter-btn" onclick="filterCategory('NETWORKING', this)">Networking</button>
+                    <button class="filter-btn" onclick="filterCategory('SYSTEM', this)">System</button>
+                    <button class="filter-btn" onclick="filterCategory('AUTO', this)">Auto</button>
+                </div>
                 <input type="text" id="cmdSearch" placeholder="Search commands..." onkeyup="searchCommands()" class="search-bar mt-10">
                 <div class="table-container mt-20">
                     <table class="cmd-table" id="cmdTable">
-                        <tr><th>CATEGORY</th><th>TITLE</th><th>COMMAND</th></tr>
-                        <tr><td><span class="badge auto">AUTO</span></td><td>Docker Scan</td><td><code>docker scan image_name</code></td></tr>
-                        <tr><td><span class="badge auto">AUTO</span></td><td>Log Review</td><td><code>journalctl -p err -e</code></td></tr>
-                        <tr><td><span class="badge auto">AUTO</span></td><td>Lynis Audit</td><td><code>lynis audit system</code></td></tr>
-                        <tr><td><span class="badge auto">AUTO</span></td><td>Check Open Ports</td><td><code>netstat -tulpn</code></td></tr>
-                        <tr><td><span class="badge auto">AUTO</span></td><td>Disk Usage Review</td><td><code>ncdu /</code></td></tr>
-                        <tr><td><span class="badge auto">AUTO</span></td><td>Git Blame</td><td><code>git blame filename</code></td></tr>
-                        <tr><td><span class="badge auto">AUTO</span></td><td>Watch Command</td><td><code>watch -n 5 "ls -la"</code></td></tr>
-                        <tr><td><span class="badge auto">AUTO</span></td><td>Auto Remove</td><td><code>apt autoremove -y</code></td></tr>
-
-                        <tr><td><span class="badge linux">LINUX</span></td><td>Update System</td><td><code>sudo apt update && sudo apt upgrade -y</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>Check Disk Usage</td><td><code>df -h</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>Check Memory Usage</td><td><code>free -h</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>List Files</td><td><code>ls -la</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>Kill Process</td><td><code>kill -9 PID</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>Top Processes</td><td><code>top</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>File Permissions</td><td><code>chmod 755 filename</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>Create Directory</td><td><code>mkdir -p /path/to/dir</code></td></tr>
-                        <tr><td><span class="badge linux">LINUX</span></td><td>Extract Archive</td><td><code>tar -xzf archive.tar.gz</code></td></tr>
-
-                        <tr><td><span class="badge vps">VPS</span></td><td>Check System Load</td><td><code>uptime</code></td></tr>
-                        <tr><td><span class="badge vps">VPS</span></td><td>Check CPU Info</td><td><code>lscpu</code></td></tr>
-                        <tr><td><span class="badge vps">VPS</span></td><td>Check Disk Info</td><td><code>lsblk</code></td></tr>
-                        <tr><td><span class="badge vps">VPS</span></td><td>Check Network Info</td><td><code>ip addr</code></td></tr>
-                        <tr><td><span class="badge vps">VPS</span></td><td>Check Firewall</td><td><code>sudo ufw status</code></td></tr>
-                        <tr><td><span class="badge vps">VPS</span></td><td>Enable Firewall</td><td><code>sudo ufw enable</code></td></tr>
-                        <tr><td><span class="badge vps">VPS</span></td><td>Allow Port</td><td><code>sudo ufw allow 80</code></td></tr>
-                        
-                        <tr><td><span class="badge docker">DOCKER</span></td><td>Run Container</td><td><code>docker run -d --name img_name</code></td></tr>
-                        <tr><td><span class="badge docker">DOCKER</span></td><td>Stop Container</td><td><code>docker stop container_id</code></td></tr>
-                        <tr><td><span class="badge docker">DOCKER</span></td><td>Start Container</td><td><code>docker start container_id</code></td></tr>
-                        <tr><td><span class="badge docker">DOCKER</span></td><td>System Prune</td><td><code>docker system prune -a</code></td></tr>
-                        <tr><td><span class="badge docker">DOCKER</span></td><td>Container Logs</td><td><code>docker logs container_id</code></td></tr>
-                        <tr><td><span class="badge docker">DOCKER</span></td><td>Exec Command</td><td><code>docker exec -it container_id /bin/bash</code></td></tr>
-                        <tr><td><span class="badge docker">DOCKER</span></td><td>Docker Stats</td><td><code>docker stats</code></td></tr>
-                        <tr><td><span class="badge docker">DOCKER</span></td><td>Volume List</td><td><code>docker volume ls</code></td></tr>
-
-                        <tr><td><span class="badge git">GIT</span></td><td>Initialize Repo</td><td><code>git init</code></td></tr>
-                        <tr><td><span class="badge git">GIT</span></td><td>Clone Repo</td><td><code>git clone url</code></td></tr>
-                        <tr><td><span class="badge git">GIT</span></td><td>Check Status</td><td><code>git status</code></td></tr>
-                        <tr><td><span class="badge git">GIT</span></td><td>Add Files</td><td><code>git add .</code></td></tr>
-                        <tr><td><span class="badge git">GIT</span></td><td>Commit Changes</td><td><code>git commit -m "message"</code></td></tr>
-                        <tr><td><span class="badge git">GIT</span></td><td>Push Changes</td><td><code>git push origin branch</code></td></tr>
-                        <tr><td><span class="badge git">GIT</span></td><td>Pull Changes</td><td><code>git pull origin branch</code></td></tr>
-
-                        <tr><td><span class="badge networking">NETWORKING</span></td><td>Ping Host</td><td><code>ping hostname</code></td></tr>
-                        <tr><td><span class="badge networking">NETWORKING</span></td><td>Trace Route</td><td><code>traceroute hostname</code></td></tr>
-                        <tr><td><span class="badge networking">NETWORKING</span></td><td>DNS Lookup</td><td><code>nslookup hostname</code></td></tr>
-                        <tr><td><span class="badge networking">NETWORKING</span></td><td>Check Port</td><td><code>telnet hostname port</code></td></tr>
-                        <tr><td><span class="badge networking">NETWORKING</span></td><td>Download File</td><td><code>curl -O file_url</code></td></tr>
-                        <tr><td><span class="badge networking">NETWORKING</span></td><td>Check Listening Ports</td><td><code>sudo netstat -tulpn</code></td></tr>
-                        <tr><td><span class="badge networking">NETWORKING</span></td><td>Speed Test</td><td><code>speedtest-cli</code></td></tr>
-
-                        <tr><td><span class="badge system">SYSTEM</span></td><td>Set Timezone</td><td><code>sudo timedatectl set-timezone Region/City</code></td></tr>
-                        <tr><td><span class="badge system">SYSTEM</span></td><td>Shutdown</td><td><code>sudo shutdown -h now</code></td></tr>
-                        <tr><td><span class="badge system">SYSTEM</span></td><td>Reboot</td><td><code>sudo reboot</code></td></tr>
-                        <tr><td><span class="badge system">SYSTEM</span></td><td>Stop Service</td><td><code>sudo systemctl stop service_name</code></td></tr>
-                        <tr><td><span class="badge system">SYSTEM</span></td><td>Restart Service</td><td><code>sudo systemctl restart service_name</code></td></tr>
-                        <tr><td><span class="badge system">SYSTEM</span></td><td>Check Service Status</td><td><code>systemctl status service_name</code></td></tr>
-
-                        <tr><td><span class="badge useful">USEFUL</span></td><td>Kill by Name</td><td><code>sudo pkill process_name</code></td></tr>
-                        <tr><td><span class="badge useful">USEFUL</span></td><td>Update All</td><td><code>apt update && apt upgrade -y</code></td></tr>
-                        <tr><td><span class="badge useful">USEFUL</span></td><td>Find Executable</td><td><code>which command</code></td></tr>
-                        <tr><td><span class="badge useful">USEFUL</span></td><td>Command History</td><td><code>history</code></td></tr>
-                        <tr><td><span class="badge useful">USEFUL</span></td><td>Monitor Processes</td><td><code>htop</code></td></tr>
-                    </table>
+                        </table>
                 </div>
             </div>
         </section>
@@ -203,7 +152,7 @@
 
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/@widgetbot/html-embed"></script>
     <script src="script.js"></script>
 </body>
-    </html>
-                                    
+</html>
