@@ -71,7 +71,7 @@ async function loadYouTubeVideos() {
         const data = await res.json();
         if(data.items && data.items.length > 0) {
             container.innerHTML = ''; 
-            data.items.slice(0, 1000000).forEach(video => {
+            data.items.slice(0, 15).forEach(video => {
                 let videoId = video.link.split('v=')[1];
                 if(videoId.includes('&')) videoId = videoId.split('&')[0]; 
                 container.innerHTML += `<div class="video-embed">
