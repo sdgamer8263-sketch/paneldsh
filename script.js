@@ -7,7 +7,31 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==========================================
-// 📄 COMMANDS PARSER (commands.txt theke data fetch)
+// 🎥 YOUTUBE VIDEOS LOADER (Fixed Missing Function)
+// ==========================================
+async function loadYouTubeVideos() {
+    // Note: Ensure you have a container with this ID in your HTML Tutorials section
+    const container = document.getElementById('yt-container'); 
+    if (!container) return;
+
+    try {
+        // Add your actual YouTube API fetch logic here. 
+        // For now, it safely handles the empty state to prevent errors.
+        let videos = []; 
+
+        if (videos && videos.length > 0) {
+            // Populate videos here
+        } else { 
+            container.innerHTML = '<p style="color: #aaa;">No videos found.</p>'; 
+        }
+    } catch(e) { 
+        console.error("YT Load Error:", e);
+        container.innerHTML = '<p style="color: red;">Error loading YouTube videos. Refresh the page.</p>'; 
+    }
+}
+
+// ==========================================
+// 📄 COMMANDS PARSER (Fetch from commands.txt)
 // ==========================================
 async function loadCommandsFromFile() {
     const table = document.getElementById('cmdTable');
@@ -71,14 +95,6 @@ function copyTableCmd(btn, cmd) {
             btn.style.background = 'rgba(255, 255, 255, 0.05)';
         }, 2000);
     });
-}
-        } else { 
-            container.innerHTML = '<p style="color: #aaa;">No videos found.</p>'; 
-        }
-    } catch(e) { 
-        console.error("YT Load Error:", e);
-        container.innerHTML = '<p style="color: red;">Error loading YouTube videos. Refresh the page.</p>'; 
-    }
 }
 
 // ==========================================
@@ -163,35 +179,5 @@ async function checkMCStatus() {
         let data = await res.json();
         if(data.online) {
             let cleanMotd = data.motd.clean.join('<br>');
-            resultDiv.innerHTML = `<div><strong>Status:</strong> <span style="color:#00ff88;">ONLINE</span></div><div><strong>IP:</strong> <span style="color:#00d2ff;">${data.ip}:${data.port}</span></div><div><strong>Players:</strong> <span style="color:#ffcc00;">${data.players.online}/${data.players.max}</span></div><div><strong>Version:</strong> <span style="color:#fff;">${data.version}</span></div><div style="margin-top:10px; border-top:1px solid #333; padding-top:10px;"><strong>MOTD:</strong><br><span style="color:#ccc; font-family:monospace;">${cleanMotd}</span></div>`;
-        } else { resultDiv.innerHTML = `<strong>Status:</strong> <span style="color:#ff3232;">OFFLINE</span>`; }
-    } catch(e) { resultDiv.innerHTML = `<span style="color:red;">Error connecting.</span>`; }
-}
-
-async function checkPaperBuild() {
-    let ver = document.getElementById("paper-ver").value;
-    let resultDiv = document.getElementById("paper-result");
-    if(!ver) return resultDiv.innerText = "Please enter version.";
-    resultDiv.style.display = "block"; resultDiv.innerHTML = "Fetching...";
-    try {
-        let res = await fetch(`https://api.papermc.io/v2/projects/paper/versions/${ver}`);
-        if(res.status === 404) return resultDiv.innerHTML = `<span style="color:#ff3232;">Not found.</span>`;
-        let data = await res.json();
-        resultDiv.innerHTML = `Latest Build for ${ver}: <span style="color:#00ffcc; font-weight:bold;">#${data.builds[data.builds.length - 1]}</span>`;
-    } catch(e) { resultDiv.innerHTML = "Error fetching."; }
-}
-
-async function runPingTest() {
-    let url = document.getElementById("ping-ip").value;
-    let resultDiv = document.getElementById("ping-result");
-    if(!url) { resultDiv.style.display="block"; return resultDiv.innerText = "Enter URL (https://...)"; }
-    if(!url.startsWith('http')) url = 'https://' + url;
-    resultDiv.style.display = "block"; resultDiv.innerHTML = "Pinging...";
-    let start = Date.now();
-    try {
-        await fetch(url, { mode: 'no-cors', cache: 'no-store' });
-        let latency = Date.now() - start;
-        let color = latency < 100 ? '#00ff88' : (latency < 300 ? 'orange' : '#ff3232');
-        resultDiv.innerHTML = `Response Time: <span style="color:${color}; font-weight:bold;">${latency}ms</span>`;
-    } catch(e) { resultDiv.innerHTML = `<span style="color:#ff3232;">Ping Failed.</span>`; }
-}
+            resultDiv.innerHTML = `<div><strong>Status:</strong> <span style="color:#00ff88;">ONLINE</span></div><div><strong>IP:</strong> <span style="color:#00d2ff;">${data.ip}:${data.port}</span></div><div><strong>Players:</strong> <span style="color:#ffcc00;">${data.players.online}/${data.players.max}</span></div><div><strong>Version:</strong> <span style="color:#fff;">${data.version}</span></div><div style="margin-top:10px; border-top:1px solid #333; padding-top:1
+        
