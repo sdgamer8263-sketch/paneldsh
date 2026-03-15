@@ -1,3 +1,7 @@
+// ==========================================
+// AUTO INITIALIZATION & FETCHING COMMANDS.TXT
+// ==========================================
+// FIXED: "document" needs to be lowercase
 document.addEventListener("DOMContentLoaded", () => {
     loadYouTubeVideos();
     loadCommandsFromFile();
@@ -18,6 +22,7 @@ async function loadCommandsFromFile() {
             line = line.trim();
             if(!line) return;
 
+            // Matches format: Category-Title-'Command' or Category - Title - 'Command'
             const match = line.match(/^([^-]+)-(.*?)-?\s*'(.*)'\s*$/);
             
             if(match) {
@@ -26,13 +31,16 @@ async function loadCommandsFromFile() {
                 const command = match[3].trim();
                 const badgeClass = category.toLowerCase();
 
+                // FIXED: Escaped quotes so inline onclick doesn't break
+                const safeCommand = command.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+
                 tableHTML += `
                 <tr>
                     <td><span class="badge ${badgeClass}">${category}</span></td>
                     <td>${title}</td>
                     <td><code>${command}</code></td>
                     <td style="text-align: right;">
-                        <button class="tbl-copy-btn" onclick="copyTableCmd(this, '${command.replace(/'/g, "\\'")}')">
+                        <button class="tbl-copy-btn" onclick="copyTableCmd(this, '${safeCommand}')">
                             <i class="fas fa-copy"></i>
                         </button>
                     </td>
@@ -46,6 +54,7 @@ async function loadCommandsFromFile() {
     }
 }
 
+// Function triggered when action copy button is clicked
 function copyTableCmd(btn, cmd) {
     navigator.clipboard.writeText(cmd).then(() => {
         btn.innerHTML = '<i class="fas fa-check"></i>';
@@ -61,6 +70,9 @@ function copyTableCmd(btn, cmd) {
     });
 }
 
+// ==========================================
+// YOUTUBE VIDEOS (SKA HOSTING)
+// ==========================================
 async function loadYouTubeVideos() {
     const container = document.getElementById('yt-container');
     if(!container) return;
@@ -69,20 +81,28 @@ async function loadYouTubeVideos() {
         const rssUrl = encodeURIComponent(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`);
         const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${rssUrl}`);
         const data = await res.json();
+        
         if(data.items && data.items.length > 0) {
             container.innerHTML = ''; 
+            // Gets max 15 videos
             data.items.slice(0, 15).forEach(video => {
                 let videoId = video.link.split('v=')[1];
-                if(videoId.includes('&')) videoId = videoId.split('&')[0]; 
-                container.innerHTML += `<div class="video-embed">
-                    <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe>
-                    <h4 class="mt-10" style="color: #fff; font-size: 0.95rem;">${video.title}</h4>
-                </div>`;
+                if(videoId && videoId.includes('&')) videoId = videoId.split('&')[0]; 
+                
+                if(videoId) {
+                    container.innerHTML += `<div class="video-embed">
+                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe>
+                        <h4 class="mt-10" style="color: #fff; font-size: 0.95rem;">${video.title}</h4>
+                    </div>`;
+                }
             });
         } else { container.innerHTML = '<p style="color: #aaa;">No videos found.</p>'; }
     } catch(e) { container.innerHTML = '<p style="color: red;">Error loading YouTube videos.</p>'; }
 }
 
+// ==========================================
+// TABS & SYSTEM
+// ==========================================
 function showSection(sectionId, element) {
     document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
     document.getElementById(sectionId).style.display = 'block';
@@ -104,6 +124,9 @@ setInterval(() => {
     document.getElementById('fake-ping').innerText = (Math.floor(Math.random() * 5) + 20) + 'ms';
 }, 2500);
 
+// ==========================================
+// CATEGORY FILTER & SEARCH
+// ==========================================
 function filterCategory(category, btnElement) {
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
     btnElement.classList.add('active');
@@ -122,8 +145,10 @@ function filterCategory(category, btnElement) {
 function searchCommands() {
     let input = document.getElementById("cmdSearch").value.toUpperCase();
     let tr = document.getElementById("cmdTable").getElementsByTagName("tr");
+    
     document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
     document.querySelector('.filter-btn').classList.add('active'); 
+    
     for (let i = 1; i < tr.length; i++) {
         let display = false;
         let tds = tr[i].getElementsByTagName("td");
@@ -132,6 +157,9 @@ function searchCommands() {
     }
 }
 
+// ==========================================
+// DISCORD & TOOLS APIs
+// ==========================================
 async function fetchDiscordTeam() {
     const container = document.getElementById('team-container');
     try {
@@ -153,7 +181,7 @@ async function checkMCStatus() {
     let resultDiv = document.getElementById("mc-result");
     if(!ip) { resultDiv.style.display = "block"; return resultDiv.innerText = "Please enter Server IP."; }
     let fullAddress = port ? `${ip}:${port}` : ip;
-    resultDiv.style.display = "block"; resultDiv.innerHTML = "Fetching...";
+    resultDiv.style.display = "block"; resultDiv.innerHTML = "Fetching... <i class='fas fa-spinner fa-spin'></i>";
     try {
         let res = await fetch(`https://api.mcsrvstat.us/3/${fullAddress}`);
         let data = await res.json();
@@ -190,4 +218,4 @@ async function runPingTest() {
         let color = latency < 100 ? '#00ff88' : (latency < 300 ? 'orange' : '#ff3232');
         resultDiv.innerHTML = `Response Time: <span style="color:${color}; font-weight:bold;">${latency}ms</span>`;
     } catch(e) { resultDiv.innerHTML = `<span style="color:#ff3232;">Ping Failed.</span>`; }
-}
+        }
