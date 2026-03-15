@@ -1,5 +1,5 @@
 * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-body { background: url('gta-6-sunset-highway-wallpapers-usagif.gif') no-repeat center center fixed; background-size: cover; color: #fff; min-height: 100vh; }
+body { background: url('gggggggggggggggggg.gif') no-repeat center center fixed; background-size: cover; color: #fff; min-height: 100vh; }
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: rgba(0,0,0,0.5); }
 ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 4px; }
@@ -48,6 +48,14 @@ body { background: url('gta-6-sunset-highway-wallpapers-usagif.gif') no-repeat c
 
 .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; }
 
+/* Category Filters Header */
+.category-filters { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; }
+.category-filters::-webkit-scrollbar { height: 4px; }
+.filter-btn { background: rgba(255, 255, 255, 0.05); color: #aaa; border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem; white-space: nowrap; transition: 0.3s; }
+.filter-btn:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
+.filter-btn.active { background: #00d2ff; color: #000; border-color: #00d2ff; }
+
+/* Table Styles */
 .table-container { overflow-x: auto; max-height: 500px; }
 .cmd-table { width: 100%; border-collapse: collapse; }
 .cmd-table th, .cmd-table td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
