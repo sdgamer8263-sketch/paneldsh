@@ -11,7 +11,7 @@ body { background: url('gta-6-sunset-highway-wallpapers-usagif.gif') no-repeat c
 .logo { display: flex; align-items: center; gap: 12px; font-weight: bold; font-size: 1.3rem; letter-spacing: 1px;}
 .logo-img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #00d2ff; }
 .nav-links { list-style: none; display: flex; gap: 15px; }
-.nav-links a { color: #bbb; text-decoration: none; font-size: 0.95rem; font-weight: 500; padding: 10px 15px; border-radius: 8px; transition: 0.3s; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.nav-links a { color: #bbb; text-decoration: none; font-size: 0.95rem; font-weight: 500; padding: 10px 15px; border-radius: 8px; transition: 0.3s; display: flex; align-items: center; gap: 8px; cursor: pointer; white-space: nowrap; }
 .nav-links a:hover, .active-tab { color: #fff !important; background: rgba(255, 255, 255, 0.1); }
 .user-profile img { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
 .main-container { padding: 40px; max-width: 1400px; margin: 0 auto; }
@@ -20,15 +20,15 @@ body { background: url('gta-6-sunset-highway-wallpapers-usagif.gif') no-repeat c
 .hero-box h4 { color: #00d2ff; letter-spacing: 3px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase;}
 .hero-box h1 { font-size: 4rem; margin: 15px 0; font-weight: 800;}
 .highlight { color: #00d2ff; text-shadow: 0 0 20px rgba(0, 210, 255, 0.4); }
-.cmd-box { background: rgba(0,0,0,0.6); display: inline-flex; align-items: center; padding: 12px 25px; border-radius: 8px; border: 1px solid #333; margin-top: 25px; }
-.cmd-box code { color: #00ffcc; margin-right: 25px; font-family: monospace; font-size: 1.15rem; }
-.copy-btn { background: #fff; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: 700; border-radius: 6px; transition: 0.3s;}
+.cmd-box { background: rgba(0,0,0,0.6); display: inline-flex; align-items: center; padding: 12px 25px; border-radius: 8px; border: 1px solid #333; margin-top: 25px; max-width: 100%; overflow-x: auto; }
+.cmd-box code { color: #00ffcc; margin-right: 25px; font-family: monospace; font-size: 1.15rem; white-space: nowrap; }
+.copy-btn { background: #fff; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: 700; border-radius: 6px; transition: 0.3s; flex-shrink: 0; }
 .copy-btn:hover { background: #00d2ff; color: #fff;}
 
 .dashboard-split { display: grid; grid-template-columns: 2.2fr 1fr; gap: 25px; }
 .social-card { display: flex; align-items: center; gap: 20px; padding: 25px; text-decoration: none; color: white; transition: 0.3s; }
 .social-card.yt:hover { border-left: 5px solid red; transform: translateY(-3px);}
-.status-grid { display: flex; justify-content: space-around; margin-top: 20px; }
+.status-grid { display: flex; justify-content: space-around; margin-top: 20px; flex-wrap: wrap; gap: 15px; }
 .stat-item .label { display: block; color: #888; font-size: 0.9rem; margin-bottom: 8px;}
 .stat-item .value { font-size: 1.8rem; font-weight: 800; }
 .success { color: #00ff88; }
@@ -46,8 +46,6 @@ body { background: url('gta-6-sunset-highway-wallpapers-usagif.gif') no-repeat c
 .member-card .status-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px;}
 .status-online { background: #3ba55c; } .status-idle { background: #faa61a; } .status-dnd { background: #ed4245; }
 
-.video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; }
-
 /* Category Filters Header */
 .category-filters { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; }
 .category-filters::-webkit-scrollbar { height: 4px; }
@@ -55,11 +53,11 @@ body { background: url('gta-6-sunset-highway-wallpapers-usagif.gif') no-repeat c
 .filter-btn:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
 .filter-btn.active { background: #00d2ff; color: #000; border-color: #00d2ff; }
 
-/* Table Styles */
-.table-container { overflow-x: auto; max-height: 500px; }
-.cmd-table { width: 100%; border-collapse: collapse; }
+/* Table Styles - Fixed Scrolling Issue */
+.table-container { overflow-x: auto; overflow-y: auto; max-height: 500px; position: relative; }
+.cmd-table { width: 100%; border-collapse: collapse; min-width: 700px; }
 .cmd-table th, .cmd-table td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
-.cmd-table th { background: rgba(0,0,0,0.8); position: sticky; top: 0; z-index: 10; font-size: 0.9rem; color: #888;}
+.cmd-table th { background: #0a0a0f; position: sticky; top: 0; z-index: 10; font-size: 0.9rem; color: #888; border-bottom: 2px solid rgba(255,255,255,0.1); }
 .badge { padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; display: inline-block; width: 100px; text-align: center;}
 .linux { background: rgba(255, 165, 0, 0.2); color: orange; border: 1px solid rgba(255, 165, 0, 0.4);}
 .docker { background: rgba(0, 150, 255, 0.2); color: #0096ff; border: 1px solid rgba(0, 150, 255, 0.4);}
@@ -69,7 +67,7 @@ body { background: url('gta-6-sunset-highway-wallpapers-usagif.gif') no-repeat c
 .system { background: rgba(220, 20, 60, 0.2); color: #dc143c; border: 1px solid rgba(220, 20, 60, 0.4);}
 .auto { background: rgba(0, 255, 255, 0.2); color: #00ffff; border: 1px solid rgba(0, 255, 255, 0.4);}
 .useful { background: rgba(144, 238, 144, 0.2); color: #90ee90; border: 1px solid rgba(144, 238, 144, 0.4);}
-.cmd-table code { background: rgba(0,0,0,0.8); padding: 6px 12px; border-radius: 6px; color: #00ffcc; font-family: monospace;}
+.cmd-table code { background: rgba(0,0,0,0.8); padding: 6px 12px; border-radius: 6px; color: #00ffcc; font-family: monospace; word-break: break-word; display: inline-block; }
 
 /* Auto Copy Button Design */
 .tbl-copy-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #aaa; cursor: pointer; padding: 8px 12px; border-radius: 6px; transition: 0.3s; font-size: 1rem; }
@@ -79,9 +77,16 @@ body { background: url('gta-6-sunset-highway-wallpapers-usagif.gif') no-repeat c
 .stat-box { background: rgba(0,0,0,0.5); padding: 30px; border-radius: 12px;}
 .stat-box h2 { font-size: 3rem; color: #00d2ff; margin-top: 15px; font-weight: 800;}
 
+/* Responsive Fixes */
 @media(max-width: 992px) {
     .dashboard-split { grid-template-columns: 1fr; }
     .hero-box h1 { font-size: 2.5rem; }
     .tools-grid, .stats-cards { grid-template-columns: 1fr; }
-    .nav-links { display: none; }
+    
+    /* Fixed: Make nav scrollable horizontally on mobile instead of disappearing */
+    .navbar { padding: 15px 20px; flex-direction: column; gap: 15px; align-items: stretch; }
+    .logo { justify-content: center; }
+    .nav-links { display: flex; overflow-x: auto; padding-bottom: 10px; width: 100%; justify-content: flex-start; }
+    .nav-links::-webkit-scrollbar { height: 3px; }
+    .user-profile { display: none; } /* Hide profile picture on mobile to save space */
 }
