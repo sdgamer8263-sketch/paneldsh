@@ -1,18 +1,27 @@
 // ==========================================
-// AUTO INITIALIZATION & FETCHING COMMANDS.TXT
+// AUTO INITIALIZATION
 // ==========================================
-// FIXED: "document" needs to be lowercase
 document.addEventListener("DOMContentLoaded", () => {
     loadYouTubeVideos();
     loadCommandsFromFile();
 });
 
+// ==========================================
+// COMMANDS FETCH FROM GITHUB RAW API
+// ==========================================
 async function loadCommandsFromFile() {
     const table = document.getElementById('cmdTable');
     if(!table) return;
 
     try {
-        const response = await fetch('commands.txt');
+        // Apnar GitHub er direct RAW API link (Sobar seshe timestamp ache jate cache na dhore)
+        const apiUrl = 'https://raw.githubusercontent.com/sdgamer8263-sketch/paneldash/main/commands.txt?v=' + new Date().getTime();
+        const response = await fetch(apiUrl);
+        
+        if (!response.ok) {
+            throw new Error("File not found on GitHub");
+        }
+        
         const text = await response.text();
         const lines = text.split('\n');
 
@@ -22,7 +31,7 @@ async function loadCommandsFromFile() {
             line = line.trim();
             if(!line) return;
 
-            // Matches format: Category-Title-'Command' or Category - Title - 'Command'
+            // Matches format: Category-Title-'Command'
             const match = line.match(/^([^-]+)-(.*?)-?\s*'(.*)'\s*$/);
             
             if(match) {
@@ -31,7 +40,7 @@ async function loadCommandsFromFile() {
                 const command = match[3].trim();
                 const badgeClass = category.toLowerCase();
 
-                // FIXED: Escaped quotes so inline onclick doesn't break
+                // Safe quote formatting
                 const safeCommand = command.replace(/'/g, "\\'").replace(/"/g, "&quot;");
 
                 tableHTML += `
@@ -50,7 +59,7 @@ async function loadCommandsFromFile() {
         
         table.innerHTML = tableHTML;
     } catch(e) {
-        table.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Failed to load commands.txt file. Make sure it's uploaded!</td></tr>`;
+        table.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">API Error: commands.txt file ti GitHub repo te paini! Daya kore upload korun.</td></tr>`;
     }
 }
 
@@ -84,7 +93,6 @@ async function loadYouTubeVideos() {
         
         if(data.items && data.items.length > 0) {
             container.innerHTML = ''; 
-            // Gets max 15 videos
             data.items.slice(0, 15).forEach(video => {
                 let videoId = video.link.split('v=')[1];
                 if(videoId && videoId.includes('&')) videoId = videoId.split('&')[0]; 
@@ -218,4 +226,4 @@ async function runPingTest() {
         let color = latency < 100 ? '#00ff88' : (latency < 300 ? 'orange' : '#ff3232');
         resultDiv.innerHTML = `Response Time: <span style="color:${color}; font-weight:bold;">${latency}ms</span>`;
     } catch(e) { resultDiv.innerHTML = `<span style="color:#ff3232;">Ping Failed.</span>`; }
-        }
+                }
