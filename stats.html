@@ -1,31 +1,13 @@
 <div class="glass-panel" style="margin-bottom: 25px;">
     <h2 style="margin-bottom: 15px;">Live Analytics</h2>
-    
     <div class="stats-top">
-        <div class="stat-card cpu">
-            <h4>CPU</h4>
-            <h2 id="cpu-val">28%</h2>
-        </div>
-        <div class="stat-card ram">
-            <h4>RAM</h4>
-            <h2><span id="ram-val">4.9</span><span>GB / 32 GB</span></h2>
-        </div>
-        <div class="stat-card net">
-            <h4>NETWORK</h4>
-            <h2><span id="net-val">90</span><span> Mbps</span></h2>
-        </div>
-        <div class="stat-card active">
-            <h4>ACTIVE</h4>
-            <h2>842 <span style="color:#888; font-size: 0.8rem;">▲ Peak</span></h2>
-        </div>
+        <div class="stat-card cpu"><h4>CPU</h4><h2 id="cpu-val">28%</h2></div>
+        <div class="stat-card ram"><h4>RAM</h4><h2><span id="ram-val">4.9</span><span>GB / 32 GB</span></h2></div>
+        <div class="stat-card net"><h4>NETWORK</h4><h2><span id="net-val">90</span><span> Mbps</span></h2></div>
+        <div class="stat-card active"><h4>ACTIVE</h4><h2>842 <span style="color:#888; font-size: 0.8rem;">▲ Peak</span></h2></div>
     </div>
-
-    <h4 style="color:#888; margin-bottom:10px;">REAL-TIME TRAFFIC</h4>
-    <div class="chart-container">
-        <canvas id="trafficChart"></canvas>
-    </div>
+    <div class="chart-container"><canvas id="trafficChart"></canvas></div>
 </div>
-
 <div class="glass-panel" style="margin-bottom: 25px;">
     <h3 style="margin-bottom: 15px;">Extended Server Metrics</h3>
     <div class="metrics-grid">
@@ -35,18 +17,9 @@
         <div class="metric-box"><h5>DB CONN.</h5><h3 class="text-warning">15</h3></div>
         <div class="metric-box"><h5>API REQ/S</h5><h3 id="m-api" class="text-success">421</h3></div>
         <div class="metric-box"><h5>ERROR RATE</h5><h3 class="text-danger">0.04%</h3></div>
-        <div class="metric-box"><h5>CACHE HIT</h5><h3 class="text-info">97%</h3></div>
-        <div class="metric-box"><h5>CONTAINERS</h5><h3 class="text-warning">9/12</h3></div>
-        <div class="metric-box"><h5>LOAD (1M)</h5><h3>0.26</h3></div>
-        <div class="metric-box"><h5>HEALTH</h5><h3 class="text-success">A+</h3></div>
-        <div class="metric-box"><h5>SWAP USAGE</h5><h3 class="text-danger">12%</h3></div>
-        <div class="metric-box"><h5>PROCESSES</h5><h3>147</h3></div>
     </div>
 </div>
-
 <div class="glass-panel">
     <h4 style="color:#888; margin-bottom:10px; font-family: monospace;">SYSTEM LOGS</h4>
-    <div id="sys-logs" class="system-logs">
-        </div>
+    <div id="sys-logs" class="system-logs"></div>
 </div>
-
