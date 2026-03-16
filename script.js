@@ -12,13 +12,16 @@ const navPages = [
     { name: 'About', file: 'about.html', icon: 'fas fa-info-circle' }
 ];
 
-function loadNavbar() {
+// Force load navbar immediately without waiting
+function forceLoadNavbar() {
     const container = document.getElementById('navbar-container');
     if(!container) return;
 
-    let currentFile = window.location.pathname.split('/').pop() || 'index.html';
-    // Handle github pages empty path issue
-    if (currentFile === '' || currentFile === 'paneldash') currentFile = 'index.html';
+    let currentPath = window.location.pathname;
+    let activePage = navPages.find(p => currentPath.includes(p.file));
+    
+    // Default to Home if it's the root domain or not found
+    if(!activePage) activePage = navPages[0];
 
     let navHTML = `
     <nav class="navbar">
@@ -29,7 +32,7 @@ function loadNavbar() {
         <ul class="nav-links">`;
 
     navPages.forEach(page => {
-        let activeClass = (page.file === currentFile) ? 'active-tab' : '';
+        let activeClass = (page.name === activePage.name) ? 'active-tab' : '';
         navHTML += `<li><a href="${page.file}" class="${activeClass}"><i class="${page.icon}"></i> ${page.name}</a></li>`;
     });
 
@@ -43,22 +46,20 @@ function loadNavbar() {
     container.innerHTML = navHTML;
 }
 
+// ✅ Run immediately!
+forceLoadNavbar();
+
 // ==========================================
-// 🛠️ SAFE AUTO INITIALIZATION
+// 🛠️ LOAD OTHER COMPONENTS ON READY
 // ==========================================
-function initAll() {
-    loadNavbar(); 
+document.addEventListener("DOMContentLoaded", () => {
+    // Safety check just in case
+    if(!document.querySelector('.navbar')) forceLoadNavbar();
+
     if(document.getElementById('yt-container')) loadYouTubeVideos();
     if(document.getElementById('cmdTable')) loadCommandsFromFile();
     if(document.getElementById('discord-members')) fetchDiscordTeam();
-}
-
-// Run safely regardless of load time
-if (document.readyState === 'loading') {
-    document.addEventListener("DOMContentLoaded", initAll);
-} else {
-    initAll();
-}
+});
 
 // ==========================================
 // 📄 COMMANDS PARSER
