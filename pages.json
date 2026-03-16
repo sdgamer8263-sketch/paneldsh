@@ -1,0 +1,9 @@
+[
+    { "id": "home", "title": "About", "icon": "fas fa-info-circle", "file": "home.html" },
+    { "id": "team", "title": "Team", "icon": "fas fa-users", "file": "team.html" },
+    { "id": "commands", "title": "Commands", "icon": "fas fa-terminal", "file": "commands.html" },
+    { "id": "hosting", "title": "Hosting Making", "icon": "fas fa-server", "file": "hosting.html" },
+    { "id": "stats", "title": "Stats", "icon": "fas fa-chart-line", "file": "stats.html" },
+    { "id": "gan", "title": "Music", "icon": "fas fa-music", "file": "gan.html" }
+]
+
