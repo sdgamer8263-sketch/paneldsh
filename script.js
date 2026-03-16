@@ -23,7 +23,7 @@ function forceLoadNavbar() {
     let navHTML = `
     <nav class="navbar">
         <div class="logo">
-            <img src="ttttttttttttttttttttttttttttt.png" alt="Logo" class="logo-img">
+            <img src="gemini_generated_video_3ccd85b2.mp4" alt="Logo" class="logo-img">
             <div class="logo-text">
                 <span class="main-title">SKA HOST</span>
                 <span class="sub-title">DASHBOARD</span>
