@@ -20,7 +20,6 @@ function forceLoadNavbar() {
     let activePage = navPages.find(p => currentPath.includes(p.file.toLowerCase()));
     if(!activePage) activePage = navPages[0];
 
-    // ✅ FIXED: Name changed to SKA HOST
     let navHTML = `
     <nav class="navbar">
         <div class="logo">
@@ -52,9 +51,6 @@ function forceLoadNavbar() {
     createProfileModal();
 }
 
-// ==========================================
-// 👤 PROFILE MODAL LOGIC (SKA HOST)
-// ==========================================
 function createProfileModal() {
     if(document.getElementById('profileModal')) return;
     const modalHTML = `
@@ -238,25 +234,120 @@ async function fetchDiscordTeam() {
 }
 
 // ==========================================
-// 📊 TOOLS & UTILS
+// 📊 SERVER TOOLS API (🔥 ENHANCED & FIXED)
 // ==========================================
 function copyCmd() {
     navigator.clipboard.writeText("bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)").then(() => alert("Master Command Copied! 🔥"));
 }
 
+// 🟢 Web Ping Test Fixed
+async function runPingTest() {
+    let urlInput = document.getElementById("ping-ip");
+    let resultDiv = document.getElementById("ping-result");
+    
+    if (!urlInput || !resultDiv) return;
+    
+    let url = urlInput.value.trim();
+    if(!url) { 
+        resultDiv.style.display = "block"; 
+        resultDiv.innerHTML = "<span style='color:orange;'><i class='fas fa-exclamation-triangle'></i> Please enter a URL first.</span>"; 
+        return; 
+    }
+    
+    if(!url.startsWith('http')) url = 'https://' + url;
+    
+    resultDiv.style.display = "block"; 
+    resultDiv.innerHTML = "Pinging server... <i class='fas fa-spinner fa-spin'></i>";
+    
+    let start = Date.now();
+    try {
+        // Abort timeout manually to handle slow/broken sites
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000); 
+        
+        await fetch(url, { mode: 'no-cors', cache: 'no-store', signal: controller.signal });
+        clearTimeout(timeoutId);
+        
+        let latency = Date.now() - start;
+        let color = latency < 200 ? '#00ff88' : (latency < 600 ? 'orange' : '#ff3232');
+        let icon = latency < 600 ? 'fa-check-circle' : 'fa-exclamation-circle';
+        
+        resultDiv.innerHTML = `
+            <span style="color:#aaa;">Status:</span> <span style="color:#00ff88; font-weight:bold;">ONLINE</span> <br> 
+            <span style="color:#aaa;">Response Time:</span> <span style="color:${color}; font-weight:bold; font-size:1.1rem;">${latency}ms</span> <i class="fas ${icon}" style="color:${color};"></i>
+        `;
+    } catch(e) { 
+        resultDiv.innerHTML = `<span style="color:#ff3232; font-weight:bold;"><i class="fas fa-times-circle"></i> Ping Failed or Host Unreachable.</span>`; 
+    }
+}
+
+// 🟢 Minecraft Status Fixed (Safeguards added)
 async function checkMCStatus() {
-    let ip = document.getElementById("mc-ip").value;
-    let port = document.getElementById("mc-port").value;
+    let ip = document.getElementById("mc-ip").value.trim();
+    let port = document.getElementById("mc-port").value.trim();
     let resultDiv = document.getElementById("mc-result");
-    if(!ip) { resultDiv.style.display = "block"; return resultDiv.innerText = "Please enter Server IP."; }
+    
+    if(!ip) { 
+        resultDiv.style.display = "block"; 
+        resultDiv.innerHTML = "<span style='color:orange;'><i class='fas fa-exclamation-triangle'></i> Please enter Server IP.</span>"; 
+        return; 
+    }
+    
     let fullAddress = port ? `${ip}:${port}` : ip;
-    resultDiv.style.display = "block"; resultDiv.innerHTML = "Fetching...";
+    resultDiv.style.display = "block"; 
+    resultDiv.innerHTML = "Fetching server details... <i class='fas fa-spinner fa-spin'></i>";
+    
     try {
         let res = await fetch(`https://api.mcsrvstat.us/3/${fullAddress}`);
         let data = await res.json();
+        
         if(data.online) {
-            let cleanMotd = data.motd.clean.join('<br>');
-            resultDiv.innerHTML = `<div><strong>Status:</strong> <span style="color:#00ff88;">ONLINE</span></div><div><strong>IP:</strong> <span style="color:#00d2ff;">${data.ip}:${data.port}</span></div><div><strong>Players:</strong> <span style="color:#ffcc00;">${data.players.online}/${data.players.max}</span></div><div><strong>Version:</strong> <span style="color:#fff;">${data.version}</span></div><div style="margin-top:10px; border-top:1px solid #333; padding-top:10px;"><strong>MOTD:</strong><br><span style="color:#ccc; font-family:monospace;">${cleanMotd}</span></div>`;
-        } else { resultDiv.innerHTML = `<strong>Status:</strong> <span style="color:#ff3232;">OFFLINE</span>`; }
-    } catch(e) { resultDiv.innerHTML = `<span style="color:red;">Error connecting.</span>`; }
+            let onlinePlayers = data.players ? data.players.online : 0;
+            let maxPlayers = data.players ? data.players.max : 0;
+            let version = data.version || "Unknown";
+            let cleanMotd = data.motd ? data.motd.clean.join('<br>') : "No MOTD provided";
+            
+            resultDiv.innerHTML = `
+                <div><strong>Status:</strong> <span style="color:#00ff88;">ONLINE <i class="fas fa-check-circle"></i></span></div>
+                <div><strong>IP:</strong> <span style="color:#00d2ff;">${data.ip || ip}:${data.port || port}</span></div>
+                <div><strong>Players:</strong> <span style="color:#ffcc00;">${onlinePlayers}/${maxPlayers}</span></div>
+                <div><strong>Version:</strong> <span style="color:#fff;">${version}</span></div>
+                <div style="margin-top:10px; border-top:1px solid #333; padding-top:10px;">
+                    <strong>MOTD:</strong><br><span style="color:#ccc; font-family:monospace;">${cleanMotd}</span>
+                </div>`;
+        } else { 
+            resultDiv.innerHTML = `<strong>Status:</strong> <span style="color:#ff3232;">OFFLINE <i class="fas fa-times-circle"></i></span>`; 
+        }
+    } catch(e) { 
+        resultDiv.innerHTML = `<span style="color:red;"><i class="fas fa-exclamation-circle"></i> Error connecting to status API.</span>`; 
+    }
+}
+
+// 🟢 Paper Build API Fixed
+async function checkPaperBuild() {
+    let ver = document.getElementById("paper-ver").value.trim();
+    let resultDiv = document.getElementById("paper-result");
+    
+    if(!ver) {
+        resultDiv.style.display = "block"; 
+        resultDiv.innerHTML = "<span style='color:orange;'><i class='fas fa-exclamation-triangle'></i> Please enter version (e.g., 1.20.4).</span>"; 
+        return;
+    }
+    
+    resultDiv.style.display = "block"; 
+    resultDiv.innerHTML = "Fetching latest build... <i class='fas fa-spinner fa-spin'></i>";
+    
+    try {
+        let res = await fetch(`https://api.papermc.io/v2/projects/paper/versions/${ver}`);
+        if(res.status === 404) {
+            resultDiv.innerHTML = `<span style="color:#ff3232;"><i class="fas fa-times-circle"></i> Version not found.</span>`;
+            return;
+        }
+        let data = await res.json();
+        let latestBuild = data.builds[data.builds.length - 1];
+        
+        resultDiv.innerHTML = `Latest Build for ${ver}: <br><span style="color:#00ffcc; font-size:1.5rem; font-weight:bold;">#${latestBuild}</span> <i class="fas fa-check-circle" style="color:#00ff88;"></i>`;
+    } catch(e) { 
+        resultDiv.innerHTML = `<span style="color:red;"><i class="fas fa-exclamation-circle"></i> Error fetching build data.</span>`; 
+    }
 }
