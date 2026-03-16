@@ -4,7 +4,7 @@
 const navPages = [
     { name: 'Home', file: 'index.html', icon: 'fas fa-home' },
     { name: 'Team', file: 'team.html', icon: 'fas fa-users' },
-    { name: 'Hosting', file: 'Hosting.html', icon: 'fas fa-server' },
+    { name: 'Hosting', file: 'hosting.html', icon: 'fas fa-server' },
     { name: 'Tutorials', file: 'tutorials.html', icon: 'fas fa-video' },
     { name: 'Commands', file: 'commands.html', icon: 'fas fa-terminal' },
     { name: 'Tools', file: 'tools.html', icon: 'fas fa-wrench' },
@@ -12,22 +12,23 @@ const navPages = [
     { name: 'About', file: 'about.html', icon: 'fas fa-info-circle' }
 ];
 
-// Force load navbar immediately without waiting
 function forceLoadNavbar() {
     const container = document.getElementById('navbar-container');
     if(!container) return;
 
-    let currentPath = window.location.pathname;
-    let activePage = navPages.find(p => currentPath.includes(p.file));
-    
-    // Default to Home if it's the root domain or not found
+    let currentPath = window.location.pathname.toLowerCase();
+    let activePage = navPages.find(p => currentPath.includes(p.file.toLowerCase()));
     if(!activePage) activePage = navPages[0];
 
+    // NOTUN NAVBAR HTML (Coding Hub, SDGAMER Profile Box)
     let navHTML = `
     <nav class="navbar">
         <div class="logo">
             <img src="ttttttttttttttttttttttttttttt.png" alt="Logo" class="logo-img">
-            <span>SKA HOST (SDGAMER)</span>
+            <div class="logo-text">
+                <span class="main-title">Coding Hub</span>
+                <span class="sub-title">DASHBOARD</span>
+            </div>
         </div>
         <ul class="nav-links">`;
 
@@ -38,12 +39,69 @@ function forceLoadNavbar() {
 
     navHTML += `
         </ul>
-        <div class="user-profile">
+        <div class="user-profile" onclick="toggleProfileModal()">
+            <div class="user-text">
+                <span class="user-name">SDGAMER</span>
+                <span class="user-role">Owner</span>
+            </div>
             <img src="ttttttttttttttttttttttttttttt.png" alt="User">
         </div>
     </nav>`;
 
     container.innerHTML = navHTML;
+    
+    // Call function to inject modal shell into body
+    createProfileModal();
+}
+
+// ==========================================
+// 👤 PROFILE MODAL LOGIC (SDGAMER)
+// ==========================================
+function createProfileModal() {
+    if(document.getElementById('profileModal')) return;
+    const modalHTML = `
+    <div id="profileModal" class="modal-overlay" style="display:none;" onclick="closeProfileModal(event)">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <img src="ttttttttttttttttttttttttttttt.png" class="modal-avatar">
+                <button class="close-btn" onclick="toggleProfileModal()"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body">
+                <h2>SDGAMER</h2>
+                <p class="status-text"><span class="dot"></span> Offline</p>
+                
+                <div class="info-box mt-20">
+                    <p class="label">PLAYING</p>
+                    <p class="value"><i class="fas fa-code" style="color:#00d2ff;"></i> VS Code</p>
+                </div>
+                
+                <div class="grid-2-col mt-10">
+                    <div class="info-box">
+                        <p class="label">USER ID</p>
+                        <p class="value" style="font-family:monospace; font-size:0.8rem;">123456789</p>
+                    </div>
+                    <div class="info-box">
+                        <p class="label">JOINED</p>
+                        <p class="value" style="font-size:0.8rem;">Coding Hub</p>
+                    </div>
+                </div>
+                
+                <button class="full-btn" onclick="toggleProfileModal()">Close Profile</button>
+            </div>
+        </div>
+    </div>`;
+    document.body.insertAdjacentHTML('beforeend', modalHTML);
+}
+
+function toggleProfileModal() {
+    const modal = document.getElementById('profileModal');
+    if(modal) {
+        modal.style.display = modal.style.display === 'none' ? 'flex' : 'none';
+    }
+}
+
+function closeProfileModal(e) {
+    if(e.target.id === 'profileModal') toggleProfileModal();
 }
 
 // ✅ Run immediately!
@@ -53,9 +111,7 @@ forceLoadNavbar();
 // 🛠️ LOAD OTHER COMPONENTS ON READY
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
-    // Safety check just in case
     if(!document.querySelector('.navbar')) forceLoadNavbar();
-
     if(document.getElementById('yt-container')) loadYouTubeVideos();
     if(document.getElementById('cmdTable')) loadCommandsFromFile();
     if(document.getElementById('discord-members')) fetchDiscordTeam();
@@ -67,18 +123,15 @@ document.addEventListener("DOMContentLoaded", () => {
 async function loadCommandsFromFile() {
     const table = document.getElementById('cmdTable');
     if(!table) return;
-
     try {
-        const response = await fetch('commands.txt');
+        const response = await fetch('commands.txt?v=' + new Date().getTime());
         const text = await response.text();
         const lines = text.split('\n');
-
         let tableHTML = `<tr><th>CATEGORY</th><th>TITLE</th><th>COMMAND</th><th style="text-align: right;">ACTION</th></tr>`;
 
         lines.forEach(line => {
             line = line.trim();
             if(!line) return;
-
             const match = line.match(/^([^-]+)-(.*?)-?\s*'(.*)'\s*$/);
             if(match) {
                 const category = match[1].trim().toUpperCase();
@@ -101,9 +154,7 @@ async function loadCommandsFromFile() {
             }
         });
         table.innerHTML = tableHTML;
-    } catch(e) {
-        table.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Failed to load commands.txt file.</td></tr>`;
-    }
+    } catch(e) { table.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Failed to load commands.txt file.</td></tr>`; }
 }
 
 function copyTableCmd(btn, cmd) {
