@@ -3,155 +3,63 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKA HOST (SDGAMER) - Dashboard</title>
+    <title>SKA HOST - Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@widgetbot/html-embed"></script>
 </head>
 <body>
     <nav class="navbar">
         <div class="logo">
             <img src="ttttttttttttttttttttttttttttt.png" alt="Logo" class="logo-img">
-            <span>SKA HOST (SDGAMER)</span>
+            <span>SKA HOST</span>
         </div>
-        <ul class="nav-links">
-            <li><a class="active-tab" onclick="showSection('home', this)"><i class="fas fa-home"></i> Home</a></li>
-            <li><a onclick="showSection('team', this)"><i class="fas fa-users"></i> Team</a></li>
-            <li><a onclick="showSection('tools', this)"><i class="fas fa-wrench"></i> Tools</a></li>
-            <li><a onclick="showSection('commands', this)"><i class="fas fa-terminal"></i> Commands</a></li>
-            <li><a onclick="showSection('stats', this)"><i class="fas fa-chart-line"></i> Stats</a></li>
-        </ul>
-        <div class="user-profile">
-            <img src="ttttttttttttttttttttttttttttt.png" alt="User">
+        <ul class="nav-links" id="dynamic-nav"></ul>
+        
+        <div class="user-profile" onclick="openProfile()">
+            <img src="ttttttttttttttttttttttttttttt.png" alt="SDGAMER">
+            <div class="user-info">
+                <span class="name">SDGAMER</span>
+                <span class="role">Owner</span>
+            </div>
         </div>
     </nav>
 
-    <div class="main-container">
-
-        <section id="home" class="active-section">
-            <div class="hero-box">
-                <h4>AUTOMATED SCRIPT</h4>
-                <h1>ALL IN ONE <span class="highlight">CMD</span></h1>
-                <p>Execute the master script to install all dependencies instantly.</p>
-                <div class="cmd-box">
-                    <code>$ bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/skahost/main/run.sh)</code>
-                    <button class="copy-btn" onclick="copyCmd()">COPY</button>
+    <div id="profileModal" class="modal-overlay" onclick="closeProfile(event)">
+        <div class="modal-content">
+            <button class="close-btn" onclick="closeProfile()"><i class="fas fa-times"></i></button>
+            <div class="modal-header">
+                <img src="ttttttttttttttttttttttttttttt.png" alt="SDGAMER" class="modal-avatar">
+                <div class="modal-title">
+                    <h3>SDGAMER <span class="badge owner-badge">OWNER</span></h3>
+                    <p><span class="status-dot status-dnd"></span> Do Not Disturb</p>
                 </div>
             </div>
-
-            <div class="dashboard-split">
-                <div class="left-panel glass-panel">
-                    <h3 style="margin-bottom: 15px; color: #5865F2; display: flex; align-items: center; gap: 10px;">
-                        <i class="fab fa-discord fa-lg"></i> Live Discord Community
-                    </h3>
-                    
-                    <widgetbot 
-                        server="1472601008998846576" 
-                        channel="1472601307520172275" 
-                        width="100%" 
-                        height="450" 
-                        style="border-radius: 8px; overflow: hidden; display: block;">
-                    </widgetbot>
+            <div class="modal-body">
+                <div class="playing-status">
+                    <p style="font-size: 0.8rem; color: #888; font-weight: bold;">PLAYING</p>
+                    <p><i class="fas fa-code" style="color: #007acc;"></i> VS Code</p>
                 </div>
-
-                <div class="right-panel">
-                    <div class="status-panel glass-panel">
-                        <h3>SYSTEM STATUS</h3>
-                        <div class="status-grid">
-                            <div class="stat-item"><span class="label">Latency</span><span class="value success" id="fake-ping">24ms</span></div>
-                            <div class="stat-item"><span class="label">Uptime</span><span class="value">99.9%</span></div>
-                            <div class="stat-item"><span class="label">Users</span><span class="value" id="fake-users">1.2K</span></div>
-                        </div>
+                <div class="modal-stats">
+                    <div>
+                        <span class="label">USER ID</span>
+                        <span class="value">1472601008</span>
                     </div>
-                    <a href="https://youtube.com/@skahosting?si=Mu6rIYL6RQv8x-U5" target="_blank" class="social-card yt glass-panel mt-20">
-                        <i class="fab fa-youtube" style="font-size: 2.5rem; color: #ff0000;"></i>
-                        <div>
-                            <h3>YouTube Channel</h3>
-                            <p style="color: #aaa; font-size: 0.9rem;">Watch Hosting Tutorials</p>
-                        </div>
-                    </a>
-                </div>
-            </div>
-        </section>
-
-        <section id="team" style="display: none;">
-            <div class="glass-panel">
-                <h2><i class="fas fa-users"></i> Core Team & Online Members</h2>
-                <div class="team-grid" id="team-container"><p>Loading members...</p></div>
-            </div>
-        </section>
-
-        <section id="tools" style="display: none;">
-            <div class="glass-panel">
-                <h2><i class="fas fa-wrench"></i> Server Tools</h2>
-                <div class="tools-grid">
-                    <div class="tool-card glass-panel text-center">
-                        <h3><i class="fas fa-gamepad" style="color:#00ff88;"></i> Minecraft Status</h3>
-                        <input type="text" id="mc-ip" placeholder="Server IP (mc.hypixel.net)" class="search-bar mt-10">
-                        <input type="number" id="mc-port" placeholder="Port (Blank=25565)" class="search-bar mt-10">
-                        <button class="tool-btn" onclick="checkMCStatus()">Check Details</button>
-                        <div id="mc-result" class="tool-result" style="text-align: left; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px; display: none;"></div>
-                    </div>
-                    <div class="tool-card glass-panel text-center">
-                        <h3><i class="fas fa-file-code" style="color:#00d2ff;"></i> Paper Latest Build</h3>
-                        <input type="text" id="paper-ver" placeholder="e.g., 1.20.4" class="search-bar mt-10">
-                        <button class="tool-btn" onclick="checkPaperBuild()">Get Build</button>
-                        <div id="paper-result" class="tool-result"></div>
-                    </div>
-                    <div class="tool-card glass-panel text-center">
-                        <h3><i class="fas fa-network-wired" style="color:#ff3232;"></i> Web Ping Test</h3>
-                        <input type="text" id="ping-ip" placeholder="https://google.com" class="search-bar mt-10">
-                        <button class="tool-btn" onclick="runPingTest()">Ping</button>
-                        <div id="ping-result" class="tool-result"></div>
+                    <div>
+                        <span class="label">JOINED</span>
+                        <span class="value">SKA HOST</span>
                     </div>
                 </div>
             </div>
-        </section>
-
-        <section id="commands" style="display: none;">
-            <div class="glass-panel">
-                <h2>Command Library</h2>
-                <div class="category-filters">
-                    <button class="filter-btn active" onclick="filterCategory('ALL', this)">ALL COMMANDS</button>
-                    <button class="filter-btn" onclick="filterCategory('USEFUL', this)">Useful</button>
-                    <button class="filter-btn" onclick="filterCategory('LINUX', this)">Linux</button>
-                    <button class="filter-btn" onclick="filterCategory('VPS', this)">VPS</button>
-                    <button class="filter-btn" onclick="filterCategory('DOCKER', this)">Docker</button>
-                    <button class="filter-btn" onclick="filterCategory('GIT', this)">Git</button>
-                    <button class="filter-btn" onclick="filterCategory('NETWORKING', this)">Networking</button>
-                    <button class="filter-btn" onclick="filterCategory('SYSTEM', this)">System</button>
-                    <button class="filter-btn" onclick="filterCategory('AUTO', this)">Auto</button>
-                </div>
-                <input type="text" id="cmdSearch" placeholder="Search commands..." onkeyup="searchCommands()" class="search-bar mt-10">
-                <div class="table-container mt-20">
-                    <table class="cmd-table" id="cmdTable">
-                        <thead>
-                            <tr>
-                                <th>Command</th>
-                                <th>Category</th>
-                                <th>Description</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <section id="stats" style="display: none;">
-            <div class="glass-panel">
-                <h2>Live Analytics</h2>
-                <div class="stats-cards mt-20">
-                    <div class="stat-box text-center"><h4>CPU Usage</h4><h2 id="live-cpu">23%</h2></div>
-                    <div class="stat-box text-center"><h4>RAM Usage</h4><h2 id="live-ram">5.9GB</h2></div>
-                    <div class="stat-box text-center"><h4>Network</h4><h2 id="live-net">67 Mbps</h2></div>
-                </div>
-            </div>
-        </section>
-
+            <button class="modal-close-btn" onclick="closeProfile()">Close Profile</button>
+        </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@widgetbot/html-embed"></script>
+    <div class="main-container" id="content-area">
+        <h2 style="text-align:center; margin-top: 50px;">Loading...</h2>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
