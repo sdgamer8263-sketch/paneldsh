@@ -4,35 +4,162 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SKA HOST - Stats</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=5">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div id="navbar-container"></div>
+
     <div class="main-container">
         <section class="active-section">
-            <div class="glass-panel">
-                <h2><i class="fas fa-chart-line"></i> Live Server Analytics</h2>
-                <div class="stats-cards mt-20">
-                    <div class="stat-box text-center">
-                        <i class="fas fa-microchip" style="font-size: 2rem; color: #00d2ff;"></i>
-                        <h4 style="margin-top:10px;">CPU Usage</h4>
-                        <h2 id="live-cpu">23%</h2>
-                    </div>
-                    <div class="stat-box text-center">
-                        <i class="fas fa-memory" style="font-size: 2rem; color: #00ff88;"></i>
-                        <h4 style="margin-top:10px;">RAM Usage</h4>
-                        <h2 id="live-ram">5.9GB <small>/ 32GB</small></h2>
-                    </div>
-                    <div class="stat-box text-center">
-                        <i class="fas fa-network-wired" style="font-size: 2rem; color: #ff3232;"></i>
-                        <h4 style="margin-top:10px;">Network</h4>
-                        <h2 id="live-net">67 Mbps</h2>
-                    </div>
+            <div class="page-header">
+                <div class="ph-left">
+                    <h2>Live Analytics</h2>
+                    <p>Real-time server resource monitoring.</p>
                 </div>
             </div>
+
+            <div class="stats-cards">
+                <div class="stat-box glass-panel">
+                    <h5 style="color:#aaa; font-size:0.8rem; letter-spacing:1px;"><i class="fas fa-microchip"></i> CPU</h5>
+                    <h2 id="live-cpu" style="color:#00d2ff; text-align:left; font-size:2.5rem; margin-top:5px;">23%</h2>
+                    <div style="width:100%; height:4px; background:#222; margin-top:10px; border-radius:2px;"><div id="cpu-bar" style="width:23%; height:100%; background:#00d2ff; border-radius:2px; transition:0.5s;"></div></div>
+                </div>
+                <div class="stat-box glass-panel">
+                    <h5 style="color:#aaa; font-size:0.8rem; letter-spacing:1px;"><i class="fas fa-memory"></i> RAM</h5>
+                    <h2 id="live-ram" style="color:#00ff88; text-align:left; font-size:2.5rem; margin-top:5px;">5.9GB</h2>
+                    <p style="color:#555; font-size:0.7rem; margin-top:5px;">/ 32 GB TOTAL</p>
+                </div>
+                <div class="stat-box glass-panel">
+                    <h5 style="color:#aaa; font-size:0.8rem; letter-spacing:1px;"><i class="fas fa-network-wired"></i> NETWORK</h5>
+                    <h2 id="live-net" style="color:#fff; text-align:left; font-size:2.5rem; margin-top:5px;">67 Mbps</h2>
+                    <p style="color:#555; font-size:0.7rem; margin-top:5px;"><i class="fas fa-arrow-up" style="color:#00ff88;"></i> 23 &nbsp; <i class="fas fa-arrow-down" style="color:#ff3232;"></i> 44</p>
+                </div>
+            </div>
+
+            <div class="realtime-graph-box glass-panel">
+                <h3><span class="blinking-dot"></span> REAL-TIME TRAFFIC</h3>
+                <div class="chart-container">
+                    <canvas id="trafficChart"></canvas>
+                </div>
+            </div>
+
+            <h3 class="extended-metrics-title">Extended Server Metrics</h3>
+            <div class="extended-metrics">
+                <div class="metric-box"><h5>Core Temp</h5><h3 id="m-temp">45°C</h3></div>
+                <div class="metric-box"><h5>Disk Read</h5><h3 id="m-read">20.1 MB/s</h3></div>
+                <div class="metric-box"><h5>Disk Write</h5><h3 id="m-write">31.3 MB/s</h3></div>
+                <div class="metric-box"><h5>DB Conn.</h5><h3 id="m-db" class="color-cyan">24</h3></div>
+                <div class="metric-box"><h5>API Req/s</h5><h3 id="m-api" class="color-green">399</h3></div>
+                
+                <div class="metric-box"><h5>Error Rate</h5><h3 id="m-err" class="color-red">0.02%</h3></div>
+                <div class="metric-box"><h5>Cache Hit</h5><h3 id="m-cache">98%</h3></div>
+                <div class="metric-box"><h5>Containers</h5><h3 id="m-cont">9/12</h3></div>
+                <div class="metric-box"><h5>Load (1m)</h5><h3 id="m-l1">0.28</h3></div>
+                <div class="metric-box"><h5>Load (5m)</h5><h3 id="m-l5">0.14</h3></div>
+
+                <div class="metric-box"><h5>Load (15m)</h5><h3 id="m-l15">0.38</h3></div>
+                <div class="metric-box"><h5>Swap Usage</h5><h3 id="m-swap">14%</h3></div>
+                <div class="metric-box"><h5>Inode Usage</h5><h3 id="m-inode">41%</h3></div>
+                <div class="metric-box"><h5>Processes</h5><h3 id="m-proc">145</h3></div>
+                <div class="metric-box"><h5>Health</h5><h3 id="m-health" class="color-green">A+</h3></div>
+            </div>
+
+            <div class="system-logs-container">
+                <h3>SYSTEM LOGS</h3>
+                <div class="terminal-logs" id="terminal-logs">
+                    </div>
+            </div>
+            <br><br>
         </section>
     </div>
-    <script src="script.js"></script>
+
+    <script src="script.js?v=5"></script>
+    <script>
+        // 📊 JS SPECIFICALLY FOR STATS PAGE (CANVAS GRAPH & LOGS)
+        document.addEventListener("DOMContentLoaded", () => {
+            initTrafficChart();
+            initSystemLogs();
+            initRandomMetrics();
+        });
+
+        function initTrafficChart() {
+            const canvas = document.getElementById('trafficChart');
+            if(!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let dataPoints = new Array(40).fill(20);
+
+            function drawChart() {
+                canvas.width = canvas.parentElement.clientWidth;
+                canvas.height = canvas.parentElement.clientHeight;
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.beginPath();
+                ctx.moveTo(0, canvas.height);
+                let step = canvas.width / (dataPoints.length - 1);
+                
+                for(let i=0; i<dataPoints.length; i++) {
+                    let y = canvas.height - (dataPoints[i] / 100) * canvas.height;
+                    ctx.lineTo(i * step, y);
+                }
+                
+                ctx.lineTo(canvas.width, canvas.height);
+                ctx.fillStyle = 'rgba(0, 210, 255, 0.1)';
+                ctx.fill();
+                ctx.strokeStyle = '#00d2ff';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+
+            setInterval(() => {
+                dataPoints.push(Math.floor(Math.random() * 70) + 10); // Random spikes
+                dataPoints.shift();
+                drawChart();
+            }, 800);
+
+            window.addEventListener('resize', drawChart);
+        }
+
+        function initSystemLogs() {
+            const logsBox = document.getElementById('terminal-logs');
+            const messages = [
+                {t: "API GET /status", c: "info"},
+                {t: "Cron Job Executed", c: "success"},
+                {t: "Cache Hit", c: "success"},
+                {t: "DB Query (12ms)", c: "info"},
+                {t: "User Login: 192.168.x.x", c: "info"},
+                {t: "Disk Space Check Passed", c: "success"},
+                {t: "High CPU Spike Detected", c: "error"}
+            ];
+
+            setInterval(() => {
+                let time = new Date().toLocaleTimeString('en-US', {hour12:false});
+                let randomMsg = messages[Math.floor(Math.random() * messages.length)];
+                
+                let line = document.createElement('div');
+                line.className = 'log-line';
+                line.innerHTML = `<span class="log-time">[${time}]</span> <span class="log-msg ${randomMsg.c}">${randomMsg.t}</span>`;
+                
+                logsBox.appendChild(line);
+                if(logsBox.childElementCount > 8) logsBox.firstElementChild.remove();
+            }, 1500);
+        }
+
+        function initRandomMetrics() {
+            setInterval(() => {
+                let cpu = Math.floor(Math.random() * 40) + 10;
+                document.getElementById('live-cpu').innerText = cpu + '%';
+                document.getElementById('cpu-bar').style.width = cpu + '%';
+                document.getElementById('live-ram').innerHTML = (Math.random() * 2 + 4.5).toFixed(1) + 'GB';
+                document.getElementById('live-net').innerText = (Math.floor(Math.random() * 60) + 30) + ' Mbps';
+
+                document.getElementById('m-temp').innerText = (Math.floor(Math.random() * 15) + 35) + '°C';
+                document.getElementById('m-read').innerText = (Math.random() * 30 + 10).toFixed(1) + ' MB/s';
+                document.getElementById('m-write').innerText = (Math.random() * 20 + 5).toFixed(1) + ' MB/s';
+                document.getElementById('m-db').innerText = Math.floor(Math.random() * 15) + 10;
+                document.getElementById('m-api').innerText = Math.floor(Math.random() * 200) + 300;
+            }, 2000);
+        }
+    </script>
 </body>
 </html>
