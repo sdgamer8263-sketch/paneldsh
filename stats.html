@@ -1,25 +1,38 @@
-<div class="glass-panel" style="margin-bottom: 25px;">
-    <h2 style="margin-bottom: 15px;">Live Analytics</h2>
-    <div class="stats-top">
-        <div class="stat-card cpu"><h4>CPU</h4><h2 id="cpu-val">28%</h2></div>
-        <div class="stat-card ram"><h4>RAM</h4><h2><span id="ram-val">4.9</span><span>GB / 32 GB</span></h2></div>
-        <div class="stat-card net"><h4>NETWORK</h4><h2><span id="net-val">90</span><span> Mbps</span></h2></div>
-        <div class="stat-card active"><h4>ACTIVE</h4><h2>842 <span style="color:#888; font-size: 0.8rem;">▲ Peak</span></h2></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKA HOST - Stats</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="navbar-container"></div>
+    <div class="main-container">
+        <section class="active-section">
+            <div class="glass-panel">
+                <h2><i class="fas fa-chart-line"></i> Live Server Analytics</h2>
+                <div class="stats-cards mt-20">
+                    <div class="stat-box text-center">
+                        <i class="fas fa-microchip" style="font-size: 2rem; color: #00d2ff;"></i>
+                        <h4 style="margin-top:10px;">CPU Usage</h4>
+                        <h2 id="live-cpu">23%</h2>
+                    </div>
+                    <div class="stat-box text-center">
+                        <i class="fas fa-memory" style="font-size: 2rem; color: #00ff88;"></i>
+                        <h4 style="margin-top:10px;">RAM Usage</h4>
+                        <h2 id="live-ram">5.9GB <small>/ 32GB</small></h2>
+                    </div>
+                    <div class="stat-box text-center">
+                        <i class="fas fa-network-wired" style="font-size: 2rem; color: #ff3232;"></i>
+                        <h4 style="margin-top:10px;">Network</h4>
+                        <h2 id="live-net">67 Mbps</h2>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
-    <div class="chart-container"><canvas id="trafficChart"></canvas></div>
-</div>
-<div class="glass-panel" style="margin-bottom: 25px;">
-    <h3 style="margin-bottom: 15px;">Extended Server Metrics</h3>
-    <div class="metrics-grid">
-        <div class="metric-box"><h5>CORE TEMP</h5><h3 id="m-temp" class="text-danger">38°C</h3></div>
-        <div class="metric-box"><h5>DISK READ</h5><h3 id="m-read" class="text-info">32.5 MB/s</h3></div>
-        <div class="metric-box"><h5>DISK WRITE</h5><h3 id="m-write" class="text-info">10.4 MB/s</h3></div>
-        <div class="metric-box"><h5>DB CONN.</h5><h3 class="text-warning">15</h3></div>
-        <div class="metric-box"><h5>API REQ/S</h5><h3 id="m-api" class="text-success">421</h3></div>
-        <div class="metric-box"><h5>ERROR RATE</h5><h3 class="text-danger">0.04%</h3></div>
-    </div>
-</div>
-<div class="glass-panel">
-    <h4 style="color:#888; margin-bottom:10px; font-family: monospace;">SYSTEM LOGS</h4>
-    <div id="sys-logs" class="system-logs"></div>
-</div>
+    <script src="script.js"></script>
+</body>
+</html>
