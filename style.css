@@ -79,9 +79,22 @@ body { background: url('gta-6-sunset-highway-wallpapers-usagif.gif') no-repeat c
 .stat-box { background: rgba(0,0,0,0.5); padding: 30px; border-radius: 12px;}
 .stat-box h2 { font-size: 3rem; color: #00d2ff; margin-top: 15px; font-weight: 800;}
 
+/* FIXED: MOBILE RESPONSIVENESS */
 @media(max-width: 992px) {
     .dashboard-split { grid-template-columns: 1fr; }
     .hero-box h1 { font-size: 2.5rem; }
     .tools-grid, .stats-cards { grid-template-columns: 1fr; }
-    .nav-links { display: none; }
+    
+    /* Ekhane nav-links ke display: none kora chilo, ota thik kore diyechi */
+    .navbar { flex-direction: column; padding: 15px; gap: 10px; }
+    .nav-links { 
+        display: flex; 
+        width: 100%; 
+        overflow-x: auto; 
+        justify-content: flex-start; 
+        padding-bottom: 5px; 
+    }
+    .nav-links::-webkit-scrollbar { height: 4px; }
+    .nav-links a { font-size: 0.9rem; padding: 8px 12px; white-space: nowrap; }
+    .user-profile { display: none; }
 }
