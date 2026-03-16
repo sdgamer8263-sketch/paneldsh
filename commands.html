@@ -1,8 +1,6 @@
 <div class="glass-panel">
     <h2>Command Library</h2>
-    <p style="color:#888; font-size:0.9rem; margin-bottom:15px;">Access over 600+ system commands instantly.</p>
-    
-    <div class="category-filters">
+    <div class="category-filters mt-10">
         <button class="filter-btn active" onclick="filterCategory('ALL', this)">ALL COMMANDS</button>
         <button class="filter-btn" onclick="filterCategory('USEFUL', this)">Useful</button>
         <button class="filter-btn" onclick="filterCategory('LINUX', this)">Linux</button>
@@ -13,21 +11,11 @@
         <button class="filter-btn" onclick="filterCategory('SYSTEM', this)">System</button>
         <button class="filter-btn" onclick="filterCategory('AUTO', this)">Auto</button>
     </div>
-    
     <input type="text" id="cmdSearch" placeholder="Search commands..." onkeyup="searchCommands()" class="search-bar">
-    
     <div class="table-container">
         <table class="cmd-table" id="cmdTable">
-            <thead>
-                <tr>
-                    <th>CATEGORY</th>
-                    <th>TITLE</th>
-                    <th>COMMAND</th>
-                    <th style="text-align: right;">ACTION</th>
-                </tr>
-            </thead>
+            <thead><tr><th>CATEGORY</th><th>TITLE</th><th>COMMAND</th><th style="text-align: right;">ACTION</th></tr></thead>
             <tbody></tbody>
         </table>
     </div>
 </div>
-
