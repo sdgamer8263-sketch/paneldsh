@@ -1,0 +1,19 @@
+<div class="glass-panel" style="margin-bottom: 25px;">
+    <h2><i class="fas fa-server"></i> Hosting Making Scripts</h2>
+    <p style="color:#888; margin-bottom:15px;">Auto installers for Pterodactyl, PufferPanel, and other tools.</p>
+    <input type="text" id="hostingSearch" placeholder="🔍 Search Panels & Scripts..." onkeyup="filterHostingCards()" class="search-bar">
+</div>
+<div class="hosting-split" style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 20px;">
+    <div class="glass-panel" style="padding: 15px;">
+        <div id="hosting-cards" style="display: flex; flex-direction: column; gap: 10px; max-height: 500px; overflow-y: auto; padding-right: 5px;"></div>
+    </div>
+    <div class="glass-panel" style="background: rgba(0,0,0,0.8); border: 1px solid #00d2ff; align-self: start;">
+        <h3 style="color: #00d2ff; margin-bottom: 15px; border-bottom: 1px dashed rgba(0,210,255,0.2); padding-bottom: 10px;">
+            <i class="fas fa-terminal"></i> Script Output
+        </h3>
+        <div id="hosting-output" style="font-family: monospace; min-height: 100px;">
+            <span style="color: #aaa;">Choose a panel from the left to display commands...</span>
+        </div>
+    </div>
+</div>
+
