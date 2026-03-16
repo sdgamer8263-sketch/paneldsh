@@ -184,7 +184,7 @@ function searchCommands() {
 }
 
 // ==========================================
-// 📺 YOUTUBE VIDEOS 
+// 📺 YOUTUBE VIDEOS (FIXED API KEY ISSUE)
 // ==========================================
 async function loadYouTubeVideos() {
     const container = document.getElementById('yt-container');
@@ -193,9 +193,12 @@ async function loadYouTubeVideos() {
     try {
         const channelId = 'UCCGkhiwOobIoOqvGSlB1v8Q'; 
         const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
-        const finalUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&api_key=00000000000000000000000000000000&_=${Math.random()}`;
+        // Removed fake api_key that was causing the error
+        const finalUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
+        
         const res = await fetch(finalUrl);
         const data = await res.json();
+        
         if(data.status === 'ok' && data.items.length > 0) {
             container.innerHTML = ''; 
             data.items.slice(0, 15).forEach(video => {
@@ -203,13 +206,17 @@ async function loadYouTubeVideos() {
                 if(videoId && videoId.includes('&')) videoId = videoId.split('&')[0]; 
                 if(videoId) {
                     container.innerHTML += `<div class="video-embed">
-                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe>
+                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen style="border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);"></iframe>
                         <h4 class="mt-10" style="color: #fff; font-size: 0.95rem;">${video.title}</h4>
                     </div>`;
                 }
             });
-        } else { container.innerHTML = '<p style="color: #aaa;">No videos found.</p>'; }
-    } catch(e) { container.innerHTML = '<p style="color: red;">Error loading YouTube videos. Refresh the page.</p>'; }
+        } else { 
+            container.innerHTML = '<p style="color: #aaa;">No videos found.</p>'; 
+        }
+    } catch(e) { 
+        container.innerHTML = '<p style="color: red;">Error loading YouTube videos. Refresh the page.</p>'; 
+    }
 }
 
 // ==========================================
@@ -234,17 +241,15 @@ async function fetchDiscordTeam() {
 }
 
 // ==========================================
-// 📊 SERVER TOOLS API (🔥 ENHANCED & FIXED)
+// 📊 SERVER TOOLS API
 // ==========================================
 function copyCmd() {
     navigator.clipboard.writeText("bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)").then(() => alert("Master Command Copied! 🔥"));
 }
 
-// 🟢 Web Ping Test Fixed
 async function runPingTest() {
     let urlInput = document.getElementById("ping-ip");
     let resultDiv = document.getElementById("ping-result");
-    
     if (!urlInput || !resultDiv) return;
     
     let url = urlInput.value.trim();
@@ -255,16 +260,13 @@ async function runPingTest() {
     }
     
     if(!url.startsWith('http')) url = 'https://' + url;
-    
     resultDiv.style.display = "block"; 
     resultDiv.innerHTML = "Pinging server... <i class='fas fa-spinner fa-spin'></i>";
     
     let start = Date.now();
     try {
-        // Abort timeout manually to handle slow/broken sites
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), 8000); 
-        
         await fetch(url, { mode: 'no-cors', cache: 'no-store', signal: controller.signal });
         clearTimeout(timeoutId);
         
@@ -281,7 +283,6 @@ async function runPingTest() {
     }
 }
 
-// 🟢 Minecraft Status Fixed (Safeguards added)
 async function checkMCStatus() {
     let ip = document.getElementById("mc-ip").value.trim();
     let port = document.getElementById("mc-port").value.trim();
@@ -319,24 +320,20 @@ async function checkMCStatus() {
             resultDiv.innerHTML = `<strong>Status:</strong> <span style="color:#ff3232;">OFFLINE <i class="fas fa-times-circle"></i></span>`; 
         }
     } catch(e) { 
-        resultDiv.innerHTML = `<span style="color:red;"><i class="fas fa-exclamation-circle"></i> Error connecting to status API.</span>`; 
+        resultDiv.innerHTML = `<span style="color:red;"><i class="fas fa-exclamation-circle"></i> Error connecting to API.</span>`; 
     }
 }
 
-// 🟢 Paper Build API Fixed
 async function checkPaperBuild() {
     let ver = document.getElementById("paper-ver").value.trim();
     let resultDiv = document.getElementById("paper-result");
-    
     if(!ver) {
         resultDiv.style.display = "block"; 
-        resultDiv.innerHTML = "<span style='color:orange;'><i class='fas fa-exclamation-triangle'></i> Please enter version (e.g., 1.20.4).</span>"; 
+        resultDiv.innerHTML = "<span style='color:orange;'><i class='fas fa-exclamation-triangle'></i> Please enter version.</span>"; 
         return;
     }
-    
     resultDiv.style.display = "block"; 
     resultDiv.innerHTML = "Fetching latest build... <i class='fas fa-spinner fa-spin'></i>";
-    
     try {
         let res = await fetch(`https://api.papermc.io/v2/projects/paper/versions/${ver}`);
         if(res.status === 404) {
@@ -345,9 +342,8 @@ async function checkPaperBuild() {
         }
         let data = await res.json();
         let latestBuild = data.builds[data.builds.length - 1];
-        
         resultDiv.innerHTML = `Latest Build for ${ver}: <br><span style="color:#00ffcc; font-size:1.5rem; font-weight:bold;">#${latestBuild}</span> <i class="fas fa-check-circle" style="color:#00ff88;"></i>`;
     } catch(e) { 
-        resultDiv.innerHTML = `<span style="color:red;"><i class="fas fa-exclamation-circle"></i> Error fetching build data.</span>`; 
+        resultDiv.innerHTML = `<span style="color:red;"><i class="fas fa-exclamation-circle"></i> Error fetching data.</span>`; 
     }
 }
