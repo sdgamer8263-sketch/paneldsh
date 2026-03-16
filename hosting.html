@@ -4,14 +4,12 @@
 <meta charset="UTF-8">
 <title>SKA HOSTING - SDGAMER EDITION</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
 :root {
   --primary: #00ffff;
   --bg-glass: rgba(0, 0, 0, 0.85);
   --glow: 0 0 15px rgba(0, 255, 255, 0.6);
 }
-
 body {
   margin: 0;
   font-family: 'Consolas', monospace;
@@ -20,7 +18,6 @@ body {
   display: flex;
   min-height: 100vh;
 }
-
 .sidebar {
   width: 70px;
   background: rgba(0, 0, 0, 0.95);
@@ -33,25 +30,21 @@ body {
   height: 100%;
   z-index: 100;
 }
-
 .sidebar a { margin-bottom: 30px; transition: 0.3s; }
 .sidebar img { width: 38px; height: 38px; filter: drop-shadow(0 0 5px var(--primary)); }
 .sidebar a:hover { transform: scale(1.2); }
-
 .main-content {
   margin-left: 70px;
   width: calc(100% - 70px);
   display: flex;
   flex-direction: column;
 }
-
 header {
   text-align: center;
   padding: 25px;
   background: var(--bg-glass);
   box-shadow: 0 4px 20px cyan;
 }
-
 .search { text-align: center; padding: 20px; }
 .search input {
   width: 85%;
@@ -64,7 +57,6 @@ header {
   font-size: 16px;
   box-shadow: var(--glow);
 }
-
 .grid {
   display: flex;
   flex-direction: column;
@@ -72,7 +64,6 @@ header {
   gap: 15px;
   padding: 20px;
 }
-
 .card {
   background: var(--bg-glass);
   padding: 18px 25px;
@@ -88,19 +79,16 @@ header {
   font-size: 18px;
   font-weight: bold;
 }
-
 .card:hover {
   background: rgba(0, 255, 255, 0.15);
   transform: translateX(10px);
   box-shadow: var(--glow);
 }
-
 #output-section {
   width: 90%;
   max-width: 750px;
   margin: 20px auto;
 }
-
 #output {
   background: rgba(0,0,0,0.95);
   padding: 25px;
@@ -110,7 +98,6 @@ header {
   min-height: 80px;
   box-shadow: inset 0 0 20px rgba(0,255,255,0.1);
 }
-
 .line {
   display: flex;
   justify-content: space-between;
@@ -119,7 +106,6 @@ header {
   padding-bottom: 10px;
   border-bottom: 1px solid rgba(0, 255, 255, 0.1);
 }
-
 .command-text {
   font-size: 19px; 
   color: #fff;
@@ -127,7 +113,6 @@ header {
   padding-right: 20px;
   line-height: 1.5;
 }
-
 .copy {
   background: var(--primary);
   border: none;
@@ -139,9 +124,7 @@ header {
   flex-shrink: 0;
   transition: 0.2s;
 }
-
 .copy:active { transform: scale(0.9); }
-
 .guide-btn {
   color: #000;
   background: var(--primary);
@@ -154,7 +137,6 @@ header {
   text-transform: uppercase;
   letter-spacing: 1px;
 }
-
 footer {
   text-align: center;
   padding: 25px;
@@ -163,7 +145,6 @@ footer {
   border-top: 1px solid var(--primary);
   margin-top: auto;
 }
-
 @media (max-width: 600px) {
   .main-content { margin-left: 60px; width: calc(100% - 60px); }
   .sidebar { width: 60px; }
@@ -172,8 +153,10 @@ footer {
 </style>
 </head>
 <body>
-
 <div class="sidebar">
+  <a href="index.html">
+    <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home" style="filter: invert(1);">
+  </a>
   <a href="https://www.youtube.com/@skahosting" target="_blank">
     <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube">
   </a>
@@ -181,145 +164,48 @@ footer {
     <img src="https://cdn-icons-png.flaticon.com/512/3670/3670157.png" alt="Discord">
   </a>
 </div>
-
 <div class="main-content">
   <header>
     <h1>SKA HOSTING NETWORK</h1>
   </header>
-
   <div class="search">
     <input id="search" placeholder="🔍 Search Panels..." onkeyup="filterCards()">
   </div>
-
   <div class="grid" id="cards"></div>
-
   <div id="output-section">
     <div id="output">Choose a panel to display commands...</div>
   </div>
-
   <footer>
     Credits: SDGAMER • Jishnu Bhi • Hoping Boyz • Coding Hub • Myhim Bhi
   </footer>
 </div>
-
 <script>
 const typingSpeed = 15;
-
 const panels = [
-{
-    name:"HuggingFace Vps",
-      text:`File Download Link:\n\nhttps://drive.google.com/file/d/1s7dLBOjpVERkewuQ5uIe1DkpKypkkYoX/view?usp=drivesdk\n\n------------------------------------------------------\n\nVPS INSTALL AND CREATE CMD:\n\nbash <(curl -s https://ptero.nobitahost.in)\n`,
- Link: "https://youtu.be/cV0tyddLcMY?si=xgBMrdBit-HbM9SP"
- },
-{
-    name:"Platit.GG Alternative (Localhost)",
-      text:`bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)\n`,
- Link: "https://youtu.be/Z97hyH8t3NA?si=7HGL31JT5tAnsE_Q"
- },
-{
-    name:"VPS / VDS Control Panel Install | VPS Se VM Create | All-in-One Dashboard",
-      text:`bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)\n`,
- Link: "https://youtu.be/ymYQdANL5UQ?si=yCMUL-P5UOEiBJwG"
- },
-{
-    name:"UPTIME KURMA (VPS OR WEBSITE DEPLOY BOT)",
-      text:`FILE NAME:\n\nlouislam/uptime-kuma`,
- Link: "https://youtu.be/mA9xTCRwlCg?si=1ljmzJ-_LX4ANvO3"
- },
-{
-    name:"PLAYIT.GG (INSTALL + STATUS CHECK)",
-      text:`INSTALL:\n\nbash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/Vps/refs/heads/main/playit-ins)\n\n------------------------------------------------------\n\nSTATUS CHECK:\n\nplayit\n`,
- Link: "https://youtu.be/23w3D5vuyQg?si=4Ra5VFQXxgONiAlG"
- },
-{
-    name:"Playit.GG Alternative (Minecube)",
-      text:`See Tutorial\n`,
- Link: "https://youtu.be/BMbxOzHGmlg?si=OxFcO4p-vtN5DxyP"
- },
-{
-    name:"VPS IP AND SPACE CHECK + SSHX COMMAND:",
-      text:`FOR IP:\n\ncurl -4 icanhazip.com\n\n------------------------------------------------------\nFOR SPACE:\n\nDf -h /home\n\n------------------------------------------------------\n\nFOR SSHX:\n\ncurl -sSf https://sshx.io/get | sh -s run`,
- noLink: true
- }, 
-{
-    name:"Xrdp + Firebase (Install + setup)[Every Debian VPS including IDX]",
-      text:`bash <(curl -s https://raw.githubusercontent.com/mahimxyzz/Vps/85b6e12c558f8befb318913c38c2e133f80d8ac9/cd/24_7.txt)`,
- noLink: true
- },
-  {
-    name:"Pterodactyl Extention Install One Line Command with Sftp",
-      text:`\nExtention File (Free) Download Link:\n\nhttps://drive.google.com/drive/folders/1-omcJP6NZAOe8JEsIkUOBYkOXBUkWcoA\n\n------------------------------------------------------\n\n      Upload your extention file (only ".blueprint") in "/var/www/pterodactyl/"\n\n------------------------------------------------------\n\n      COMMAND:\n\n      cd /var/www/pterodactyl/\n      \nbash <(curl -fsSL https://raw.githubusercontent.com/sdgamer8263-sketch/pterodactyl_extention/main/install.sh)\n\n------------------------------------------------------\n\n      PASTE THIS COMMAND:\n      \n      bash <(curl -fsSL https://raw.githubusercontent.com/hopingboyz/blueprint/main/addon-installer.sh)`,
-    noLink:true
-  },
-  {
-    name: "Pterodactyl Extra Extentions (No need to connect of SFTP)",
-    text: `bash <(curl -fsSL https://raw.githubusercontent.com/sdgamer8263-sketch/pterodactyl_extention/main/install.sh)`,
-    noLink: true
-  },
-  {
-    name: "Xrdp (Install+Setup) For Debian 11/12/13 [Not for IDX]",
-    text: `curl -fsSL https://raw.githubusercontent.com/sdgamer8263-sketch/rdp2/main/install.sh | sudo bash`,
-    noLink: true
-  },
-  {
-    name: "Xrdp (Install+Setup) For Ubuntu [for any vps and IDX]",
-    text: `curl -fsSL https://raw.githubusercontent.com/sdgamer8263-sketch/Rdp/main/install.sh | sudo bash`,
-    noLink: true
-  },
-  {
-    name: "Hydra Panel + Dashboard",
-    text: `Panel install:\n    \n    sudo su\n    \nbash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/dashboard/refs/heads/main/dash)\n\n------------------------------------------------------\n\nNode install:\n\ngit clone https://github.com/hydren-dev/HydraDAEMON\n\ncd HydraDAEMON\n\nnpm install\n\npaste your configure of node\n\nnode\nAgain Start:\n------------------------------------------------------------\n1) cd oversee-fixed\n\n2) node.\n\ncreate a new terminal (+)\n\n3) cd HydraDAEMON\n\n4) node\n`,
-    link: "https://youtu.be/iYV1f5FGdqU?si=6fkYy28yjDAyZg4C"
-  },
-  {
-    name: "Skyport Panel",
-    text: `                                              Skyport panel\n\nPANEL INSTALL:\n\n1) sudo su\n\n2) bash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/skyport/refs/heads/main/panel)\n\n------------------------------------------------------\n\nWINGS/NODE INSTALL:\n\n1) sudo su\n\n2) bash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/skyport/refs/heads/main/wings)\n\n3) cd skyportd\n\n4) paste your node configure\n\n5) pm2 start .                                          \n\n------------------------------------------------------\n\n                                   Panel relaunch \n\n1) pm2 start index\n\n2) pm2 start skyportd  \n`,
-    link: "https://youtu.be/wDGOeEu6tuI"
-  },
-  {
-    name: "Puffer Panel Setup ",
-    text: `      Puffer Panel\n------------------------------------------------------      \nsudo su\n\n\napt update\n\napt upgrade\n\n$ mkdir -p /var/lib/pufferpanel\n\n$ docker volume create pufferpanel-config\n\n$ docker create --name pufferpanel -p 8080:8080 -p 5657:5657 -v pufferpanel-config:/etc/pufferpanel -v /var/lib/pufferpanel:/var/lib/pufferpanel -v /var/run/docker.sock:/var/run/docker.sock --restart=on-failure pufferpanel/pufferpanel:latest\n\n$ docker start pufferpanel\n\n$ docker exec -it pufferpanel /pufferpanel/pufferpanel user add \n\n------------------------------------------------------\nAgain start your panel\n      \ndocker start pufferpanel  \n  `,
-    link: "https://youtube.com/playlist?list=PLlqZTveCNnL6zTve1jmD-XlxzNsZzzzHk"
-  },
-  {
-    name:"Puffer Panel 2",
-      text:`       Install puffer panel 2 \n\n1) bash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/puffer-panel/refs/heads/main/install)\n\n------------------------------------------------------\n\n   Admin user create & start\n\n1) sudo pufferpanel user add\n\n2) sudo systemctl enable --now pufferpanel  \n`,
-  link: "https://youtu.be/wDGOeEu6tuI"
-  },
-  {
-    name:"Pterodactyl Panel (Manually)",
-      text:`                    Ifconfig install:\n\n1) sudo apt install net-tools\n\n2) sudo apt install ssh\n\n------------------------------------------------------\n\n                      Pterodactyl panel:\n1) sudo su \n\n2) bash <(curl -s https://pterodactyl-installer.se) \n\n------------------------------------------------------\n\n                       Start wings:\n                       \n1) systemctl start wings                                           \n\n------------------------------------------------------\n\n                               Theme install\n\nbash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/ptero-theme/refs/heads/main/install) \n\n------------------------------------------------------\n\n//Atention ❗❗\n\n  After watching this video, you must watch "Pterodactyl Error Fix Video"\n`,
-    link:"https://youtu.be/9SPDr8Rdysg?si=yfYXp2hlJj8iglc1"
-  },
-  {
-  name:"Pterodactyl Error Fix Video",
-  text:`"Watch the guide video below"\n`,
-  link:"https://youtu.be/04xvIA4VHwI"
-},
-  {
-    name: "Air Link Panel",
-    text: `bash <(curl -s https://airlink.jishnu.fun)\n`,
-    link: "https://youtu.be/0O6FZEBs1D0"
-  },
-  {
-    name:"Pterodactyl Panel (One Line Installing Cmd)",
-      text:`1) bash <(curl -s https://vps1.jishnu.fun)\n      \n      2) bash <(curl -s https://ptero.jishnu.fun) `,
-  link:"https://youtu.be/SwQdKODDNRY?si=JRytpxcnnScMd0Gs"
-  },
-  {
-    name: "Draco Panel",
-    text:`                  Install the jtg-panel\n\n1) sudo su\n\n2) bash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/Vps/refs/heads/main/jishnu)\n------------------------------------------------------\n\n                       Install the node\n\n1) bash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/Vps/refs/heads/main/node) \n\n2) cd node\n\n3) paste your configure of node\n\n4) node . \n\n------------------------------------------------------\n\n         Again start your panel\n\n1) cd panel\n\n2) node .\n\n------------------------------------------------------\n   Again start node\n\n1) create a new terminal\n\n2) cd node\n\n3) node . \n`,
-    link: "https://youtu.be/H_p9r-j_xv0"
-  },
-  {
-    name: "24/7 Making Code (IDX,codesandbox)",
-    text: `\n    python3 <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/24-7/refs/heads/main/24)\n    \n    python3\n`,
-  noLink: true
-  }
+{ name:"HuggingFace Vps", text:`File Download Link:\n\nhttps://drive.google.com/file/d/1s7dLBOjpVERkewuQ5uIe1DkpKypkkYoX/view?usp=drivesdk\n\n------------------------------------------------------\n\nVPS INSTALL AND CREATE CMD:\n\nbash <(curl -s https://ptero.nobitahost.in)\n`, Link: "https://youtu.be/cV0tyddLcMY?si=xgBMrdBit-HbM9SP" },
+{ name:"Platit.GG Alternative (Localhost)", text:`bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)\n`, Link: "https://youtu.be/Z97hyH8t3NA?si=7HGL31JT5tAnsE_Q" },
+{ name:"VPS / VDS Control Panel Install | VPS Se VM Create | All-in-One Dashboard", text:`bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)\n`, Link: "https://youtu.be/ymYQdANL5UQ?si=yCMUL-P5UOEiBJwG" },
+{ name:"UPTIME KURMA (VPS OR WEBSITE DEPLOY BOT)", text:`FILE NAME:\n\nlouislam/uptime-kuma`, Link: "https://youtu.be/mA9xTCRwlCg?si=1ljmzJ-_LX4ANvO3" },
+{ name:"PLAYIT.GG (INSTALL + STATUS CHECK)", text:`INSTALL:\n\nbash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/Vps/refs/heads/main/playit-ins)\n\n------------------------------------------------------\n\nSTATUS CHECK:\n\nplayit\n`, Link: "https://youtu.be/23w3D5vuyQg?si=4Ra5VFQXxgONiAlG" },
+{ name:"Playit.GG Alternative (Minecube)", text:`See Tutorial\n`, Link: "https://youtu.be/BMbxOzHGmlg?si=OxFcO4p-vtN5DxyP" },
+{ name:"VPS IP AND SPACE CHECK + SSHX COMMAND:", text:`FOR IP:\n\ncurl -4 icanhazip.com\n\n------------------------------------------------------\nFOR SPACE:\n\nDf -h /home\n\n------------------------------------------------------\n\nFOR SSHX:\n\ncurl -sSf https://sshx.io/get | sh -s run`, noLink: true }, 
+{ name:"Xrdp + Firebase (Install + setup)[Every Debian VPS including IDX]", text:`bash <(curl -s https://raw.githubusercontent.com/mahimxyzz/Vps/85b6e12c558f8befb318913c38c2e133f80d8ac9/cd/24_7.txt)`, noLink: true },
+{ name:"Pterodactyl Extention Install One Line Command with Sftp", text:`\nExtention File (Free) Download Link:\n\nhttps://drive.google.com/drive/folders/1-omcJP6NZAOe8JEsIkUOBYkOXBUkWcoA\n\n------------------------------------------------------\n\n      Upload your extention file (only ".blueprint") in "/var/www/pterodactyl/"\n\n------------------------------------------------------\n\n      COMMAND:\n\n      cd /var/www/pterodactyl/\n      \nbash <(curl -fsSL https://raw.githubusercontent.com/sdgamer8263-sketch/pterodactyl_extention/main/install.sh)\n\n------------------------------------------------------\n\n      PASTE THIS COMMAND:\n      \n      bash <(curl -fsSL https://raw.githubusercontent.com/hopingboyz/blueprint/main/addon-installer.sh)`, noLink:true },
+{ name: "Pterodactyl Extra Extentions (No need to connect of SFTP)", text: `bash <(curl -fsSL https://raw.githubusercontent.com/sdgamer8263-sketch/pterodactyl_extention/main/install.sh)`, noLink: true },
+{ name: "Xrdp (Install+Setup) For Debian 11/12/13 [Not for IDX]", text: `curl -fsSL https://raw.githubusercontent.com/sdgamer8263-sketch/rdp2/main/install.sh | sudo bash`, noLink: true },
+{ name: "Xrdp (Install+Setup) For Ubuntu [for any vps and IDX]", text: `curl -fsSL https://raw.githubusercontent.com/sdgamer8263-sketch/Rdp/main/install.sh | sudo bash`, noLink: true },
+{ name: "Hydra Panel + Dashboard", text: `Panel install:\n    \n    sudo su\n    \nbash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/dashboard/refs/heads/main/dash)\n\n------------------------------------------------------\n\nNode install:\n\ngit clone https://github.com/hydren-dev/HydraDAEMON\n\ncd HydraDAEMON\n\nnpm install\n\npaste your configure of node\n\nnode\nAgain Start:\n------------------------------------------------------------\n1) cd oversee-fixed\n\n2) node.\n\ncreate a new terminal (+)\n\n3) cd HydraDAEMON\n\n4) node\n`, link: "https://youtu.be/iYV1f5FGdqU?si=6fkYy28yjDAyZg4C" },
+{ name: "Skyport Panel", text: `                                              Skyport panel\n\nPANEL INSTALL:\n\n1) sudo su\n\n2) bash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/skyport/refs/heads/main/panel)\n\n------------------------------------------------------\n\nWINGS/NODE INSTALL:\n\n1) sudo su\n\n2) bash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/skyport/refs/heads/main/wings)\n\n3) cd skyportd\n\n4) paste your node configure\n\n5) pm2 start .                                          \n\n------------------------------------------------------\n\n                                   Panel relaunch \n\n1) pm2 start index\n\n2) pm2 start skyportd  \n`, link: "https://youtu.be/wDGOeEu6tuI" },
+{ name: "Puffer Panel Setup ", text: `      Puffer Panel\n------------------------------------------------------      \nsudo su\n\n\napt update\n\napt upgrade\n\n$ mkdir -p /var/lib/pufferpanel\n\n$ docker volume create pufferpanel-config\n\n$ docker create --name pufferpanel -p 8080:8080 -p 5657:5657 -v pufferpanel-config:/etc/pufferpanel -v /var/lib/pufferpanel:/var/lib/pufferpanel -v /var/run/docker.sock:/var/run/docker.sock --restart=on-failure pufferpanel/pufferpanel:latest\n\n$ docker start pufferpanel\n\n$ docker exec -it pufferpanel /pufferpanel/pufferpanel user add \n\n------------------------------------------------------\nAgain start your panel\n      \ndocker start pufferpanel  \n  `, link: "https://youtube.com/playlist?list=PLlqZTveCNnL6zTve1jmD-XlxzNsZzzzHk" },
+{ name:"Puffer Panel 2", text:`       Install puffer panel 2 \n\n1) bash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/puffer-panel/refs/heads/main/install)\n\n------------------------------------------------------\n\n   Admin user create & start\n\n1) sudo pufferpanel user add\n\n2) sudo systemctl enable --now pufferpanel  \n`, link: "https://youtu.be/wDGOeEu6tuI" },
+{ name:"Pterodactyl Panel (Manually)", text:`                    Ifconfig install:\n\n1) sudo apt install net-tools\n\n2) sudo apt install ssh\n\n------------------------------------------------------\n\n                      Pterodactyl panel:\n1) sudo su \n\n2) bash <(curl -s https://pterodactyl-installer.se) \n\n------------------------------------------------------\n\n                       Start wings:\n                       \n1) systemctl start wings                                           \n\n------------------------------------------------------\n\n                               Theme install\n\nbash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/ptero-theme/refs/heads/main/install) \n\n------------------------------------------------------\n\n//Atention ❗❗\n\n  After watching this video, you must watch "Pterodactyl Error Fix Video"\n`, link:"https://youtu.be/9SPDr8Rdysg?si=yfYXp2hlJj8iglc1" },
+{ name:"Pterodactyl Error Fix Video", text:`"Watch the guide video below"\n`, link:"https://youtu.be/04xvIA4VHwI" },
+{ name: "Air Link Panel", text: `bash <(curl -s https://airlink.jishnu.fun)\n`, link: "https://youtu.be/0O6FZEBs1D0" },
+{ name:"Pterodactyl Panel (One Line Installing Cmd)", text:`1) bash <(curl -s https://vps1.jishnu.fun)\n      \n      2) bash <(curl -s https://ptero.jishnu.fun) `, link:"https://youtu.be/SwQdKODDNRY?si=JRytpxcnnScMd0Gs" },
+{ name: "Draco Panel", text:`                  Install the jtg-panel\n\n1) sudo su\n\n2) bash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/Vps/refs/heads/main/jishnu)\n------------------------------------------------------\n\n                       Install the node\n\n1) bash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/Vps/refs/heads/main/node) \n\n2) cd node\n\n3) paste your configure of node\n\n4) node . \n\n------------------------------------------------------\n\n         Again start your panel\n\n1) cd panel\n\n2) node .\n\n------------------------------------------------------\n   Again start node\n\n1) create a new terminal\n\n2) cd node\n\n3) node . \n`, link: "https://youtu.be/H_p9r-j_xv0" },
+{ name: "24/7 Making Code (IDX,codesandbox)", text: `\n    python3 <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/24-7/refs/heads/main/24)\n    \n    python3\n`, noLink: true }
 ];
-
 const cardsBox = document.getElementById("cards");
-
 function init() {
   panels.forEach(p => {
     const d = document.createElement("div");
@@ -329,13 +215,11 @@ function init() {
     cardsBox.appendChild(d);
   });
 }
-
 function showPanel(data) {
   const out = document.getElementById("output");
   out.innerHTML = "";
   let lines = data.text.split("\n");
   let li = 0;
-
   function type() {
     if (li >= lines.length) {
       if (!data.noLink && data.link) {
@@ -348,7 +232,6 @@ function showPanel(data) {
       }
       return;
     }
-
     const row = document.createElement("div");
     row.className = "line";
     const span = document.createElement("span");
@@ -356,20 +239,16 @@ function showPanel(data) {
     const copyBtn = document.createElement("button");
     copyBtn.className = "copy";
     copyBtn.innerText = "COPY";
-    
     const currentLineText = lines[li];
     copyBtn.onclick = () => {
       navigator.clipboard.writeText(currentLineText);
       copyBtn.innerText = "DONE!";
       setTimeout(() => copyBtn.innerText = "COPY", 1200);
     };
-
     if (currentLineText.trim() === "") copyBtn.style.display = "none";
-    
     row.appendChild(span);
     row.appendChild(copyBtn);
     out.appendChild(row);
-    
     let charIdx = 0;
     function typeChar() {
       if (charIdx < currentLineText.length) {
@@ -384,16 +263,13 @@ function showPanel(data) {
   }
   type();
 }
-
 function filterCards() {
   const v = document.getElementById("search").value.toLowerCase();
   document.querySelectorAll(".card").forEach(c => {
     c.style.display = c.innerText.toLowerCase().includes(v) ? "flex" : "none";
   });
 }
-
 init();
 </script>
-
 </body>
 </html>
