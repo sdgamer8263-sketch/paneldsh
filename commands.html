@@ -1,21 +1,42 @@
-<div class="glass-panel">
-    <h2>Command Library</h2>
-    <div class="category-filters mt-10">
-        <button class="filter-btn active" onclick="filterCategory('ALL', this)">ALL COMMANDS</button>
-        <button class="filter-btn" onclick="filterCategory('USEFUL', this)">Useful</button>
-        <button class="filter-btn" onclick="filterCategory('LINUX', this)">Linux</button>
-        <button class="filter-btn" onclick="filterCategory('VPS', this)">VPS</button>
-        <button class="filter-btn" onclick="filterCategory('DOCKER', this)">Docker</button>
-        <button class="filter-btn" onclick="filterCategory('GIT', this)">Git</button>
-        <button class="filter-btn" onclick="filterCategory('NETWORKING', this)">Networking</button>
-        <button class="filter-btn" onclick="filterCategory('SYSTEM', this)">System</button>
-        <button class="filter-btn" onclick="filterCategory('AUTO', this)">Auto</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKA HOST - Commands</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <div class="main-container">
+        <section class="active-section">
+            <div class="glass-panel">
+                <h2>Command Library</h2>
+                <div class="category-filters">
+                    <button class="filter-btn active" onclick="filterCategory('ALL', this)">ALL</button>
+                    <button class="filter-btn" onclick="filterCategory('LINUX', this)">Linux</button>
+                    <button class="filter-btn" onclick="filterCategory('VPS', this)">VPS</button>
+                    <button class="filter-btn" onclick="filterCategory('DOCKER', this)">Docker</button>
+                    <button class="filter-btn" onclick="filterCategory('GIT', this)">Git</button>
+                    <button class="filter-btn" onclick="filterCategory('NETWORKING', this)">Networking</button>
+                    <button class="filter-btn" onclick="filterCategory('SYSTEM', this)">System</button>
+                    <button class="filter-btn" onclick="filterCategory('AUTO', this)">Auto</button>
+                    <button class="filter-btn" onclick="filterCategory('REVIEW', this)">Review</button>
+                    <button class="filter-btn" onclick="filterCategory('SUGGESTION', this)">Suggestion</button>
+                    <button class="filter-btn" onclick="filterCategory('USEFUL', this)">Useful</button>
+                </div>
+                <input type="text" id="cmdSearch" placeholder="Search commands..." onkeyup="searchCommands()" class="search-bar mt-10">
+                <div class="table-container mt-20">
+                    <table class="cmd-table" id="cmdTable">
+                        </table>
+                </div>
+            </div>
+        </section>
     </div>
-    <input type="text" id="cmdSearch" placeholder="Search commands..." onkeyup="searchCommands()" class="search-bar">
-    <div class="table-container">
-        <table class="cmd-table" id="cmdTable">
-            <thead><tr><th>CATEGORY</th><th>TITLE</th><th>COMMAND</th><th style="text-align: right;">ACTION</th></tr></thead>
-            <tbody></tbody>
-        </table>
-    </div>
-</div>
+
+    <script src="script.js"></script>
+    <script> document.addEventListener("DOMContentLoaded", () => { loadNavbar('Commands'); }); </script>
+</body>
+</html>
