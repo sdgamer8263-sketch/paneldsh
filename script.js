@@ -4,8 +4,9 @@
 const navPages = [
     { name: 'Home', file: 'index.html', icon: 'fas fa-home' },
     { name: 'Team', file: 'team.html', icon: 'fas fa-users' },
-    { name: 'Hosting', file: 'hosting.html', icon: 'fas fa-server' },
-    { name: 'Tutorials', file: 'tutorials.html', icon: 'fas fa-video' },
+    // FIXED: EXACT MATCH FOR GITHUB PAGES (Capital H and T)
+    { name: 'Hosting', file: 'Hosting.html', icon: 'fas fa-server' },
+    { name: 'Tutorials', file: 'Tutorials.html', icon: 'fas fa-video' },
     { name: 'Commands', file: 'commands.html', icon: 'fas fa-terminal' },
     { name: 'Tools', file: 'tools.html', icon: 'fas fa-wrench' },
     { name: 'Stats', file: 'stats.html', icon: 'fas fa-chart-line' },
@@ -20,7 +21,6 @@ function forceLoadNavbar() {
     let activePage = navPages.find(p => currentPath.includes(p.file.toLowerCase()));
     if(!activePage) activePage = navPages[0];
 
-    // NOTUN NAVBAR HTML (Coding Hub, SDGAMER Profile Box)
     let navHTML = `
     <nav class="navbar">
         <div class="logo">
@@ -49,14 +49,9 @@ function forceLoadNavbar() {
     </nav>`;
 
     container.innerHTML = navHTML;
-    
-    // Call function to inject modal shell into body
     createProfileModal();
 }
 
-// ==========================================
-// 👤 PROFILE MODAL LOGIC (SDGAMER)
-// ==========================================
 function createProfileModal() {
     if(document.getElementById('profileModal')) return;
     const modalHTML = `
@@ -68,24 +63,11 @@ function createProfileModal() {
             </div>
             <div class="modal-body">
                 <h2>SDGAMER</h2>
-                <p class="status-text"><span class="dot"></span> Offline</p>
-                
+                <p class="status-text"><span class="dot" style="background:#00ff88; box-shadow:0 0 5px #00ff88;"></span> Online</p>
                 <div class="info-box mt-20">
                     <p class="label">PLAYING</p>
                     <p class="value"><i class="fas fa-code" style="color:#00d2ff;"></i> VS Code</p>
                 </div>
-                
-                <div class="grid-2-col mt-10">
-                    <div class="info-box">
-                        <p class="label">USER ID</p>
-                        <p class="value" style="font-family:monospace; font-size:0.8rem;">123456789</p>
-                    </div>
-                    <div class="info-box">
-                        <p class="label">JOINED</p>
-                        <p class="value" style="font-size:0.8rem;">Coding Hub</p>
-                    </div>
-                </div>
-                
                 <button class="full-btn" onclick="toggleProfileModal()">Close Profile</button>
             </div>
         </div>
@@ -95,26 +77,20 @@ function createProfileModal() {
 
 function toggleProfileModal() {
     const modal = document.getElementById('profileModal');
-    if(modal) {
-        modal.style.display = modal.style.display === 'none' ? 'flex' : 'none';
-    }
+    if(modal) modal.style.display = modal.style.display === 'none' ? 'flex' : 'none';
 }
 
 function closeProfileModal(e) {
     if(e.target.id === 'profileModal') toggleProfileModal();
 }
 
-// ✅ Run immediately!
 forceLoadNavbar();
 
-// ==========================================
-// 🛠️ LOAD OTHER COMPONENTS ON READY
-// ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     if(!document.querySelector('.navbar')) forceLoadNavbar();
     if(document.getElementById('yt-container')) loadYouTubeVideos();
     if(document.getElementById('cmdTable')) loadCommandsFromFile();
-    if(document.getElementById('discord-members')) fetchDiscordTeam();
+    if(document.getElementById('real-discord-members')) fetchDiscordTeam();
 });
 
 // ==========================================
@@ -229,10 +205,10 @@ async function loadYouTubeVideos() {
 }
 
 // ==========================================
-// 🤖 DISCORD MEMBERS
+// 🤖 PURE REAL DISCORD MEMBERS ONLY
 // ==========================================
 async function fetchDiscordTeam() {
-    const container = document.getElementById('discord-members');
+    const container = document.getElementById('real-discord-members');
     if(!container) return;
     try {
         const res = await fetch('https://discord.com/api/guilds/1472601008998846576/widget.json');
@@ -241,10 +217,12 @@ async function fetchDiscordTeam() {
         if(data.members && data.members.length > 0) {
             data.members.forEach(m => {
                 let statusClass = m.status === 'online' ? 'status-online' : (m.status === 'idle' ? 'status-idle' : 'status-dnd');
-                container.innerHTML += `<div class="member-card"><img src="${m.avatar_url}" alt="${m.username}"><h4 style="color: #fff;"><span class="status-dot ${statusClass}"></span> ${m.username}</h4><p style="color: #aaa; font-size: 0.8rem; margin-top: 5px;">Community Member</p></div>`;
+                container.innerHTML += `<div class="member-card"><img src="${m.avatar_url}" alt="${m.username}"><h4 style="color: #fff;"><span class="status-dot ${statusClass}"></span> ${m.username}</h4><p style="color: #aaa; font-size: 0.8rem; margin-top: 5px;">Server Member</p></div>`;
             });
+        } else {
+            container.innerHTML = '<p style="color:#aaa;">No members currently online.</p>';
         }
-    } catch (e) { container.innerHTML = `<p style="color:red;">Error fetching team data.</p>`; }
+    } catch (e) { container.innerHTML = `<p style="color:red;">Error fetching team data. Is Widget enabled?</p>`; }
 }
 
 // ==========================================
@@ -252,15 +230,6 @@ async function fetchDiscordTeam() {
 // ==========================================
 function copyCmd() {
     navigator.clipboard.writeText("bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)").then(() => alert("Master Command Copied! 🔥"));
-}
-
-if(document.getElementById('live-cpu')) {
-    setInterval(() => {
-        document.getElementById('live-cpu').innerText = (Math.floor(Math.random() * 30) + 15) + '%';
-        document.getElementById('live-ram').innerHTML = (Math.random() * 2.5 + 5.0).toFixed(1) + 'GB <small>/ 32GB</small>';
-        document.getElementById('live-net').innerText = (Math.floor(Math.random() * 50) + 40) + ' Mbps';
-        document.getElementById('fake-ping').innerText = (Math.floor(Math.random() * 5) + 20) + 'ms';
-    }, 2500);
 }
 
 async function checkMCStatus() {
@@ -278,32 +247,4 @@ async function checkMCStatus() {
             resultDiv.innerHTML = `<div><strong>Status:</strong> <span style="color:#00ff88;">ONLINE</span></div><div><strong>IP:</strong> <span style="color:#00d2ff;">${data.ip}:${data.port}</span></div><div><strong>Players:</strong> <span style="color:#ffcc00;">${data.players.online}/${data.players.max}</span></div><div><strong>Version:</strong> <span style="color:#fff;">${data.version}</span></div><div style="margin-top:10px; border-top:1px solid #333; padding-top:10px;"><strong>MOTD:</strong><br><span style="color:#ccc; font-family:monospace;">${cleanMotd}</span></div>`;
         } else { resultDiv.innerHTML = `<strong>Status:</strong> <span style="color:#ff3232;">OFFLINE</span>`; }
     } catch(e) { resultDiv.innerHTML = `<span style="color:red;">Error connecting.</span>`; }
-}
-
-async function checkPaperBuild() {
-    let ver = document.getElementById("paper-ver").value;
-    let resultDiv = document.getElementById("paper-result");
-    if(!ver) return resultDiv.innerText = "Please enter version.";
-    resultDiv.style.display = "block"; resultDiv.innerHTML = "Fetching...";
-    try {
-        let res = await fetch(`https://api.papermc.io/v2/projects/paper/versions/${ver}`);
-        if(res.status === 404) return resultDiv.innerHTML = `<span style="color:#ff3232;">Not found.</span>`;
-        let data = await res.json();
-        resultDiv.innerHTML = `Latest Build for ${ver}: <span style="color:#00ffcc; font-weight:bold;">#${data.builds[data.builds.length - 1]}</span>`;
-    } catch(e) { resultDiv.innerHTML = "Error fetching."; }
-}
-
-async function runPingTest() {
-    let url = document.getElementById("ping-ip").value;
-    let resultDiv = document.getElementById("ping-result");
-    if(!url) { resultDiv.style.display="block"; return resultDiv.innerText = "Enter URL (https://...)"; }
-    if(!url.startsWith('http')) url = 'https://' + url;
-    resultDiv.style.display = "block"; resultDiv.innerHTML = "Pinging...";
-    let start = Date.now();
-    try {
-        await fetch(url, { mode: 'no-cors', cache: 'no-store' });
-        let latency = Date.now() - start;
-        let color = latency < 100 ? '#00ff88' : (latency < 300 ? 'orange' : '#ff3232');
-        resultDiv.innerHTML = `Response Time: <span style="color:${color}; font-weight:bold;">${latency}ms</span>`;
-    } catch(e) { resultDiv.innerHTML = `<span style="color:#ff3232;">Ping Failed.</span>`; }
 }
