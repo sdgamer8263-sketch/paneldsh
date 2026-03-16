@@ -1,7 +1,6 @@
 // ==========================================
 // 🚀 DYNAMIC AUTO-NAVIGATION BAR SYSTEM
 // ==========================================
-// Future a kono page add korte hole shudhu ekhane add korben!
 const navPages = [
     { name: 'Home', file: 'index.html', icon: 'fas fa-home' },
     { name: 'Team', file: 'team.html', icon: 'fas fa-users' },
@@ -43,7 +42,6 @@ function loadNavbar(activePageName) {
 // 🛠️ AUTO INITIALIZATION
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
-    // Check if functions exist before running them on specific pages
     if(document.getElementById('yt-container')) loadYouTubeVideos();
     if(document.getElementById('cmdTable')) loadCommandsFromFile();
     if(document.getElementById('discord-members')) fetchDiscordTeam();
@@ -198,4 +196,49 @@ if(document.getElementById('live-cpu')) {
         document.getElementById('live-net').innerText = (Math.floor(Math.random() * 50) + 40) + ' Mbps';
         document.getElementById('fake-ping').innerText = (Math.floor(Math.random() * 5) + 20) + 'ms';
     }, 2500);
+}
+
+async function checkMCStatus() {
+    let ip = document.getElementById("mc-ip").value;
+    let port = document.getElementById("mc-port").value;
+    let resultDiv = document.getElementById("mc-result");
+    if(!ip) { resultDiv.style.display = "block"; return resultDiv.innerText = "Please enter Server IP."; }
+    let fullAddress = port ? `${ip}:${port}` : ip;
+    resultDiv.style.display = "block"; resultDiv.innerHTML = "Fetching...";
+    try {
+        let res = await fetch(`https://api.mcsrvstat.us/3/${fullAddress}`);
+        let data = await res.json();
+        if(data.online) {
+            let cleanMotd = data.motd.clean.join('<br>');
+            resultDiv.innerHTML = `<div><strong>Status:</strong> <span style="color:#00ff88;">ONLINE</span></div><div><strong>IP:</strong> <span style="color:#00d2ff;">${data.ip}:${data.port}</span></div><div><strong>Players:</strong> <span style="color:#ffcc00;">${data.players.online}/${data.players.max}</span></div><div><strong>Version:</strong> <span style="color:#fff;">${data.version}</span></div><div style="margin-top:10px; border-top:1px solid #333; padding-top:10px;"><strong>MOTD:</strong><br><span style="color:#ccc; font-family:monospace;">${cleanMotd}</span></div>`;
+        } else { resultDiv.innerHTML = `<strong>Status:</strong> <span style="color:#ff3232;">OFFLINE</span>`; }
+    } catch(e) { resultDiv.innerHTML = `<span style="color:red;">Error connecting.</span>`; }
+}
+
+async function checkPaperBuild() {
+    let ver = document.getElementById("paper-ver").value;
+    let resultDiv = document.getElementById("paper-result");
+    if(!ver) return resultDiv.innerText = "Please enter version.";
+    resultDiv.style.display = "block"; resultDiv.innerHTML = "Fetching...";
+    try {
+        let res = await fetch(`https://api.papermc.io/v2/projects/paper/versions/${ver}`);
+        if(res.status === 404) return resultDiv.innerHTML = `<span style="color:#ff3232;">Not found.</span>`;
+        let data = await res.json();
+        resultDiv.innerHTML = `Latest Build for ${ver}: <span style="color:#00ffcc; font-weight:bold;">#${data.builds[data.builds.length - 1]}</span>`;
+    } catch(e) { resultDiv.innerHTML = "Error fetching."; }
+}
+
+async function runPingTest() {
+    let url = document.getElementById("ping-ip").value;
+    let resultDiv = document.getElementById("ping-result");
+    if(!url) { resultDiv.style.display="block"; return resultDiv.innerText = "Enter URL (https://...)"; }
+    if(!url.startsWith('http')) url = 'https://' + url;
+    resultDiv.style.display = "block"; resultDiv.innerHTML = "Pinging...";
+    let start = Date.now();
+    try {
+        await fetch(url, { mode: 'no-cors', cache: 'no-store' });
+        let latency = Date.now() - start;
+        let color = latency < 100 ? '#00ff88' : (latency < 300 ? 'orange' : '#ff3232');
+        resultDiv.innerHTML = `Response Time: <span style="color:${color}; font-weight:bold;">${latency}ms</span>`;
+    } catch(e) { resultDiv.innerHTML = `<span style="color:#ff3232;">Ping Failed.</span>`; }
 }
