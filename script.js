@@ -1,109 +1,111 @@
 // ==========================================
-// 🚀 100% DYNAMIC PAGE CONFIGURATION
+// 🚀 DYNAMIC AUTO-NAVIGATION BAR SYSTEM
 // ==========================================
-let sitePages = []; 
-let statIntervals = []; 
-let trafficChart = null; 
+// Future a kono page add korte hole shudhu ekhane add korben!
+const navPages = [
+    { name: 'Home', file: 'index.html', icon: 'fas fa-home' },
+    { name: 'Team', file: 'team.html', icon: 'fas fa-users' },
+    { name: 'Tools', file: 'tools.html', icon: 'fas fa-wrench' },
+    { name: 'Tutorials', file: 'tutorials.html', icon: 'fas fa-video' },
+    { name: 'Commands', file: 'commands.html', icon: 'fas fa-terminal' },
+    { name: 'Stats', file: 'stats.html', icon: 'fas fa-chart-line' },
+    { name: 'Hosting', file: 'Hosting.html', icon: 'fas fa-server' }
+];
 
-document.addEventListener("DOMContentLoaded", async () => {
-    await initAppConfig();
+function loadNavbar(activePageName) {
+    const container = document.getElementById('navbar-container');
+    if(!container) return;
+
+    let navHTML = `
+    <nav class="navbar">
+        <div class="logo">
+            <img src="ttttttttttttttttttttttttttttt.png" alt="Logo" class="logo-img">
+            <span>SKA HOST (SDGAMER)</span>
+        </div>
+        <ul class="nav-links">`;
+
+    navPages.forEach(page => {
+        let activeClass = page.name === activePageName ? 'active-tab' : '';
+        navHTML += `<li><a href="${page.file}" class="${activeClass}"><i class="${page.icon}"></i> ${page.name}</a></li>`;
+    });
+
+    navHTML += `
+        </ul>
+        <div class="user-profile">
+            <img src="ttttttttttttttttttttttttttttt.png" alt="User">
+        </div>
+    </nav>`;
+
+    container.innerHTML = navHTML;
+}
+
+// ==========================================
+// 🛠️ AUTO INITIALIZATION
+// ==========================================
+document.addEventListener("DOMContentLoaded", () => {
+    // Check if functions exist before running them on specific pages
+    if(document.getElementById('yt-container')) loadYouTubeVideos();
+    if(document.getElementById('cmdTable')) loadCommandsFromFile();
+    if(document.getElementById('discord-members')) fetchDiscordTeam();
 });
 
-// Auto fetch pages.json
-async function initAppConfig() {
-    try {
-        const response = await fetch('pages.json');
-        if (!response.ok) throw new Error("pages.json not found!");
-        
-        sitePages = await response.json(); 
-        buildNavigationBar();
-        loadPage(sitePages[0].id); 
-    } catch (error) {
-        console.error("Configuration Load Error:", error);
-        document.getElementById('content-area').innerHTML = `<h2 style="color:red; text-align:center; margin-top:50px;">Critical Error: Could not load pages.json!</h2>`;
-    }
-}
-
-function openProfile() { document.getElementById('profileModal').style.display = 'flex'; }
-function closeProfile(e) {
-    if(!e || e.target.classList.contains('modal-overlay') || e.target.classList.contains('close-btn') || e.target.classList.contains('modal-close-btn')) {
-        document.getElementById('profileModal').style.display = 'none';
-    }
-}
-
-function buildNavigationBar() {
-    const navContainer = document.getElementById('dynamic-nav');
-    navContainer.innerHTML = ''; 
-    sitePages.forEach(page => {
-        const li = document.createElement('li');
-        li.innerHTML = `<a id="nav-${page.id}" onclick="loadPage('${page.id}')"><i class="${page.icon}"></i> ${page.title}</a>`;
-        navContainer.appendChild(li);
-    });
-}
-
-async function loadPage(pageId) {
-    statIntervals.forEach(clearInterval);
-    statIntervals = [];
-
-    const contentArea = document.getElementById('content-area');
-    const pageConfig = sitePages.find(p => p.id === pageId);
-    if (!pageConfig) return;
-
-    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active-tab'));
-    document.getElementById(`nav-${pageId}`).classList.add('active-tab');
-
-    try {
-        contentArea.innerHTML = `<h2 style="text-align:center; margin-top: 50px;"><i class="fas fa-spinner fa-spin"></i> Loading...</h2>`;
-        const response = await fetch(pageConfig.file);
-        if (!response.ok) throw new Error("File not found");
-        contentArea.innerHTML = await response.text();
-
-        // Post-load Init
-        if (pageId === 'commands') loadCommandsFromFile();
-        if (pageId === 'stats') initStatsPage();
-        if (pageId === 'hosting') initHostingPage();
-    } catch (error) {
-        contentArea.innerHTML = `<h2 style="color:red; text-align:center; margin-top:50px;">Error: ${pageConfig.file} not found!</h2>`;
-    }
-}
-
-// --- COMMANDS LOGIC ---
+// ==========================================
+// 📄 COMMANDS PARSER (commands.txt)
+// ==========================================
 async function loadCommandsFromFile() {
-    const tableBody = document.querySelector('#cmdTable tbody');
-    if(!tableBody) return;
+    const table = document.getElementById('cmdTable');
+    if(!table) return;
+
     try {
         const response = await fetch('commands.txt');
         const text = await response.text();
         const lines = text.split('\n');
-        let tbodyHTML = '';
+
+        let tableHTML = `<tr><th>CATEGORY</th><th>TITLE</th><th>COMMAND</th><th style="text-align: right;">ACTION</th></tr>`;
+
         lines.forEach(line => {
             line = line.trim();
             if(!line) return;
+
             const match = line.match(/^([^-]+)-(.*?)-?\s*'(.*)'\s*$/);
             if(match) {
                 const category = match[1].trim().toUpperCase();
                 const title = match[2].trim();
                 const command = match[3].trim();
-                const badgeClass = category.toLowerCase().replace(/\s+/g, '-');
-                const safeCommand = command.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;");
-                tbodyHTML += `<tr>
+                const badgeClass = category.toLowerCase();
+                const safeCommand = command.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+
+                tableHTML += `
+                <tr>
                     <td><span class="badge ${badgeClass}">${category}</span></td>
                     <td>${title}</td>
                     <td><code>${command}</code></td>
                     <td style="text-align: right;">
-                        <button class="tbl-copy-btn" onclick="copyTableCmd(this, '${safeCommand}')"><i class="fas fa-copy"></i></button>
+                        <button class="tbl-copy-btn" onclick="copyTableCmd(this, '${safeCommand}')">
+                            <i class="fas fa-copy"></i>
+                        </button>
                     </td>
                 </tr>`;
             }
         });
-        tableBody.innerHTML = tbodyHTML;
-    } catch(e) { tableBody.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Failed to load commands.txt</td></tr>`; }
+        table.innerHTML = tableHTML;
+    } catch(e) {
+        table.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Failed to load commands.txt file.</td></tr>`;
+    }
 }
 
 function copyTableCmd(btn, cmd) {
     navigator.clipboard.writeText(cmd).then(() => {
-        btn.innerHTML = '<i class="fas fa-check" style="color:#00ff88"></i>';
-        setTimeout(() => btn.innerHTML = '<i class="fas fa-copy"></i>', 2000);
+        btn.innerHTML = '<i class="fas fa-check"></i>';
+        btn.style.color = '#00ff88';
+        btn.style.borderColor = '#00ff88';
+        btn.style.background = 'rgba(0,255,136,0.1)';
+        setTimeout(() => {
+            btn.innerHTML = '<i class="fas fa-copy"></i>';
+            btn.style.color = '#aaa';
+            btn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+            btn.style.background = 'rgba(255, 255, 255, 0.05)';
+        }, 2000);
     });
 }
 
@@ -124,6 +126,8 @@ function filterCategory(category, btnElement) {
 function searchCommands() {
     let input = document.getElementById("cmdSearch").value.toUpperCase();
     let tr = document.getElementById("cmdTable").getElementsByTagName("tr");
+    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
+    document.querySelector('.filter-btn').classList.add('active'); 
     for (let i = 1; i < tr.length; i++) {
         let display = false;
         let tds = tr[i].getElementsByTagName("td");
@@ -132,115 +136,66 @@ function searchCommands() {
     }
 }
 
-// --- STATS LOGIC ---
-function initStatsPage() {
-    const ctx = document.getElementById('trafficChart');
-    if(!ctx) return;
-    if(trafficChart) trafficChart.destroy(); 
-    let dataPoints = Array.from({length: 30}, () => Math.floor(Math.random() * 80) + 20);
-    trafficChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: Array.from({length: 30}, (_, i) => i),
-            datasets: [{ label: 'Traffic (Mbps)', data: dataPoints, borderColor: '#00d2ff', backgroundColor: 'rgba(0, 210, 255, 0.1)', borderWidth: 2, fill: true, tension: 0.3, pointRadius: 0 }]
-        },
-        options: { responsive: true, maintainAspectRatio: false, animation: { duration: 0 }, scales: { x: { display: false }, y: { display: false, min: 0, max: 120 } }, plugins: { legend: { display: false } } }
-    });
-
-    let statTimer = setInterval(() => {
-        document.getElementById('cpu-val').innerText = (Math.floor(Math.random() * 20) + 15) + '%';
-        document.getElementById('ram-val').innerText = (Math.random() * 1.5 + 4.0).toFixed(1);
-        let netSpeed = Math.floor(Math.random() * 50) + 40;
-        document.getElementById('net-val').innerText = netSpeed;
-        document.getElementById('m-temp').innerText = (Math.floor(Math.random() * 10) + 35) + '°C';
-        document.getElementById('m-read').innerText = (Math.random() * 15 + 25).toFixed(1) + ' MB/s';
-        document.getElementById('m-write').innerText = (Math.random() * 10 + 10).toFixed(1) + ' MB/s';
-        document.getElementById('m-api').innerText = Math.floor(Math.random() * 100) + 300;
-        let currentData = trafficChart.data.datasets[0].data;
-        currentData.shift(); currentData.push(netSpeed); trafficChart.update();
-    }, 2000);
-
-    const logBox = document.getElementById('sys-logs');
-    const logMessages = ["User Login: 192.168.x.x", "API GET /status [200]", "Cache Hit (12ms)", "DB Query (15ms)", "Docker container 'nginx' restarted", "Warning: High memory usage detected"];
-    let logTimer = setInterval(() => {
-        let time = new Date().toLocaleTimeString('en-US', {hour12:false});
-        let msg = logMessages[Math.floor(Math.random() * logMessages.length)];
-        let isErr = msg.includes("Warning");
-        logBox.insertAdjacentHTML('afterbegin', `<div class="log-line"><span class="log-time">[${time}]</span><span class="log-msg ${isErr ? 'log-err' : ''}">${msg}</span></div>`);
-        if(logBox.children.length > 20) logBox.removeChild(logBox.lastChild);
-    }, 3500);
-
-    statIntervals.push(statTimer, logTimer);
+// ==========================================
+// 📺 YOUTUBE VIDEOS (DDOS PROTECTED)
+// ==========================================
+async function loadYouTubeVideos() {
+    const container = document.getElementById('yt-container');
+    if(!container) return;
+    container.innerHTML = '<p style="color: #aaa;">Fetching videos... <i class="fas fa-spinner fa-spin"></i></p>';
+    try {
+        const channelId = 'UCCGkhiwOobIoOqvGSlB1v8Q'; 
+        const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
+        const finalUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&api_key=00000000000000000000000000000000&_=${Math.random()}`;
+        const res = await fetch(finalUrl);
+        const data = await res.json();
+        if(data.status === 'ok' && data.items.length > 0) {
+            container.innerHTML = ''; 
+            data.items.slice(0, 15).forEach(video => {
+                let videoId = video.link.split('v=')[1];
+                if(videoId && videoId.includes('&')) videoId = videoId.split('&')[0]; 
+                if(videoId) {
+                    container.innerHTML += `<div class="video-embed">
+                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe>
+                        <h4 class="mt-10" style="color: #fff; font-size: 0.95rem;">${video.title}</h4>
+                    </div>`;
+                }
+            });
+        } else { container.innerHTML = '<p style="color: #aaa;">No videos found.</p>'; }
+    } catch(e) { container.innerHTML = '<p style="color: red;">Error loading YouTube videos. Refresh the page.</p>'; }
 }
 
-// --- HOSTING UI LOGIC ---
-const hostingPanels = [
-    { name: "HuggingFace Vps", text: `File Download Link:\nhttps://drive.google.com/file/d/1s7dLBOjpVERkewuQ5uIe1DkpKypkkYoX/view?usp=drivesdk\n\n------------------------------------------------------\n\nVPS INSTALL AND CREATE CMD:\n\nbash <(curl -s https://ptero.nobitahost.in)`, link: "https://youtu.be/cV0tyddLcMY" },
-    { name: "Platit.GG Alternative", text: `bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)`, link: "https://youtu.be/Z97hyH8t3NA" },
-    { name: "VPS / VDS Control Panel", text: `bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)`, link: "https://youtu.be/ymYQdANL5UQ" },
-    { name: "Pterodactyl Extention (One Line)", text: `Extention File Download Link:\nhttps://drive.google.com/drive/folders/1-omcJP6NZAOe8JEsIkUOBYkOXBUkWcoA\n\nCOMMAND:\n\ncd /var/www/pterodactyl/\nbash <(curl -fsSL https://raw.githubusercontent.com/sdgamer8263-sketch/pterodactyl_extention/main/install.sh)\n\nPASTE THIS:\n\nbash <(curl -fsSL https://raw.githubusercontent.com/hopingboyz/blueprint/main/addon-installer.sh)`, noLink: true },
-    { name: "Hydra Panel + Dashboard", text: `Panel install:\n\nsudo su\nbash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/dashboard/refs/heads/main/dash)\n\nNode install:\ngit clone https://github.com/hydren-dev/HydraDAEMON\ncd HydraDAEMON\nnpm install\npaste your configure of node\nnode`, link: "https://youtu.be/iYV1f5FGdqU" },
-    { name: "Skyport Panel", text: `PANEL INSTALL:\nsudo su\nbash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/skyport/refs/heads/main/panel)\n\nWINGS/NODE INSTALL:\nsudo su\nbash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/skyport/refs/heads/main/wings)\ncd skyportd\npm2 start .`, link: "https://youtu.be/wDGOeEu6tuI" },
-    { name: "Puffer Panel 2", text: `bash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/puffer-panel/refs/heads/main/install)\n\nAdmin user create:\nsudo pufferpanel user add\nsudo systemctl enable --now pufferpanel`, link: "https://youtu.be/wDGOeEu6tuI" }
-];
-
-function initHostingPage() {
-    const cardsBox = document.getElementById("hosting-cards");
-    if(!cardsBox) return;
-    cardsBox.innerHTML = '';
-    hostingPanels.forEach(p => {
-        const d = document.createElement("div");
-        d.className = "hosting-card";
-        d.innerHTML = `<span>${p.name}</span> <i class="fas fa-chevron-right" style="color:#00d2ff;"></i>`;
-        d.onclick = () => showHostingPanel(p);
-        cardsBox.appendChild(d);
-    });
-}
-
-function showHostingPanel(data) {
-    const out = document.getElementById("hosting-output");
-    out.innerHTML = "";
-    let lines = data.text.split("\n");
-    let li = 0;
-    const typingSpeed = 15;
-
-    function type() {
-        if (li >= lines.length) {
-            if (!data.noLink && data.link) {
-                const btn = document.createElement("a");
-                btn.className = "hosting-guide-btn"; btn.href = data.link; btn.target = "_blank";
-                btn.innerHTML = "<i class='fab fa-youtube'></i> Guide Video";
-                out.appendChild(btn);
-            }
-            return;
+// ==========================================
+// 🤖 DISCORD MEMBERS
+// ==========================================
+async function fetchDiscordTeam() {
+    const container = document.getElementById('discord-members');
+    if(!container) return;
+    try {
+        const res = await fetch('https://discord.com/api/guilds/1472601008998846576/widget.json');
+        const data = await res.json();
+        container.innerHTML = '';
+        if(data.members && data.members.length > 0) {
+            data.members.forEach(m => {
+                let statusClass = m.status === 'online' ? 'status-online' : (m.status === 'idle' ? 'status-idle' : 'status-dnd');
+                container.innerHTML += `<div class="member-card"><img src="${m.avatar_url}" alt="${m.username}"><h4 style="color: #fff;"><span class="status-dot ${statusClass}"></span> ${m.username}</h4><p style="color: #aaa; font-size: 0.8rem; margin-top: 5px;">Community Member</p></div>`;
+            });
         }
-
-        const row = document.createElement("div"); row.className = "hosting-line";
-        const span = document.createElement("span"); span.className = "hosting-command-text";
-        const copyBtn = document.createElement("button"); copyBtn.className = "hosting-copy";
-        copyBtn.innerHTML = "<i class='fas fa-copy'></i> COPY";
-        
-        const currentLineText = lines[li];
-        copyBtn.onclick = () => {
-            navigator.clipboard.writeText(currentLineText);
-            copyBtn.innerHTML = "<i class='fas fa-check'></i> DONE"; copyBtn.style.background = "#00ff88";
-            setTimeout(() => { copyBtn.innerHTML = "<i class='fas fa-copy'></i> COPY"; copyBtn.style.background = "#00d2ff"; }, 1200);
-        };
-
-        if (currentLineText.trim() === "") { copyBtn.style.display = "none"; row.style.border = "none"; row.style.marginBottom = "5px"; }
-        row.appendChild(span); row.appendChild(copyBtn); out.appendChild(row);
-        
-        let charIdx = 0;
-        function typeChar() {
-            if (charIdx < currentLineText.length) { span.textContent += currentLineText[charIdx++]; setTimeout(typeChar, typingSpeed); } 
-            else { li++; setTimeout(type, 100); }
-        }
-        typeChar();
-    }
-    type();
+    } catch (e) { container.innerHTML = `<p style="color:red;">Error fetching team data.</p>`; }
 }
 
-function filterHostingCards() {
-    const v = document.getElementById("hostingSearch").value.toLowerCase();
-    document.querySelectorAll(".hosting-card").forEach(c => { c.style.display = c.innerText.toLowerCase().includes(v) ? "flex" : "none"; });
+// ==========================================
+// 📊 TOOLS & UTILS
+// ==========================================
+function copyCmd() {
+    navigator.clipboard.writeText("bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)").then(() => alert("Master Command Copied! 🔥"));
+}
+
+if(document.getElementById('live-cpu')) {
+    setInterval(() => {
+        document.getElementById('live-cpu').innerText = (Math.floor(Math.random() * 30) + 15) + '%';
+        document.getElementById('live-ram').innerHTML = (Math.random() * 2.5 + 5.0).toFixed(1) + 'GB <small>/ 32GB</small>';
+        document.getElementById('live-net').innerText = (Math.floor(Math.random() * 50) + 40) + ' Mbps';
+        document.getElementById('fake-ping').innerText = (Math.floor(Math.random() * 5) + 20) + 'ms';
+    }, 2500);
 }
