@@ -3,46 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SKA HOST - Tools</title>
-    <link rel="stylesheet" href="style.css?v=7">
+    <title>SKA HOST (SDGAMER) - Home</title>
+    <link rel="stylesheet" href="style.css?v=8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div id="navbar-container"></div>
 
     <div class="main-container">
+        
+        <div class="page-header">
+            <div class="ph-left">
+                <h2>Dashboard</h2>
+                <p>Welcome back, Commander.</p>
+            </div>
+            <div class="ph-right">
+                <span class="online-badge"><span class="dot"></span> ONLINE</span>
+            </div>
+        </div>
+
         <section class="active-section">
-            <div class="glass-panel">
-                <h2><i class="fas fa-wrench"></i> Server Tools</h2>
-                <div class="tools-grid mt-20">
-                    
-                    <div class="tool-card glass-panel text-center">
-                        <h3><i class="fas fa-gamepad" style="color:#00ff88;"></i> Minecraft Status</h3>
-                        <input type="text" id="mc-ip" placeholder="Server IP (mc.hypixel.net)" class="search-bar mt-10">
-                        <input type="number" id="mc-port" placeholder="Port (Blank=25565)" class="search-bar mt-10">
-                        <button class="tool-btn" onclick="checkMCStatus()">Check Details</button>
-                        <div id="mc-result" class="tool-result" style="text-align: left; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px; display: none;"></div>
-                    </div>
+            <div class="hero-box">
+                <h4>AUTOMATED SCRIPT</h4>
+                <h1>ALL IN ONE <span class="highlight">CMD</span></h1>
+                <p>Execute the master script to install all dependencies instantly.</p>
+                <div class="cmd-box">
+                    <code>$ bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)</code>
+                    <button class="copy-btn" onclick="copyCmd()">COPY</button>
+                </div>
+            </div>
 
-                    <div class="tool-card glass-panel text-center">
-                        <h3><i class="fas fa-file-code" style="color:#00d2ff;"></i> Paper Latest Build</h3>
-                        <input type="text" id="paper-ver" placeholder="e.g., 1.20.4" class="search-bar mt-10">
-                        <button class="tool-btn" onclick="checkPaperBuild()">Get Build</button>
-                        <div id="paper-result" class="tool-result"></div>
-                    </div>
+            <div class="dashboard-split">
+                <div class="left-panel glass-panel">
+                    <h3 style="margin-bottom: 15px; color: #5865F2;"><i class="fab fa-discord fa-lg"></i> Live Discord Community</h3>
+                    <iframe src="https://e.widgetbot.io/channels/1472601008998846576" width="100%" height="450" allowtransparency="true" frameborder="0" style="border-radius: 8px;"></iframe>
+                </div>
 
-                    <div class="tool-card glass-panel text-center">
-                        <h3><i class="fas fa-network-wired" style="color:#ff3232;"></i> Web Ping Test</h3>
-                        <input type="text" id="ping-ip" placeholder="https://google.com" class="search-bar mt-10">
-                        <button class="tool-btn" onclick="runPingTest()">Ping</button>
-                        <div id="ping-result" class="tool-result"></div>
+                <div class="right-panel">
+                    <div class="status-panel glass-panel">
+                        <h3>SYSTEM STATUS</h3>
+                        <div class="status-grid">
+                            <div class="stat-item"><span class="label">Latency</span><span class="value success" id="fake-ping">24ms</span></div>
+                            <div class="stat-item"><span class="label">Uptime</span><span class="value">99.9%</span></div>
+                            <div class="stat-item"><span class="label">Users</span><span class="value" id="fake-users">1.2K</span></div>
+                        </div>
                     </div>
-
+                    <a href="https://youtube.com/@skahosting" target="_blank" class="social-card yt glass-panel mt-20">
+                        <i class="fab fa-youtube" style="font-size: 2.5rem; color: #ff0000;"></i>
+                        <div><h3>YouTube Channel</h3><p style="color:#aaa;">Watch Hosting Tutorials</p></div>
+                    </a>
                 </div>
             </div>
         </section>
     </div>
 
-    <script src="script.js?v=7"></script>
+    <script src="script.js?v=8"></script>
 </body>
 </html>
