@@ -1,113 +1,125 @@
 // ==========================================
-// 🛠️ AUTO INITIALIZATION
+// 🚀 DYNAMIC PAGE CONFIGURATION
 // ==========================================
+const sitePages = [
+    { id: 'home', title: 'About', icon: 'fas fa-info-circle', file: 'home.html' },
+    { id: 'team', title: 'Team', icon: 'fas fa-users', file: 'team.html' },
+    { id: 'commands', title: 'Commands', icon: 'fas fa-terminal', file: 'commands.html' },
+    { id: 'stats', title: 'Stats', icon: 'fas fa-chart-line', file: 'stats.html' }
+];
+
+let statIntervals = []; // To clear intervals when switching pages
+let trafficChart = null; // Store chart instance
+
 document.addEventListener("DOMContentLoaded", () => {
-    loadYouTubeVideos();
-    loadCommandsFromFile();
+    buildNavigationBar();
+    loadPage('home'); 
 });
 
-// ==========================================
-// 🎥 YOUTUBE VIDEOS LOADER (Fixed Missing Function)
-// ==========================================
-async function loadYouTubeVideos() {
-    // Note: Ensure you have a container with this ID in your HTML Tutorials section
-    const container = document.getElementById('yt-container'); 
-    if (!container) return;
-
-    try {
-        // Add your actual YouTube API fetch logic here. 
-        // For now, it safely handles the empty state to prevent errors.
-        let videos = []; 
-
-        if (videos && videos.length > 0) {
-            // Populate videos here
-        } else { 
-            container.innerHTML = '<p style="color: #aaa;">No videos found.</p>'; 
-        }
-    } catch(e) { 
-        console.error("YT Load Error:", e);
-        container.innerHTML = '<p style="color: red;">Error loading YouTube videos. Refresh the page.</p>'; 
+// Profile Modal Logic
+function openProfile() {
+    document.getElementById('profileModal').style.display = 'flex';
+}
+function closeProfile(e) {
+    if(!e || e.target.classList.contains('modal-overlay') || e.target.classList.contains('close-btn') || e.target.classList.contains('modal-close-btn')) {
+        document.getElementById('profileModal').style.display = 'none';
     }
 }
 
 // ==========================================
-// 📄 COMMANDS PARSER (Fetch from commands.txt)
+// 📑 AUTO NAVBAR BUILDER
+// ==========================================
+function buildNavigationBar() {
+    const navContainer = document.getElementById('dynamic-nav');
+    navContainer.innerHTML = ''; 
+
+    sitePages.forEach(page => {
+        const li = document.createElement('li');
+        li.innerHTML = `<a id="nav-${page.id}" onclick="loadPage('${page.id}')">
+                            <i class="${page.icon}"></i> ${page.title}
+                        </a>`;
+        navContainer.appendChild(li);
+    });
+}
+
+// ==========================================
+// 🔄 PAGE LOADER (Fetches individual HTML files)
+// ==========================================
+async function loadPage(pageId) {
+    // Clear any running stat intervals if leaving Stats page
+    statIntervals.forEach(clearInterval);
+    statIntervals = [];
+
+    const contentArea = document.getElementById('content-area');
+    const pageConfig = sitePages.find(p => p.id === pageId);
+    if (!pageConfig) return;
+
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active-tab'));
+    document.getElementById(`nav-${pageId}`).classList.add('active-tab');
+
+    try {
+        contentArea.innerHTML = `<h2 style="text-align:center; margin-top: 50px;"><i class="fas fa-spinner fa-spin"></i> Loading...</h2>`;
+        
+        const response = await fetch(pageConfig.file);
+        if (!response.ok) throw new Error("File not found");
+        
+        const html = await response.text();
+        contentArea.innerHTML = html;
+
+        // Post-load Initialization
+        if (pageId === 'commands') loadCommandsFromFile();
+        if (pageId === 'stats') initStatsPage();
+
+    } catch (error) {
+        contentArea.innerHTML = `<h2 style="color:red; text-align:center; margin-top:50px;">Error: ${pageConfig.file} not found!</h2>`;
+    }
+}
+
+// ==========================================
+// 📄 COMMANDS PARSER
 // ==========================================
 async function loadCommandsFromFile() {
-    const table = document.getElementById('cmdTable');
-    if(!table) return;
+    const tableBody = document.querySelector('#cmdTable tbody');
+    if(!tableBody) return;
 
     try {
         const response = await fetch('commands.txt');
         const text = await response.text();
         const lines = text.split('\n');
-
-        let tableHTML = `<tr><th>CATEGORY</th><th>TITLE</th><th>COMMAND</th><th style="text-align: right;">ACTION</th></tr>`;
+        let tbodyHTML = '';
 
         lines.forEach(line => {
             line = line.trim();
             if(!line) return;
-
-            // Matches format: Category-Title-'Command'
             const match = line.match(/^([^-]+)-(.*?)-?\s*'(.*)'\s*$/);
-            
             if(match) {
                 const category = match[1].trim().toUpperCase();
                 const title = match[2].trim();
                 const command = match[3].trim();
-                const badgeClass = category.toLowerCase();
+                const badgeClass = category.toLowerCase().replace(/\s+/g, '-');
+                const safeCommand = command.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;");
 
-                // FIXED: Cloudflare ba DDOS firewall-e quote issue fix korar jonno escaping
-                const safeCommand = command.replace(/'/g, "\\'").replace(/"/g, "&quot;");
-
-                tableHTML += `
-                <tr>
+                tbodyHTML += `<tr>
                     <td><span class="badge ${badgeClass}">${category}</span></td>
                     <td>${title}</td>
                     <td><code>${command}</code></td>
                     <td style="text-align: right;">
-                        <button class="tbl-copy-btn" onclick="copyTableCmd(this, '${safeCommand}')">
-                            <i class="fas fa-copy"></i>
-                        </button>
+                        <button class="tbl-copy-btn" onclick="copyTableCmd(this, '${safeCommand}')"><i class="fas fa-copy"></i></button>
                     </td>
                 </tr>`;
             }
         });
-        
-        table.innerHTML = tableHTML;
+        tableBody.innerHTML = tbodyHTML;
     } catch(e) {
-        console.error("Command Load Error:", e);
-        table.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Failed to load commands.txt file.</td></tr>`;
+        tableBody.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Failed to load commands.txt file.</td></tr>`;
     }
 }
 
-// Command Table Copy Logic
 function copyTableCmd(btn, cmd) {
     navigator.clipboard.writeText(cmd).then(() => {
-        btn.innerHTML = '<i class="fas fa-check"></i>';
-        btn.style.color = '#00ff88';
-        btn.style.borderColor = '#00ff88';
-        btn.style.background = 'rgba(0,255,136,0.1)';
-        setTimeout(() => {
-            btn.innerHTML = '<i class="fas fa-copy"></i>';
-            btn.style.color = '#aaa';
-            btn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-            btn.style.background = 'rgba(255, 255, 255, 0.05)';
-        }, 2000);
+        btn.innerHTML = '<i class="fas fa-check" style="color:#00ff88"></i>';
+        setTimeout(() => btn.innerHTML = '<i class="fas fa-copy"></i>', 2000);
     });
-}
-
-// ==========================================
-// 📑 NAVIGATION & FILTERS
-// ==========================================
-function showSection(sectionId, element) {
-    document.querySelectorAll('section').forEach(sec => sec.style.display = 'none');
-    document.getElementById(sectionId).style.display = 'block';
-    if(element) {
-        document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active-tab'));
-        element.classList.add('active-tab');
-    }
-    if(sectionId === 'team') fetchDiscordTeam();
 }
 
 function filterCategory(category, btnElement) {
@@ -128,8 +140,6 @@ function filterCategory(category, btnElement) {
 function searchCommands() {
     let input = document.getElementById("cmdSearch").value.toUpperCase();
     let tr = document.getElementById("cmdTable").getElementsByTagName("tr");
-    document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-    document.querySelector('.filter-btn').classList.add('active'); 
     for (let i = 1; i < tr.length; i++) {
         let display = false;
         let tds = tr[i].getElementsByTagName("td");
@@ -139,45 +149,83 @@ function searchCommands() {
 }
 
 // ==========================================
-// 📊 SYSTEM TOOLS & API
+// 📊 STATS & ANALYTICS PAGE LOGIC
 // ==========================================
-function copyCmd() {
-    navigator.clipboard.writeText("bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)").then(() => alert("Master Command Copied! 🔥"));
-}
+function initStatsPage() {
+    // 1. Initialize Chart
+    const ctx = document.getElementById('trafficChart');
+    if(!ctx) return;
 
-setInterval(() => {
-    document.getElementById('live-cpu').innerText = (Math.floor(Math.random() * 30) + 15) + '%';
-    document.getElementById('live-ram').innerHTML = (Math.random() * 2.5 + 5.0).toFixed(1) + 'GB <small>/ 32GB</small>';
-    document.getElementById('live-net').innerText = (Math.floor(Math.random() * 50) + 40) + ' Mbps';
-    document.getElementById('fake-ping').innerText = (Math.floor(Math.random() * 5) + 20) + 'ms';
-}, 2500);
+    if(trafficChart) trafficChart.destroy(); // Clear old chart
 
-async function fetchDiscordTeam() {
-    const container = document.getElementById('team-container');
-    try {
-        const res = await fetch('https://discord.com/api/guilds/1472601008998846576/widget.json');
-        const data = await res.json();
-        container.innerHTML = `<div class="member-card"><img src="ttttttttttttttttttttttttttttt.png" alt="SDGAMER"><h3 style="color: #fff;">SDGAMER</h3><p style="color: #ed4245; font-weight: bold; font-size: 0.85rem; margin-top: 5px;">👑 Founder</p></div>`;
-        if(data.members && data.members.length > 0) {
-            data.members.forEach(m => {
-                let statusClass = m.status === 'online' ? 'status-online' : (m.status === 'idle' ? 'status-idle' : 'status-dnd');
-                container.innerHTML += `<div class="member-card"><img src="${m.avatar_url}" alt="${m.username}"><h4 style="color: #fff;"><span class="status-dot ${statusClass}"></span> ${m.username}</h4><p style="color: #aaa; font-size: 0.8rem; margin-top: 5px;">Community Member</p></div>`;
-            });
+    // Create initial data points
+    let dataPoints = Array.from({length: 30}, () => Math.floor(Math.random() * 80) + 20);
+
+    trafficChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Array.from({length: 30}, (_, i) => i),
+            datasets: [{
+                label: 'Traffic (Mbps)',
+                data: dataPoints,
+                borderColor: '#00d2ff',
+                backgroundColor: 'rgba(0, 210, 255, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.3,
+                pointRadius: 0
+            }]
+        },
+        options: {
+            responsive: true, maintainAspectRatio: false,
+            animation: { duration: 0 },
+            scales: { x: { display: false }, y: { display: false, min: 0, max: 120 } },
+            plugins: { legend: { display: false } }
         }
-    } catch (e) { container.innerHTML = `<p style="color:red;">Error fetching team data.</p>`; }
-}
+    });
 
-async function checkMCStatus() {
-    let ip = document.getElementById("mc-ip").value;
-    let port = document.getElementById("mc-port").value;
-    let resultDiv = document.getElementById("mc-result");
-    if(!ip) { resultDiv.style.display = "block"; return resultDiv.innerText = "Please enter Server IP."; }
-    let fullAddress = port ? `${ip}:${port}` : ip;
-    resultDiv.style.display = "block"; resultDiv.innerHTML = "Fetching...";
-    try {
-        let res = await fetch(`https://api.mcsrvstat.us/3/${fullAddress}`);
-        let data = await res.json();
-        if(data.online) {
-            let cleanMotd = data.motd.clean.join('<br>');
-            resultDiv.innerHTML = `<div><strong>Status:</strong> <span style="color:#00ff88;">ONLINE</span></div><div><strong>IP:</strong> <span style="color:#00d2ff;">${data.ip}:${data.port}</span></div><div><strong>Players:</strong> <span style="color:#ffcc00;">${data.players.online}/${data.players.max}</span></div><div><strong>Version:</strong> <span style="color:#fff;">${data.version}</span></div><div style="margin-top:10px; border-top:1px solid #333; padding-top:1
+    // 2. Set Intervals for Fake Data Updates
+    let statTimer = setInterval(() => {
+        // Top Cards
+        document.getElementById('cpu-val').innerText = (Math.floor(Math.random() * 20) + 15) + '%';
+        document.getElementById('ram-val').innerText = (Math.random() * 1.5 + 4.0).toFixed(1);
+        let netSpeed = Math.floor(Math.random() * 50) + 40;
+        document.getElementById('net-val').innerText = netSpeed;
         
+        // Extended Metrics
+        document.getElementById('m-temp').innerText = (Math.floor(Math.random() * 10) + 35) + '°C';
+        document.getElementById('m-read').innerText = (Math.random() * 15 + 25).toFixed(1) + ' MB/s';
+        document.getElementById('m-write').innerText = (Math.random() * 10 + 10).toFixed(1) + ' MB/s';
+        document.getElementById('m-api').innerText = Math.floor(Math.random() * 100) + 300;
+
+        // Update Chart
+        let currentData = trafficChart.data.datasets[0].data;
+        currentData.shift(); // remove first
+        currentData.push(netSpeed); // add new
+        trafficChart.update();
+
+    }, 2000);
+
+    // 3. System Logs Generator
+    const logBox = document.getElementById('sys-logs');
+    const logMessages = [
+        "User Login: 192.168.x.x", "API GET /status [200]", "Cache Hit (12ms)", 
+        "DB Query (15ms)", "Docker container 'nginx' restarted", "Warning: High memory usage detected"
+    ];
+
+    let logTimer = setInterval(() => {
+        let time = new Date().toLocaleTimeString('en-US', {hour12:false});
+        let msg = logMessages[Math.floor(Math.random() * logMessages.length)];
+        let isErr = msg.includes("Warning");
+        
+        let logHTML = `<div class="log-line">
+            <span class="log-time">[${time}]</span>
+            <span class="log-msg ${isErr ? 'log-err' : ''}">${msg}</span>
+        </div>`;
+        
+        logBox.insertAdjacentHTML('afterbegin', logHTML);
+        if(logBox.children.length > 20) logBox.removeChild(logBox.lastChild);
+    }, 3500);
+
+    statIntervals.push(statTimer, logTimer);
+}
