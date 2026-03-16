@@ -17,14 +17,19 @@ function forceLoadNavbar() {
     if(!container) return;
 
     let currentPath = window.location.pathname.toLowerCase();
-    let activePage = navPages.find(p => currentPath.includes(p.file.toLowerCase()));
-    if(!activePage) activePage = navPages[0];
+    
+    // Safely figure out the current page
+    let activePage = navPages.find(p => currentPath.endsWith(p.file.toLowerCase()));
+    
+    // If it's just the root domain, default to index.html
+    if(!activePage || currentPath.endsWith('/') || currentPath.trim() === '') {
+        activePage = navPages[0]; 
+    }
 
-    // ✅ FIXED: Name changed to SKA HOST & Logo to Video
     let navHTML = `
     <nav class="navbar">
         <div class="logo">
-            <video src="gemini_generated_video_3ccd85b2.mp4" autoplay loop muted class="logo-video"></video>
+            <video src="gemini_generated_video_3ccd85b2.mp4" autoplay loop muted playsinline class="logo-video"></video>
             <div class="logo-text">
                 <span class="main-title">SKA HOST</span>
                 <span class="sub-title">DASHBOARD</span>
@@ -44,7 +49,7 @@ function forceLoadNavbar() {
                 <span class="user-name">SDGAMER</span>
                 <span class="user-role">Owner</span>
             </div>
-            <video src="gemini_generated_video_3ccd85b2.mp4" autoplay loop muted alt="User" class="user-profile-video"></video>
+            <video src="gemini_generated_video_3ccd85b2.mp4" autoplay loop muted playsinline class="user-profile-video"></video>
         </div>
     </nav>`;
 
@@ -52,16 +57,13 @@ function forceLoadNavbar() {
     createProfileModal();
 }
 
-// ==========================================
-// 👤 PROFILE MODAL LOGIC (SKA HOST)
-// ==========================================
 function createProfileModal() {
     if(document.getElementById('profileModal')) return;
     const modalHTML = `
     <div id="profileModal" class="modal-overlay" style="display:none;" onclick="closeProfileModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="modal-header">
-                <video src="gemini_generated_video_3ccd85b2.mp4" autoplay loop muted class="modal-avatar-video"></video>
+                <video src="gemini_generated_video_3ccd85b2.mp4" autoplay loop muted playsinline class="modal-avatar-video"></video>
                 <button class="close-btn" onclick="toggleProfileModal()"><i class="fas fa-times"></i></button>
             </div>
             <div class="modal-body">
@@ -197,7 +199,7 @@ async function loadYouTubeVideos() {
     try {
         const channelId = 'UCCGkhiwOobIoOqvGSlB1v8Q'; 
         const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
-        const finalUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}&api_key=00000000000000000000000000000000&_=${Math.random()}`;
+        const finalUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
         const res = await fetch(finalUrl);
         const data = await res.json();
         if(data.status === 'ok' && data.items.length > 0) {
@@ -207,7 +209,7 @@ async function loadYouTubeVideos() {
                 if(videoId && videoId.includes('&')) videoId = videoId.split('&')[0]; 
                 if(videoId) {
                     container.innerHTML += `<div class="video-embed">
-                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen style="border-radius: 8px;"></iframe>
+                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen style="border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);"></iframe>
                         <h4 class="mt-10" style="color: #fff; font-size: 0.95rem;">${video.title}</h4>
                     </div>`;
                 }
@@ -217,10 +219,10 @@ async function loadYouTubeVideos() {
 }
 
 // ==========================================
-// 🤖 DISCORD MEMBERS
+// 🤖 REAL DISCORD MEMBERS ONLY
 // ==========================================
 async function fetchDiscordTeam() {
-    const container = document.getElementById('discord-members');
+    const container = document.getElementById('real-discord-members');
     if(!container) return;
     try {
         const res = await fetch('https://discord.com/api/guilds/1472601008998846576/widget.json');
@@ -229,69 +231,118 @@ async function fetchDiscordTeam() {
         if(data.members && data.members.length > 0) {
             data.members.forEach(m => {
                 let statusClass = m.status === 'online' ? 'status-online' : (m.status === 'idle' ? 'status-idle' : 'status-dnd');
-                container.innerHTML += `<div class="member-card"><img src="${m.avatar_url}" alt="${m.username}"><h4 style="color: #fff;"><span class="status-dot ${statusClass}"></span> ${m.username}</h4><p style="color: #aaa; font-size: 0.8rem; margin-top: 5px;">Community Member</p></div>`;
+                container.innerHTML += `<div class="member-card"><img src="${m.avatar_url}" alt="${m.username}"><h4 style="color: #fff;"><span class="status-dot ${statusClass}"></span> ${m.username}</h4><p style="color: #aaa; font-size: 0.8rem; margin-top: 5px;">Server Member</p></div>`;
             });
+        } else {
+            container.innerHTML = '<p style="color:#aaa;">No members currently online.</p>';
         }
-    } catch (e) { container.innerHTML = `<p style="color:red;">Error fetching team data.</p>`; }
+    } catch (e) { container.innerHTML = `<p style="color:red;">Error fetching team data. Is Widget enabled?</p>`; }
 }
 
 // ==========================================
-// 📊 TOOLS & UTILS
+// 📊 SERVER TOOLS API
 // ==========================================
 function copyCmd() {
     navigator.clipboard.writeText("bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)").then(() => alert("Master Command Copied! 🔥"));
 }
 
-if(document.getElementById('live-cpu')) {
-    setInterval(() => {
-        document.getElementById('live-cpu').innerText = (Math.floor(Math.random() * 30) + 15) + '%';
-        document.getElementById('live-ram').innerHTML = (Math.random() * 2.5 + 5.0).toFixed(1) + 'GB <small>/ 32GB</small>';
-        document.getElementById('live-net').innerText = (Math.floor(Math.random() * 50) + 40) + ' Mbps';
-        document.getElementById('fake-ping').innerText = (Math.floor(Math.random() * 5) + 20) + 'ms';
-    }, 2500);
+async function runPingTest() {
+    let urlInput = document.getElementById("ping-ip");
+    let resultDiv = document.getElementById("ping-result");
+    if (!urlInput || !resultDiv) return;
+    
+    let url = urlInput.value.trim();
+    if(!url) { 
+        resultDiv.style.display = "block"; 
+        resultDiv.innerHTML = "<span style='color:orange;'><i class='fas fa-exclamation-triangle'></i> Please enter a URL first.</span>"; 
+        return; 
+    }
+    
+    if(!url.startsWith('http')) url = 'https://' + url;
+    resultDiv.style.display = "block"; 
+    resultDiv.innerHTML = "Pinging server... <i class='fas fa-spinner fa-spin'></i>";
+    
+    let start = Date.now();
+    try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 8000); 
+        await fetch(url, { mode: 'no-cors', cache: 'no-store', signal: controller.signal });
+        clearTimeout(timeoutId);
+        
+        let latency = Date.now() - start;
+        let color = latency < 200 ? '#00ff88' : (latency < 600 ? 'orange' : '#ff3232');
+        let icon = latency < 600 ? 'fa-check-circle' : 'fa-exclamation-circle';
+        
+        resultDiv.innerHTML = `
+            <span style="color:#aaa;">Status:</span> <span style="color:#00ff88; font-weight:bold;">ONLINE</span> <br> 
+            <span style="color:#aaa;">Response Time:</span> <span style="color:${color}; font-weight:bold; font-size:1.1rem;">${latency}ms</span> <i class="fas ${icon}" style="color:${color};"></i>
+        `;
+    } catch(e) { 
+        resultDiv.innerHTML = `<span style="color:#ff3232; font-weight:bold;"><i class="fas fa-times-circle"></i> Ping Failed or Host Unreachable.</span>`; 
+    }
 }
 
 async function checkMCStatus() {
-    let ip = document.getElementById("mc-ip").value;
-    let port = document.getElementById("mc-port").value;
+    let ip = document.getElementById("mc-ip").value.trim();
+    let port = document.getElementById("mc-port").value.trim();
     let resultDiv = document.getElementById("mc-result");
-    if(!ip) { resultDiv.style.display = "block"; return resultDiv.innerText = "Please enter Server IP."; }
+    
+    if(!ip) { 
+        resultDiv.style.display = "block"; 
+        resultDiv.innerHTML = "<span style='color:orange;'><i class='fas fa-exclamation-triangle'></i> Please enter Server IP.</span>"; 
+        return; 
+    }
+    
     let fullAddress = port ? `${ip}:${port}` : ip;
-    resultDiv.style.display = "block"; resultDiv.innerHTML = "Fetching...";
+    resultDiv.style.display = "block"; 
+    resultDiv.innerHTML = "Fetching server details... <i class='fas fa-spinner fa-spin'></i>";
+    
     try {
         let res = await fetch(`https://api.mcsrvstat.us/3/${fullAddress}`);
         let data = await res.json();
+        
         if(data.online) {
-            let cleanMotd = data.motd.clean.join('<br>');
-            resultDiv.innerHTML = `<div><strong>Status:</strong> <span style="color:#00ff88;">ONLINE</span></div><div><strong>IP:</strong> <span style="color:#00d2ff;">${data.ip}:${data.port}</span></div><div><strong>Players:</strong> <span style="color:#ffcc00;">${data.players.online}/${data.players.max}</span></div><div><strong>Version:</strong> <span style="color:#fff;">${data.version}</span></div><div style="margin-top:10px; border-top:1px solid #333; padding-top:10px;"><strong>MOTD:</strong><br><span style="color:#ccc; font-family:monospace;">${cleanMotd}</span></div>`;
-        } else { resultDiv.innerHTML = `<strong>Status:</strong> <span style="color:#ff3232;">OFFLINE</span>`; }
-    } catch(e) { resultDiv.innerHTML = `<span style="color:red;">Error connecting.</span>`; }
+            let onlinePlayers = data.players ? data.players.online : 0;
+            let maxPlayers = data.players ? data.players.max : 0;
+            let version = data.version || "Unknown";
+            let cleanMotd = data.motd ? data.motd.clean.join('<br>') : "No MOTD provided";
+            
+            resultDiv.innerHTML = `
+                <div><strong>Status:</strong> <span style="color:#00ff88;">ONLINE <i class="fas fa-check-circle"></i></span></div>
+                <div><strong>IP:</strong> <span style="color:#00d2ff;">${data.ip || ip}:${data.port || port}</span></div>
+                <div><strong>Players:</strong> <span style="color:#ffcc00;">${onlinePlayers}/${maxPlayers}</span></div>
+                <div><strong>Version:</strong> <span style="color:#fff;">${version}</span></div>
+                <div style="margin-top:10px; border-top:1px solid #333; padding-top:10px;">
+                    <strong>MOTD:</strong><br><span style="color:#ccc; font-family:monospace;">${cleanMotd}</span>
+                </div>`;
+        } else { 
+            resultDiv.innerHTML = `<strong>Status:</strong> <span style="color:#ff3232;">OFFLINE <i class="fas fa-times-circle"></i></span>`; 
+        }
+    } catch(e) { 
+        resultDiv.innerHTML = `<span style="color:red;"><i class="fas fa-exclamation-circle"></i> Error connecting to API.</span>`; 
+    }
 }
 
 async function checkPaperBuild() {
-    let ver = document.getElementById("paper-ver").value;
+    let ver = document.getElementById("paper-ver").value.trim();
     let resultDiv = document.getElementById("paper-result");
-    if(!ver) return resultDiv.innerText = "Please enter version.";
-    resultDiv.style.display = "block"; resultDiv.innerHTML = "Fetching...";
+    if(!ver) {
+        resultDiv.style.display = "block"; 
+        resultDiv.innerHTML = "<span style='color:orange;'><i class='fas fa-exclamation-triangle'></i> Please enter version.</span>"; 
+        return;
+    }
+    resultDiv.style.display = "block"; 
+    resultDiv.innerHTML = "Fetching latest build... <i class='fas fa-spinner fa-spin'></i>";
     try {
         let res = await fetch(`https://api.papermc.io/v2/projects/paper/versions/${ver}`);
-        if(res.status === 404) return resultDiv.innerHTML = `<span style="color:#ff3232;">Not found.</span>`;
+        if(res.status === 404) {
+            resultDiv.innerHTML = `<span style="color:#ff3232;"><i class="fas fa-times-circle"></i> Version not found.</span>`;
+            return;
+        }
         let data = await res.json();
-        resultDiv.innerHTML = `Latest Build for ${ver}: <span style="color:#00ffcc; font-weight:bold;">#${data.builds[data.builds.length - 1]}</span>`;
-    } catch(e) { resultDiv.innerHTML = "Error fetching."; }
-}
-
-async function runPingTest() {
-    let url = document.getElementById("ping-ip").value;
-    let resultDiv = document.getElementById("ping-result");
-    if(!url) { resultDiv.style.display="block"; return resultDiv.innerText = "Enter URL (https://...)"; }
-    if(!url.startsWith('http')) url = 'https://' + url;
-    resultDiv.style.display = "block"; resultDiv.innerHTML = "Pinging...";
-    let start = Date.now();
-    try {
-        await fetch(url, { mode: 'no-cors', cache: 'no-store' });
-        let latency = Date.now() - start;
-        let color = latency < 100 ? '#00ff88' : (latency < 300 ? 'orange' : '#ff3232');
-        resultDiv.innerHTML = `Response Time: <span style="color:${color}; font-weight:bold;">${latency}ms</span>`;
-    } catch(e) { resultDiv.innerHTML = `<span style="color:#ff3232;">Ping Failed.</span>`; }
+        let latestBuild = data.builds[data.builds.length - 1];
+        resultDiv.innerHTML = `Latest Build for ${ver}: <br><span style="color:#00ffcc; font-size:1.5rem; font-weight:bold;">#${latestBuild}</span> <i class="fas fa-check-circle" style="color:#00ff88;"></i>`;
+    } catch(e) { 
+        resultDiv.innerHTML = `<span style="color:red;"><i class="fas fa-exclamation-circle"></i> Error fetching data.</span>`; 
     }
+}
