@@ -4,16 +4,19 @@
 const navPages = [
     { name: 'Home', file: 'index.html', icon: 'fas fa-home' },
     { name: 'Team', file: 'team.html', icon: 'fas fa-users' },
-    { name: 'Tools', file: 'tools.html', icon: 'fas fa-wrench' },
+    { name: 'Hosting', file: 'Hosting.html', icon: 'fas fa-server' },
     { name: 'Tutorials', file: 'tutorials.html', icon: 'fas fa-video' },
     { name: 'Commands', file: 'commands.html', icon: 'fas fa-terminal' },
+    { name: 'Tools', file: 'tools.html', icon: 'fas fa-wrench' },
     { name: 'Stats', file: 'stats.html', icon: 'fas fa-chart-line' },
-    { name: 'Hosting', file: 'Hosting.html', icon: 'fas fa-server' }
+    { name: 'About', file: 'about.html', icon: 'fas fa-info-circle' }
 ];
 
-function loadNavbar(activePageName) {
+function loadNavbar() {
     const container = document.getElementById('navbar-container');
     if(!container) return;
+
+    let currentFile = window.location.pathname.split('/').pop() || 'index.html';
 
     let navHTML = `
     <nav class="navbar">
@@ -24,7 +27,7 @@ function loadNavbar(activePageName) {
         <ul class="nav-links">`;
 
     navPages.forEach(page => {
-        let activeClass = page.name === activePageName ? 'active-tab' : '';
+        let activeClass = (page.file === currentFile) ? 'active-tab' : '';
         navHTML += `<li><a href="${page.file}" class="${activeClass}"><i class="${page.icon}"></i> ${page.name}</a></li>`;
     });
 
@@ -42,13 +45,14 @@ function loadNavbar(activePageName) {
 // 🛠️ AUTO INITIALIZATION
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
+    loadNavbar(); 
     if(document.getElementById('yt-container')) loadYouTubeVideos();
     if(document.getElementById('cmdTable')) loadCommandsFromFile();
     if(document.getElementById('discord-members')) fetchDiscordTeam();
 });
 
 // ==========================================
-// 📄 COMMANDS PARSER (commands.txt)
+// 📄 COMMANDS PARSER
 // ==========================================
 async function loadCommandsFromFile() {
     const table = document.getElementById('cmdTable');
@@ -135,7 +139,7 @@ function searchCommands() {
 }
 
 // ==========================================
-// 📺 YOUTUBE VIDEOS (DDOS PROTECTED)
+// 📺 YOUTUBE VIDEOS 
 // ==========================================
 async function loadYouTubeVideos() {
     const container = document.getElementById('yt-container');
