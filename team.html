@@ -1,15 +1,44 @@
-<div class="glass-panel" style="margin-bottom: 25px;">
-    <h2>Core Team</h2>
-    <div class="team-grid mt-10">
-        <div class="member-card" style="border-left: 3px solid #ed4245;"><img src="ttttttttttttttttttttttttttttt.png"><div><h3 style="color:#fff;">SDGAMER</h3><span class="role-badge" style="color:#ed4245; border-color:#ed4245;">OWNER</span></div></div>
-        <div class="member-card" style="border-left: 3px solid #00d2ff;"><img src="ttttttttttttttttttttttttttttt.png"><div><h3 style="color:#fff;">You</h3><span class="role-badge" style="color:#00d2ff; border-color:#00d2ff;">DEVELOPER</span></div></div>
-        <div class="member-card" style="border-left: 3px solid #00ff88;"><img src="ttttttttttttttttttttttttttttt.png"><div><h3 style="color:#fff;">Deadishere</h3><span class="role-badge" style="color:#00ff88; border-color:#00ff88;">MC DEV</span></div></div>
-        <div class="member-card" style="border-left: 3px solid #b142ff;"><img src="ttttttttttttttttttttttttttttt.png"><div><h3 style="color:#fff;">Miss Riya</h3><span class="role-badge" style="color:#b142ff; border-color:#b142ff;">DB MANAGER</span></div></div>
-        <div class="member-card" style="border-left: 3px solid #f5a623;"><img src="ttttttttttttttttttttttttttttt.png"><div><h3 style="color:#fff;">Kabeer</h3><span class="role-badge" style="color:#f5a623; border-color:#f5a623;">HOST</span></div></div>
-        <div class="member-card" style="border-left: 3px solid #ff4242;"><img src="ttttttttttttttttttttttttttttt.png"><div><h3 style="color:#fff;">Aarma</h3><span class="role-badge" style="color:#ff4242; border-color:#ff4242;">CODE DEV</span></div></div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKA HOST - Team</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <div class="main-container">
+        <div class="glass-panel" style="margin-bottom: 30px;">
+            <h2><i class="fas fa-crown"></i> Core Team & Bots</h2>
+            <div class="team-grid mt-20">
+                <div class="member-card" style="border-color: #ffcc00; box-shadow: 0 0 15px rgba(255,204,0,0.2);">
+                    <img src="ttttttttttttttttttttttttttttt.png" alt="Owner">
+                    <h3 style="color: #fff;">SDGAMER</h3>
+                    <p style="color: #ffcc00; font-weight: bold; font-size: 0.85rem; margin-top: 5px;">👑 Owner & Developer</p>
+                </div>
+                <div class="member-card" style="border-color: #ed4245;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" alt="Admin">
+                    <h3 style="color: #fff;">Miss Riya</h3>
+                    <p style="color: #ed4245; font-weight: bold; font-size: 0.85rem; margin-top: 5px;">🛡️ Server Admin</p>
+                </div>
+                <div class="member-card" style="border-color: #5865F2;">
+                    <img src="https://cdn-icons-png.flaticon.com/512/4712/4712010.png" alt="Bot">
+                    <h3 style="color: #fff;">System Bot</h3>
+                    <p style="color: #5865F2; font-weight: bold; font-size: 0.85rem; margin-top: 5px;">🤖 Auto Manager</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-panel">
+            <h2><i class="fas fa-users"></i> Live Community Members</h2>
+            <div class="team-grid mt-20" id="discord-members"><p>Loading live members...</p></div>
+        </div>
     </div>
-</div>
-<div class="glass-panel">
-    <h3 style="color: #5865F2; margin-bottom: 15px;"><i class="fab fa-discord fa-lg"></i> Live Discord Community</h3>
-    <widgetbot server="1472601008998846576" channel="1472601307520172275" width="100%" height="450" style="border-radius: 8px;"></widgetbot>
-</div>
+
+    <script src="script.js"></script>
+    <script> document.addEventListener("DOMContentLoaded", () => { loadNavbar('Team'); }); </script>
+</body>
+</html>
