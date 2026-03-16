@@ -2,183 +2,52 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>SKA HOSTING - SDGAMER EDITION</title>
+<title>SKA HOST - Hosting Panels</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="style.css?v=6">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
-:root {
-  --primary: #00ffff;
-  --bg-glass: rgba(0, 0, 0, 0.85);
-  --glow: 0 0 15px rgba(0, 255, 255, 0.6);
-}
-body {
-  margin: 0;
-  font-family: 'Consolas', monospace;
-  background: url("beaa776788318ffa9adf475282e18bb5.gif") center/cover fixed no-repeat;
-  color: var(--primary);
-  display: flex;
-  min-height: 100vh;
-}
-.sidebar {
-  width: 70px;
-  background: rgba(0, 0, 0, 0.95);
-  border-right: 2px solid var(--primary);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 30px;
-  position: fixed;
-  height: 100%;
-  z-index: 100;
-}
-.sidebar a { margin-bottom: 30px; transition: 0.3s; }
-.sidebar img { width: 38px; height: 38px; filter: drop-shadow(0 0 5px var(--primary)); }
-.sidebar a:hover { transform: scale(1.2); }
-.main-content {
-  margin-left: 70px;
-  width: calc(100% - 70px);
-  display: flex;
-  flex-direction: column;
-}
-header {
-  text-align: center;
-  padding: 25px;
-  background: var(--bg-glass);
-  box-shadow: 0 4px 20px cyan;
-}
+/* Hosting Page Specific Styles (Fixed for Top Navbar) */
 .search { text-align: center; padding: 20px; }
-.search input {
-  width: 85%;
-  max-width: 600px;
-  padding: 15px;
-  border-radius: 12px;
-  border: 1px solid var(--primary);
-  background: #000;
-  color: #fff;
-  font-size: 16px;
-  box-shadow: var(--glow);
-}
-.grid {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 15px;
-  padding: 20px;
-}
-.card {
-  background: var(--bg-glass);
-  padding: 18px 25px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 750px;
-  cursor: pointer;
-  border-left: 6px solid var(--primary);
-  transition: 0.3s;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 18px;
-  font-weight: bold;
-}
-.card:hover {
-  background: rgba(0, 255, 255, 0.15);
-  transform: translateX(10px);
-  box-shadow: var(--glow);
-}
-#output-section {
-  width: 90%;
-  max-width: 750px;
-  margin: 20px auto;
-}
-#output {
-  background: rgba(0,0,0,0.95);
-  padding: 25px;
-  border-radius: 15px;
-  border: 2px solid var(--primary);
-  white-space: pre-wrap;
-  min-height: 80px;
-  box-shadow: inset 0 0 20px rgba(0,255,255,0.1);
-}
-.line {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px; 
-  padding-bottom: 10px;
-  border-bottom: 1px solid rgba(0, 255, 255, 0.1);
-}
-.command-text {
-  font-size: 19px; 
-  color: #fff;
-  word-break: break-all;
-  padding-right: 20px;
-  line-height: 1.5;
-}
-.copy {
-  background: var(--primary);
-  border: none;
-  border-radius: 6px;
-  padding: 6px 14px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 12px;
-  flex-shrink: 0;
-  transition: 0.2s;
-}
+.search input { width: 85%; max-width: 600px; padding: 15px; border-radius: 12px; border: 1px solid #00d2ff; background: rgba(0,0,0,0.6); color: #fff; font-size: 16px; outline: none; box-shadow: 0 0 15px rgba(0, 255, 255, 0.2); }
+.grid { display: flex; flex-direction: column; align-items: center; gap: 15px; padding: 20px; }
+.card { background: rgba(20, 20, 25, 0.85); backdrop-filter: blur(12px); padding: 18px 25px; border-radius: 12px; width: 90%; max-width: 750px; cursor: pointer; border-left: 6px solid #00d2ff; transition: 0.3s; display: flex; justify-content: space-between; align-items: center; font-size: 18px; font-weight: bold; border-top: 1px solid rgba(255,255,255,0.08); border-right: 1px solid rgba(255,255,255,0.08); border-bottom: 1px solid rgba(255,255,255,0.08); }
+.card:hover { background: rgba(0, 210, 255, 0.15); transform: translateX(10px); }
+#output-section { width: 90%; max-width: 750px; margin: 20px auto; }
+#output { background: rgba(0,0,0,0.95); padding: 25px; border-radius: 15px; border: 2px solid #00d2ff; white-space: pre-wrap; min-height: 80px; box-shadow: inset 0 0 20px rgba(0,210,255,0.1); }
+.line { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 1px solid rgba(0, 210, 255, 0.1); }
+.command-text { font-size: 19px; color: #fff; word-break: break-all; padding-right: 20px; line-height: 1.5; font-family: monospace; }
+.copy { background: #00d2ff; border: none; border-radius: 6px; padding: 6px 14px; cursor: pointer; font-weight: bold; font-size: 12px; transition: 0.2s; color: #000; }
 .copy:active { transform: scale(0.9); }
-.guide-btn {
-  color: #000;
-  background: var(--primary);
-  padding: 10px 25px;
-  border-radius: 5px;
-  text-decoration: none;
-  display: inline-block;
-  margin-top: 25px;
-  font-weight: bold;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-}
-footer {
-  text-align: center;
-  padding: 25px;
-  background: var(--bg-glass);
-  font-size: 14px;
-  border-top: 1px solid var(--primary);
-  margin-top: auto;
-}
-@media (max-width: 600px) {
-  .main-content { margin-left: 60px; width: calc(100% - 60px); }
-  .sidebar { width: 60px; }
-  .command-text { font-size: 16px; }
-}
+.guide-btn { color: #000; background: #00d2ff; padding: 10px 25px; border-radius: 5px; text-decoration: none; display: inline-block; margin-top: 25px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+@media (max-width: 600px) { .command-text { font-size: 14px; } .card { font-size: 15px; } }
 </style>
 </head>
 <body>
-<div class="sidebar">
-  <a href="index.html">
-    <img src="https://cdn-icons-png.flaticon.com/512/25/25694.png" alt="Home" style="filter: invert(1);">
-  </a>
-  <a href="https://www.youtube.com/@skahosting" target="_blank">
-    <img src="https://cdn-icons-png.flaticon.com/512/1384/1384060.png" alt="YouTube">
-  </a>
-  <a href="https://discord.gg/UqfbtuURca" target="_blank">
-    <img src="https://cdn-icons-png.flaticon.com/512/3670/3670157.png" alt="Discord">
-  </a>
+<div id="navbar-container"></div>
+
+<div class="main-container">
+  <section class="active-section">
+      <div class="page-header">
+          <div class="ph-left">
+              <h2>Hosting Panels</h2>
+              <p>Select a panel to execute installation commands automatically.</p>
+          </div>
+      </div>
+
+      <div class="search">
+        <input id="search" placeholder="🔍 Search Panels..." onkeyup="filterCards()">
+      </div>
+
+      <div class="grid" id="cards"></div>
+
+      <div id="output-section">
+        <div id="output" style="color: #aaa; text-align: center;">Choose a panel from the list to display commands...</div>
+      </div>
+  </section>
 </div>
-<div class="main-content">
-  <header>
-    <h1>SKA HOSTING NETWORK</h1>
-  </header>
-  <div class="search">
-    <input id="search" placeholder="🔍 Search Panels..." onkeyup="filterCards()">
-  </div>
-  <div class="grid" id="cards"></div>
-  <div id="output-section">
-    <div id="output">Choose a panel to display commands...</div>
-  </div>
-  <footer>
-    Credits: SDGAMER • Jishnu Bhi • Hoping Boyz • Coding Hub • Myhim Bhi
-  </footer>
-</div>
+
+<script src="script.js?v=6"></script>
 <script>
 const typingSpeed = 15;
 const panels = [
@@ -205,7 +74,9 @@ const panels = [
 { name: "Draco Panel", text:`                  Install the jtg-panel\n\n1) sudo su\n\n2) bash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/Vps/refs/heads/main/jishnu)\n------------------------------------------------------\n\n                       Install the node\n\n1) bash <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/Vps/refs/heads/main/node) \n\n2) cd node\n\n3) paste your configure of node\n\n4) node . \n\n------------------------------------------------------\n\n         Again start your panel\n\n1) cd panel\n\n2) node .\n\n------------------------------------------------------\n   Again start node\n\n1) create a new terminal\n\n2) cd node\n\n3) node . \n`, link: "https://youtu.be/H_p9r-j_xv0" },
 { name: "24/7 Making Code (IDX,codesandbox)", text: `\n    python3 <(curl -s https://raw.githubusercontent.com/JishnuTheGamer/24-7/refs/heads/main/24)\n    \n    python3\n`, noLink: true }
 ];
+
 const cardsBox = document.getElementById("cards");
+
 function init() {
   panels.forEach(p => {
     const d = document.createElement("div");
@@ -215,23 +86,26 @@ function init() {
     cardsBox.appendChild(d);
   });
 }
+
 function showPanel(data) {
   const out = document.getElementById("output");
   out.innerHTML = "";
   let lines = data.text.split("\n");
   let li = 0;
+
   function type() {
     if (li >= lines.length) {
-      if (!data.noLink && data.link) {
+      if (!data.noLink && (data.link || data.Link)) {
         const btn = document.createElement("a");
         btn.className = "guide-btn";
-        btn.href = data.link;
+        btn.href = data.link || data.Link;
         btn.target = "_blank";
         btn.innerText = "Guide Video"; 
         out.appendChild(btn);
       }
       return;
     }
+
     const row = document.createElement("div");
     row.className = "line";
     const span = document.createElement("span");
@@ -239,16 +113,20 @@ function showPanel(data) {
     const copyBtn = document.createElement("button");
     copyBtn.className = "copy";
     copyBtn.innerText = "COPY";
+    
     const currentLineText = lines[li];
     copyBtn.onclick = () => {
       navigator.clipboard.writeText(currentLineText);
       copyBtn.innerText = "DONE!";
       setTimeout(() => copyBtn.innerText = "COPY", 1200);
     };
+
     if (currentLineText.trim() === "") copyBtn.style.display = "none";
+    
     row.appendChild(span);
     row.appendChild(copyBtn);
     out.appendChild(row);
+    
     let charIdx = 0;
     function typeChar() {
       if (charIdx < currentLineText.length) {
@@ -263,12 +141,14 @@ function showPanel(data) {
   }
   type();
 }
+
 function filterCards() {
   const v = document.getElementById("search").value.toLowerCase();
   document.querySelectorAll(".card").forEach(c => {
     c.style.display = c.innerText.toLowerCase().includes(v) ? "flex" : "none";
   });
 }
+
 init();
 </script>
 </body>
