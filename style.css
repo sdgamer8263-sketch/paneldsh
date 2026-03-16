@@ -7,15 +7,56 @@ body { background: url('gta-6-sunset-highway-wallpapers-usagif.gif') no-repeat c
 .glass-panel { background: rgba(20, 20, 25, 0.85); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 12px; padding: 25px; box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); }
 .text-center { text-align: center; } .mt-10 { margin-top: 10px; } .mt-20 { margin-top: 20px; }
 
+/* NAVBAR & NEW LOGO/PROFILE DESIGN */
 .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 40px; background: rgba(10, 10, 15, 0.95); border-bottom: 1px solid rgba(255, 255, 255, 0.05); position: sticky; top: 0; z-index: 100; }
-.logo { display: flex; align-items: center; gap: 12px; font-weight: bold; font-size: 1.3rem; letter-spacing: 1px;}
+.logo { display: flex; align-items: center; gap: 12px; }
 .logo-img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid #00d2ff; }
+.logo-text { display: flex; flex-direction: column; }
+.main-title { font-weight: bold; font-size: 1.2rem; letter-spacing: 1px; color: #fff; }
+.sub-title { font-size: 0.7rem; color: #888; letter-spacing: 2px; text-transform: uppercase; }
+
 .nav-links { list-style: none; display: flex; gap: 15px; }
 .nav-links a { color: #bbb; text-decoration: none; font-size: 0.95rem; font-weight: 500; padding: 10px 15px; border-radius: 8px; transition: 0.3s; display: flex; align-items: center; gap: 8px; cursor: pointer; }
 .nav-links a:hover, .active-tab { color: #fff !important; background: rgba(255, 255, 255, 0.1); }
-.user-profile img { width: 40px; height: 40px; border-radius: 50%; cursor: pointer; }
-.main-container { padding: 40px; max-width: 1400px; margin: 0 auto; }
 
+.user-profile { display: flex; align-items: center; gap: 12px; cursor: pointer; padding: 5px 10px; border-radius: 8px; transition: 0.3s; }
+.user-profile:hover { background: rgba(255,255,255,0.05); }
+.user-text { display: flex; flex-direction: column; text-align: right; }
+.user-name { font-weight: bold; font-size: 0.95rem; color: #fff; }
+.user-role { font-size: 0.75rem; color: #aaa; }
+.user-profile img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid transparent; transition: 0.3s; }
+.user-profile:hover img { border-color: #00d2ff; }
+
+.main-container { padding: 20px 40px 40px 40px; max-width: 1400px; margin: 0 auto; }
+
+/* PAGE HEADER (Dashboard, Welcome Back, Online Badge) */
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.ph-left h2 { font-size: 1.8rem; margin-bottom: 5px; color: #fff; }
+.ph-left p { color: #aaa; font-size: 0.9rem; }
+.online-badge { background: rgba(0, 255, 136, 0.1); border: 1px solid rgba(0, 255, 136, 0.3); color: #00ff88; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; display: flex; align-items: center; gap: 8px; letter-spacing: 1px; }
+.online-badge .dot { width: 8px; height: 8px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 8px #00ff88; animation: pulse 1.5s infinite; }
+@keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+/* PROFILE MODAL (POPUP) */
+.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 1000; display: flex; justify-content: center; align-items: center; }
+.modal-content { width: 350px; background: #111216; border: 1px solid #333; border-radius: 15px; overflow: hidden; box-shadow: 0 10px 40px rgba(0,0,0,0.8); animation: popIn 0.3s ease; }
+@keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+.modal-header { height: 100px; background: linear-gradient(45deg, #0044ff, #00d2ff); position: relative; }
+.modal-avatar { width: 80px; height: 80px; border-radius: 50%; border: 4px solid #111216; position: absolute; bottom: -40px; left: 20px; background: #000; }
+.close-btn { position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.5); border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; cursor: pointer; transition: 0.3s; display: flex; justify-content: center; align-items: center; }
+.close-btn:hover { background: #ff3232; }
+.modal-body { padding: 50px 20px 20px 20px; }
+.modal-body h2 { margin: 0; font-size: 1.5rem; text-align: left; color: #fff; }
+.status-text { color: #aaa; font-size: 0.9rem; text-align: left; margin-bottom: 20px; display: flex; align-items: center; gap: 5px; }
+.status-text .dot { width: 10px; height: 10px; background: gray; border-radius: 50%; display: inline-block; }
+.info-box { background: rgba(255,255,255,0.03); padding: 15px; border-radius: 8px; text-align: left; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.05); }
+.info-box .label { font-size: 0.7rem; color: #888; font-weight: bold; letter-spacing: 1px; margin-bottom: 5px; }
+.info-box .value { font-size: 0.95rem; color: #fff; display: flex; align-items: center; gap: 8px; }
+.grid-2-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.full-btn { width: 100%; padding: 12px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); color: #fff; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; margin-top: 15px; }
+.full-btn:hover { background: rgba(255,255,255,0.1); }
+
+/* BAKI SOB AGER DESIGN */
 .hero-box { text-align: center; margin-bottom: 50px; }
 .hero-box h4 { color: #00d2ff; letter-spacing: 3px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase;}
 .hero-box h1 { font-size: 4rem; margin: 15px 0; font-weight: 800;}
@@ -24,7 +65,6 @@ body { background: url('gta-6-sunset-highway-wallpapers-usagif.gif') no-repeat c
 .cmd-box code { color: #00ffcc; margin-right: 25px; font-family: monospace; font-size: 1.15rem; }
 .copy-btn { background: #fff; color: #000; border: none; padding: 10px 20px; cursor: pointer; font-weight: 700; border-radius: 6px; transition: 0.3s;}
 .copy-btn:hover { background: #00d2ff; color: #fff;}
-
 .dashboard-split { display: grid; grid-template-columns: 2.2fr 1fr; gap: 25px; }
 .social-card { display: flex; align-items: center; gap: 20px; padding: 25px; text-decoration: none; color: white; transition: 0.3s; }
 .social-card.yt:hover { border-left: 5px solid red; transform: translateY(-3px);}
@@ -32,34 +72,28 @@ body { background: url('gta-6-sunset-highway-wallpapers-usagif.gif') no-repeat c
 .stat-item .label { display: block; color: #888; font-size: 0.9rem; margin-bottom: 8px;}
 .stat-item .value { font-size: 1.8rem; font-weight: 800; }
 .success { color: #00ff88; }
-
 .tools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
 .tool-card { padding: 30px 20px; }
 .search-bar { width: 100%; padding: 12px; border-radius: 6px; border: 1px solid #333; background: rgba(0,0,0,0.5); color: #fff; font-size: 1rem; outline: none;}
 .tool-btn { background: #00d2ff; color: #000; width: 100%; border: none; padding: 12px; margin-top: 15px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.3s;}
 .tool-btn:hover { background: #0099cc; color: white;}
 .tool-result { margin-top: 15px; font-size: 0.9rem; color: #00ffcc; min-height: 20px; word-wrap: break-word;}
-
 .team-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
 .member-card { background: rgba(0,0,0,0.4); padding: 20px; border-radius: 10px; text-align: center; border: 1px solid rgba(255,255,255,0.05);}
 .member-card img { width: 80px; height: 80px; border-radius: 50%; margin-bottom: 15px; border: 2px solid #5865F2;}
 .member-card .status-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; margin-right: 5px;}
 .status-online { background: #3ba55c; } .status-idle { background: #faa61a; } .status-dnd { background: #ed4245; }
-
 .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; }
-
 .category-filters { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; }
 .category-filters::-webkit-scrollbar { height: 4px; }
 .filter-btn { background: rgba(255, 255, 255, 0.05); color: #aaa; border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem; white-space: nowrap; transition: 0.3s; }
 .filter-btn:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
 .filter-btn.active { background: #00d2ff; color: #000; border-color: #00d2ff; }
-
 .table-container { overflow-x: auto; max-height: 500px; }
 .cmd-table { width: 100%; border-collapse: collapse; }
 .cmd-table th, .cmd-table td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .cmd-table th { background: rgba(0,0,0,0.8); position: sticky; top: 0; z-index: 10; font-size: 0.9rem; color: #888;}
 .badge { padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; display: inline-block; width: 100px; text-align: center;}
-
 .linux { background: rgba(255, 165, 0, 0.2); color: orange; border: 1px solid rgba(255, 165, 0, 0.4);}
 .docker { background: rgba(0, 150, 255, 0.2); color: #0096ff; border: 1px solid rgba(0, 150, 255, 0.4);}
 .git { background: rgba(255, 50, 50, 0.2); color: #ff3232; border: 1px solid rgba(255, 50, 50, 0.4);}
@@ -70,39 +104,22 @@ body { background: url('gta-6-sunset-highway-wallpapers-usagif.gif') no-repeat c
 .useful { background: rgba(144, 238, 144, 0.2); color: #90ee90; border: 1px solid rgba(144, 238, 144, 0.4);}
 .review { background: rgba(255, 105, 180, 0.2); color: #ff69b4; border: 1px solid rgba(255, 105, 180, 0.4);}
 .suggestion { background: rgba(255, 215, 0, 0.2); color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.4);}
-
 .cmd-table code { background: rgba(0,0,0,0.8); padding: 6px 12px; border-radius: 6px; color: #00ffcc; font-family: monospace;}
 .tbl-copy-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #aaa; cursor: pointer; padding: 8px 12px; border-radius: 6px; transition: 0.3s; font-size: 1rem; }
 .tbl-copy-btn:hover { background: rgba(0, 210, 255, 0.2); color: #00d2ff; border-color: #00d2ff; }
-
 .stats-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px; }
 .stat-box { background: rgba(0,0,0,0.5); padding: 30px; border-radius: 12px;}
 .stat-box h2 { font-size: 3rem; color: #00d2ff; margin-top: 15px; font-weight: 800;}
 
-/* ==========================================
-   🛠️ FIXED MOBILE RESPONSIVENESS (100% WORKS)
-   ========================================== */
 @media(max-width: 992px) {
     .dashboard-split { grid-template-columns: 1fr; }
     .hero-box h1 { font-size: 2.5rem; }
     .tools-grid, .stats-cards { grid-template-columns: 1fr; }
-    
-    /* Ekhane Navbar ar logo fix kora hoyeche */
     .navbar { flex-direction: column; padding: 15px 10px; gap: 15px; }
     .logo { width: 100%; justify-content: center; margin-bottom: 5px; }
-    
-    /* Mobile-e menu ta scroll hobe */
-    .nav-links { 
-        display: flex !important; 
-        flex-direction: row; 
-        width: 100%; 
-        overflow-x: auto; 
-        justify-content: flex-start; 
-        padding-bottom: 10px; 
-        -webkit-overflow-scrolling: touch; 
-    }
+    .nav-links { display: flex !important; flex-direction: row; width: 100%; overflow-x: auto; justify-content: flex-start; padding-bottom: 10px; -webkit-overflow-scrolling: touch; }
     .nav-links li { flex: 0 0 auto; }
     .nav-links a { font-size: 0.9rem; padding: 10px 15px; }
-    
     .user-profile { display: none !important; }
-}
+    .page-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+                }
