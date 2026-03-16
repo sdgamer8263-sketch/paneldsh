@@ -17,6 +17,8 @@ function loadNavbar() {
     if(!container) return;
 
     let currentFile = window.location.pathname.split('/').pop() || 'index.html';
+    // Handle github pages empty path issue
+    if (currentFile === '' || currentFile === 'paneldash') currentFile = 'index.html';
 
     let navHTML = `
     <nav class="navbar">
@@ -42,14 +44,21 @@ function loadNavbar() {
 }
 
 // ==========================================
-// 🛠️ AUTO INITIALIZATION
+// 🛠️ SAFE AUTO INITIALIZATION
 // ==========================================
-document.addEventListener("DOMContentLoaded", () => {
+function initAll() {
     loadNavbar(); 
     if(document.getElementById('yt-container')) loadYouTubeVideos();
     if(document.getElementById('cmdTable')) loadCommandsFromFile();
     if(document.getElementById('discord-members')) fetchDiscordTeam();
-});
+}
+
+// Run safely regardless of load time
+if (document.readyState === 'loading') {
+    document.addEventListener("DOMContentLoaded", initAll);
+} else {
+    initAll();
+}
 
 // ==========================================
 // 📄 COMMANDS PARSER
