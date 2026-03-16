@@ -48,19 +48,18 @@ body { background: url('gta-6-sunset-highway-wallpapers-usagif.gif') no-repeat c
 
 .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 25px; }
 
-/* Category Filters Header */
 .category-filters { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 10px; }
 .category-filters::-webkit-scrollbar { height: 4px; }
 .filter-btn { background: rgba(255, 255, 255, 0.05); color: #aaa; border: 1px solid rgba(255, 255, 255, 0.1); padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 0.85rem; white-space: nowrap; transition: 0.3s; }
 .filter-btn:hover { background: rgba(255, 255, 255, 0.1); color: #fff; }
 .filter-btn.active { background: #00d2ff; color: #000; border-color: #00d2ff; }
 
-/* Table Styles */
 .table-container { overflow-x: auto; max-height: 500px; }
 .cmd-table { width: 100%; border-collapse: collapse; }
 .cmd-table th, .cmd-table td { padding: 15px; text-align: left; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .cmd-table th { background: rgba(0,0,0,0.8); position: sticky; top: 0; z-index: 10; font-size: 0.9rem; color: #888;}
 .badge { padding: 5px 10px; border-radius: 4px; font-size: 0.8rem; font-weight: bold; display: inline-block; width: 100px; text-align: center;}
+
 .linux { background: rgba(255, 165, 0, 0.2); color: orange; border: 1px solid rgba(255, 165, 0, 0.4);}
 .docker { background: rgba(0, 150, 255, 0.2); color: #0096ff; border: 1px solid rgba(0, 150, 255, 0.4);}
 .git { background: rgba(255, 50, 50, 0.2); color: #ff3232; border: 1px solid rgba(255, 50, 50, 0.4);}
@@ -71,8 +70,8 @@ body { background: url('gta-6-sunset-highway-wallpapers-usagif.gif') no-repeat c
 .useful { background: rgba(144, 238, 144, 0.2); color: #90ee90; border: 1px solid rgba(144, 238, 144, 0.4);}
 .review { background: rgba(255, 105, 180, 0.2); color: #ff69b4; border: 1px solid rgba(255, 105, 180, 0.4);}
 .suggestion { background: rgba(255, 215, 0, 0.2); color: #ffd700; border: 1px solid rgba(255, 215, 0, 0.4);}
-.cmd-table code { background: rgba(0,0,0,0.8); padding: 6px 12px; border-radius: 6px; color: #00ffcc; font-family: monospace;}
 
+.cmd-table code { background: rgba(0,0,0,0.8); padding: 6px 12px; border-radius: 6px; color: #00ffcc; font-family: monospace;}
 .tbl-copy-btn { background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); color: #aaa; cursor: pointer; padding: 8px 12px; border-radius: 6px; transition: 0.3s; font-size: 1rem; }
 .tbl-copy-btn:hover { background: rgba(0, 210, 255, 0.2); color: #00d2ff; border-color: #00d2ff; }
 
