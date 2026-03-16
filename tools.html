@@ -4,16 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SKA HOST - Tools</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=8">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <div id="navbar-container"></div>
+
     <div class="main-container">
         <section class="active-section">
             <div class="glass-panel">
                 <h2><i class="fas fa-wrench"></i> Server Tools</h2>
                 <div class="tools-grid mt-20">
+                    
                     <div class="tool-card glass-panel text-center">
                         <h3><i class="fas fa-gamepad" style="color:#00ff88;"></i> Minecraft Status</h3>
                         <input type="text" id="mc-ip" placeholder="Server IP (mc.hypixel.net)" class="search-bar mt-10">
@@ -21,23 +23,26 @@
                         <button class="tool-btn" onclick="checkMCStatus()">Check Details</button>
                         <div id="mc-result" class="tool-result" style="text-align: left; background: rgba(0,0,0,0.4); padding: 10px; border-radius: 6px; display: none;"></div>
                     </div>
+
                     <div class="tool-card glass-panel text-center">
                         <h3><i class="fas fa-file-code" style="color:#00d2ff;"></i> Paper Latest Build</h3>
                         <input type="text" id="paper-ver" placeholder="e.g., 1.20.4" class="search-bar mt-10">
                         <button class="tool-btn" onclick="checkPaperBuild()">Get Build</button>
                         <div id="paper-result" class="tool-result"></div>
                     </div>
+
                     <div class="tool-card glass-panel text-center">
                         <h3><i class="fas fa-network-wired" style="color:#ff3232;"></i> Web Ping Test</h3>
                         <input type="text" id="ping-ip" placeholder="https://google.com" class="search-bar mt-10">
                         <button class="tool-btn" onclick="runPingTest()">Ping</button>
                         <div id="ping-result" class="tool-result"></div>
                     </div>
+
                 </div>
             </div>
         </section>
     </div>
-    <script src="script.js"></script>
+
+    <script src="script.js?v=8"></script>
 </body>
 </html>
-
