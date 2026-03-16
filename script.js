@@ -4,9 +4,8 @@
 const navPages = [
     { name: 'Home', file: 'index.html', icon: 'fas fa-home' },
     { name: 'Team', file: 'team.html', icon: 'fas fa-users' },
-    // FIXED: EXACT MATCH FOR GITHUB PAGES (Capital H and T)
-    { name: 'Hosting', file: 'Hosting.html', icon: 'fas fa-server' },
-    { name: 'Tutorials', file: 'Tutorials.html', icon: 'fas fa-video' },
+    { name: 'Hosting', file: 'hosting.html', icon: 'fas fa-server' },
+    { name: 'Tutorials', file: 'tutorials.html', icon: 'fas fa-video' },
     { name: 'Commands', file: 'commands.html', icon: 'fas fa-terminal' },
     { name: 'Tools', file: 'tools.html', icon: 'fas fa-wrench' },
     { name: 'Stats', file: 'stats.html', icon: 'fas fa-chart-line' },
@@ -21,12 +20,13 @@ function forceLoadNavbar() {
     let activePage = navPages.find(p => currentPath.includes(p.file.toLowerCase()));
     if(!activePage) activePage = navPages[0];
 
+    // ✅ FIXED: Name changed to SKA HOST
     let navHTML = `
     <nav class="navbar">
         <div class="logo">
             <img src="ttttttttttttttttttttttttttttt.png" alt="Logo" class="logo-img">
             <div class="logo-text">
-                <span class="main-title">Coding Hub</span>
+                <span class="main-title">SKA HOST</span>
                 <span class="sub-title">DASHBOARD</span>
             </div>
         </div>
@@ -52,6 +52,9 @@ function forceLoadNavbar() {
     createProfileModal();
 }
 
+// ==========================================
+// 👤 PROFILE MODAL LOGIC (SKA HOST)
+// ==========================================
 function createProfileModal() {
     if(document.getElementById('profileModal')) return;
     const modalHTML = `
@@ -68,6 +71,16 @@ function createProfileModal() {
                     <p class="label">PLAYING</p>
                     <p class="value"><i class="fas fa-code" style="color:#00d2ff;"></i> VS Code</p>
                 </div>
+                <div class="grid-2-col mt-10">
+                    <div class="info-box">
+                        <p class="label">USER ID</p>
+                        <p class="value" style="font-family:monospace; font-size:0.8rem;">123456789</p>
+                    </div>
+                    <div class="info-box">
+                        <p class="label">JOINED</p>
+                        <p class="value" style="font-size:0.8rem;">SKA HOST</p>
+                    </div>
+                </div>
                 <button class="full-btn" onclick="toggleProfileModal()">Close Profile</button>
             </div>
         </div>
@@ -79,7 +92,6 @@ function toggleProfileModal() {
     const modal = document.getElementById('profileModal');
     if(modal) modal.style.display = modal.style.display === 'none' ? 'flex' : 'none';
 }
-
 function closeProfileModal(e) {
     if(e.target.id === 'profileModal') toggleProfileModal();
 }
@@ -205,7 +217,7 @@ async function loadYouTubeVideos() {
 }
 
 // ==========================================
-// 🤖 PURE REAL DISCORD MEMBERS ONLY
+// 🤖 REAL DISCORD MEMBERS ONLY
 // ==========================================
 async function fetchDiscordTeam() {
     const container = document.getElementById('real-discord-members');
