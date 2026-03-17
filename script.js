@@ -7,6 +7,7 @@ const navPages = [
     { name: 'Hosting', file: 'hosting.html', icon: 'fas fa-server' },
     { name: 'Tutorials', file: 'tutorials.html', icon: 'fas fa-video' },
     { name: 'Commands', file: 'commands.html', icon: 'fas fa-terminal' },
+    { name: 'Codes', file: 'code.html', icon: 'fas fa-file-code' }, // ✅ NOTUN MENU ADD KORA HOLO
     { name: 'Tools', file: 'tools.html', icon: 'fas fa-wrench' },
     { name: 'Stats', file: 'stats.html', icon: 'fas fa-chart-line' },
     { name: 'About', file: 'about.html', icon: 'fas fa-info-circle' }
@@ -17,11 +18,7 @@ function forceLoadNavbar() {
     if(!container) return;
 
     let currentPath = window.location.pathname.toLowerCase();
-    
-    // Safely figure out the current page
     let activePage = navPages.find(p => currentPath.endsWith(p.file.toLowerCase()));
-    
-    // If it's just the root domain, default to index.html
     if(!activePage || currentPath.endsWith('/') || currentPath.trim() === '') {
         activePage = navPages[0]; 
     }
@@ -100,12 +97,83 @@ function closeProfileModal(e) {
 
 forceLoadNavbar();
 
+// ==========================================
+// 🛠️ PAGE LOADER
+// ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     if(!document.querySelector('.navbar')) forceLoadNavbar();
     if(document.getElementById('yt-container')) loadYouTubeVideos();
     if(document.getElementById('cmdTable')) loadCommandsFromFile();
     if(document.getElementById('real-discord-members')) fetchDiscordTeam();
+    if(document.getElementById('code-container')) loadCodeFiles(); // ✅ NEW: Calls the TXT loader
 });
+
+// ==========================================
+// 📄 TEXT & CODES LOADER (GITHUB API) - NEW!
+// ==========================================
+async function loadCodeFiles() {
+    const container = document.getElementById('code-container');
+    if(!container) return;
+
+    try {
+        // GitHub API diye apnar repository theke file er list fetch korche
+        const res = await fetch('https://api.github.com/repos/sdgamer8263-sketch/SDGAMER.HOST/contents/');
+        const files = await res.json();
+
+        // Shudhu .txt file gulo bachai kora (commands.txt bad diye jate ota mix na hoy)
+        const txtFiles = files.filter(f => f.name.endsWith('.txt') && f.name !== 'commands.txt');
+
+        if(txtFiles.length === 0) {
+            container.innerHTML = '<p style="color: #aaa; text-align: center;">No text files found in the repository.</p>';
+            return;
+        }
+
+        container.innerHTML = ''; // Loading text moche fela
+
+        for(let file of txtFiles) {
+            // Protita txt file er content kora
+            const textRes = await fetch(file.download_url);
+            const textContent = await textRes.text();
+
+            // .txt kete diye boro hater (Uppercase) kora: "jk.txt" -> "JK"
+            const displayName = file.name.replace('.txt', '').toUpperCase();
+            const safeContent = textContent.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+            const safeId = file.name.replace('.', '-'); // ID toiri kora
+
+            const fileHTML = `
+            <div class="glass-panel" style="margin-bottom: 25px; padding: 20px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 15px;">
+                    <h3 style="color: #00d2ff; font-weight: bold;"><i class="fas fa-file-alt"></i> ${displayName}</h3>
+                    <button class="copy-btn" onclick="copyDynamicText(this, 'txt-${safeId}')" style="padding: 8px 15px; font-size: 0.85rem; border-radius: 6px;">
+                        <i class="fas fa-copy"></i> COPY
+                    </button>
+                </div>
+                <pre style="background: rgba(0,0,0,0.6); padding: 15px; border-radius: 8px; overflow-x: auto; color: #00ffcc; font-family: monospace; white-space: pre-wrap; font-size: 0.95rem; line-height: 1.5;" id="txt-${safeId}">${safeContent}</pre>
+            </div>`;
+
+            container.innerHTML += fileHTML;
+        }
+    } catch(e) {
+        container.innerHTML = '<p style="color: #ff3232; text-align: center;"><i class="fas fa-exclamation-circle"></i> Error loading files. GitHub API limit reached or network error.</p>';
+    }
+}
+
+// ✅ Dynamic Copy Button for the TXT files
+function copyDynamicText(btn, elementId) {
+    const textElement = document.getElementById(elementId);
+    if(textElement) {
+        navigator.clipboard.writeText(textElement.innerText).then(() => {
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-check"></i> COPIED!';
+            btn.style.background = '#00ff88';
+            btn.style.color = '#000';
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = '#fff';
+            }, 2000);
+        });
+    }
+}
 
 // ==========================================
 // 📄 COMMANDS PARSER
