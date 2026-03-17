@@ -7,7 +7,7 @@ const navPages = [
     { name: 'Hosting', file: 'hosting.html', icon: 'fas fa-server' },
     { name: 'Tutorials', file: 'tutorials.html', icon: 'fas fa-video' },
     { name: 'Commands', file: 'commands.html', icon: 'fas fa-terminal' },
-    { name: 'Codes', file: 'code.html', icon: 'fas fa-file-code' }, // ✅ Notun Code Menu Add Kora Holo
+    { name: 'Codes', file: 'code.html', icon: 'fas fa-file-code' }, 
     { name: 'Tools', file: 'tools.html', icon: 'fas fa-wrench' },
     { name: 'Stats', file: 'stats.html', icon: 'fas fa-chart-line' },
     { name: 'About', file: 'about.html', icon: 'fas fa-info-circle' }
@@ -105,45 +105,43 @@ document.addEventListener("DOMContentLoaded", () => {
     if(document.getElementById('yt-container')) loadYouTubeVideos();
     if(document.getElementById('cmdTable')) loadCommandsFromFile();
     if(document.getElementById('real-discord-members')) fetchDiscordTeam();
-    if(document.getElementById('code-container')) loadGitHubCodes(); // ✅ Code fetcher call kora holo
+    if(document.getElementById('code-container')) loadGitHubCodes();
 });
 
 // ==========================================
-// 📄 GITHUB .TXT FILE LOADER (NEW)
+// 📄 CODES PAGE LOADER - ONLY .text FILES
 // ==========================================
 async function loadGitHubCodes() {
     const container = document.getElementById('code-container');
     if(!container) return;
 
     try {
-        const timestamp = new Date().getTime(); // Cache bust
-        // ✅ Apnar ashol GitHub repository link:
-        const res = await fetch(`https://api.github.com/repos/sdgamer8263-sketch/SDGAMER.HOST/contents/?t=${timestamp}`);
+        const timestamp = new Date().getTime(); 
+        const res = await fetch(`https://api.github.com/repos/sdgamer8263-sketch/paneldsh/contents/?t=${timestamp}`);
         
-        if (!res.ok) throw new Error("GitHub Theke Data Aseni.");
+        if (!res.ok) throw new Error("GitHub API theke data asheni.");
         const files = await res.json();
 
-        // Shudhu .txt file filter kora hocche (commands.txt bad diye)
-        const txtFiles = files.filter(f => f.name.toLowerCase().endsWith('.txt') && f.name.toLowerCase() !== 'commands.txt');
+        // ✅ FIXED: Shudhu .text file allow korbe. Kono .txt allow korbe na.
+        const textFiles = files.filter(f => f.name.toLowerCase().endsWith('.text'));
 
-        if(txtFiles.length === 0) {
+        if(textFiles.length === 0) {
             container.innerHTML = `
             <div class="glass-panel text-center" style="padding: 30px;">
-                <p style="color: #aaa;"><i class="fas fa-folder-open fa-2x" style="color: #555; margin-bottom: 10px;"></i><br>Kono notun .txt file paoa jayni. GitHub-e file upload korun.</p>
+                <p style="color: #aaa;"><i class="fas fa-folder-open fa-2x" style="color: #555; margin-bottom: 10px;"></i><br>Kono .text file paoa jayni. GitHub-e file upload korun (e.g. lapsus.text).</p>
             </div>`;
             return;
         }
 
-        container.innerHTML = ''; // Loading text clear
+        container.innerHTML = ''; 
 
-        for(let file of txtFiles) {
+        for(let file of textFiles) {
             const textRes = await fetch(`${file.download_url}?t=${timestamp}`);
             const textContent = await textRes.text();
 
-            // Format Name: "jk.txt" -> "JK"
-            const displayName = file.name.replace(/\.txt$/i, '').toUpperCase();
+            // Format Name: "lapsus.text" -> "LAPSUS"
+            const displayName = file.name.replace(/\.text$/i, '').toUpperCase();
             
-            // XSS Security
             const safeContent = textContent.replace(/</g, "&lt;").replace(/>/g, "&gt;");
             const safeId = file.name.replace(/\./g, '-');
 
@@ -163,7 +161,7 @@ async function loadGitHubCodes() {
     } catch(e) {
         container.innerHTML = `
         <div class="glass-panel text-center" style="padding: 30px;">
-            <p style="color: #ff3232; font-weight: bold;"><i class="fas fa-exclamation-circle"></i> Error loading files. GitHub limits reached.</p>
+            <p style="color: #ff3232; font-weight: bold;"><i class="fas fa-exclamation-circle"></i> Error: GitHub er link paoa jacche na ba API limit shesh.</p>
         </div>`;
     }
 }
@@ -185,12 +183,13 @@ function copyDynamicText(btn, elementId) {
 }
 
 // ==========================================
-// 📄 COMMANDS PARSER
+// 📄 COMMANDS PAGE LOADER - ONLY commands.txt
 // ==========================================
 async function loadCommandsFromFile() {
     const table = document.getElementById('cmdTable');
     if(!table) return;
     try {
+        // ✅ FIXED: Eta shudhu commands.txt thekei load korbe
         const response = await fetch('commands.txt?v=' + new Date().getTime());
         const text = await response.text();
         const lines = text.split('\n');
@@ -320,7 +319,7 @@ async function fetchDiscordTeam() {
 // 📊 SERVER TOOLS API
 // ==========================================
 function copyCmd() {
-    navigator.clipboard.writeText("bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/skahost/main/run.sh)").then(() => alert("Master Command Copied! 🔥"));
+    navigator.clipboard.writeText("bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)").then(() => alert("Master Command Copied! 🔥"));
 }
 
 async function runPingTest() {
