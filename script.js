@@ -8,6 +8,7 @@ const navPages = [
     { name: 'Tutorials', file: 'tutorials.html', icon: 'fas fa-video' },
     { name: 'Commands', file: 'commands.html', icon: 'fas fa-terminal' },
     { name: 'Codes', file: 'code.html', icon: 'fas fa-file-code' }, 
+    { name: 'Downloads', file: 'download.html', icon: 'fas fa-download' }, // ✅ NOTUN MENU ADD KORA HOLO
     { name: 'Tools', file: 'tools.html', icon: 'fas fa-wrench' },
     { name: 'Stats', file: 'stats.html', icon: 'fas fa-chart-line' },
     { name: 'About', file: 'about.html', icon: 'fas fa-info-circle' }
@@ -106,10 +107,65 @@ document.addEventListener("DOMContentLoaded", () => {
     if(document.getElementById('cmdTable')) loadCommandsFromFile();
     if(document.getElementById('real-discord-members')) fetchDiscordTeam();
     if(document.getElementById('code-container')) loadGitHubCodes();
+    if(document.getElementById('download-container')) loadDownloadFiles(); // ✅ Notun download logic call kora holo
 });
 
 // ==========================================
-// 📄 CODES PAGE LOADER - ONLY .text FILES
+// 📥 GITHUB DOWNLOAD FILE LOADER (Df FOLDER)
+// ==========================================
+async function loadDownloadFiles() {
+    const container = document.getElementById('download-container');
+    if(!container) return;
+
+    try {
+        const timestamp = new Date().getTime(); 
+        // GitHub er Df folder theke file fetch kora hocche
+        const res = await fetch(`https://api.github.com/repos/sdgamer8263-sketch/paneldsh/contents/Df?t=${timestamp}`);
+        
+        if (!res.ok) {
+            if(res.status === 404) throw new Error("'Df' folder ta GitHub-e paoa jacche na.");
+            throw new Error("GitHub API theke data asheni.");
+        }
+        
+        const files = await res.json();
+        const actualFiles = files.filter(f => f.type === 'file'); // Shudhu file gulo nibe, folder noy
+
+        if(actualFiles.length === 0) {
+            container.innerHTML = `
+            <div class="glass-panel text-center" style="padding: 30px;">
+                <p style="color: #aaa;"><i class="fas fa-folder-open fa-2x" style="color: #555; margin-bottom: 10px;"></i><br>'Df' folder e kono file paoa jayni.</p>
+            </div>`;
+            return;
+        }
+
+        container.innerHTML = ''; 
+
+        for(let file of actualFiles) {
+            const fileSize = (file.size / 1024).toFixed(2) + ' KB'; // File size KB te kora holo
+
+            const fileHTML = `
+            <div class="glass-panel" style="padding: 20px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #00ff88; margin-bottom: 15px;">
+                <div style="text-align: left;">
+                    <h3 style="color: #fff; margin: 0; font-size: 1.1rem;"><i class="fas fa-file-download" style="color: #00d2ff; margin-right: 8px;"></i> ${file.name}</h3>
+                    <p style="color: #888; font-size: 0.8rem; margin-top: 5px;">File Size: ${fileSize}</p>
+                </div>
+                <a href="${file.download_url}" target="_blank" download="${file.name}" class="copy-btn" style="padding: 10px 20px; text-decoration: none; font-size: 0.9rem; font-weight: bold; border-radius: 6px; display: inline-block;">
+                    <i class="fas fa-download"></i> DOWNLOAD
+                </a>
+            </div>`;
+
+            container.innerHTML += fileHTML;
+        }
+    } catch(e) {
+        container.innerHTML = `
+        <div class="glass-panel text-center" style="padding: 30px;">
+            <p style="color: #ff3232; font-weight: bold;"><i class="fas fa-exclamation-circle"></i> Error: ${e.message}</p>
+        </div>`;
+    }
+}
+
+// ==========================================
+// 📄 GITHUB .TEXT FILE LOADER (CODES PAGE)
 // ==========================================
 async function loadGitHubCodes() {
     const container = document.getElementById('code-container');
@@ -122,7 +178,6 @@ async function loadGitHubCodes() {
         if (!res.ok) throw new Error("GitHub API theke data asheni.");
         const files = await res.json();
 
-        // ✅ FIXED: Shudhu .text file allow korbe. Kono .txt allow korbe na.
         const textFiles = files.filter(f => f.name.toLowerCase().endsWith('.text'));
 
         if(textFiles.length === 0) {
@@ -138,10 +193,7 @@ async function loadGitHubCodes() {
         for(let file of textFiles) {
             const textRes = await fetch(`${file.download_url}?t=${timestamp}`);
             const textContent = await textRes.text();
-
-            // Format Name: "lapsus.text" -> "LAPSUS"
             const displayName = file.name.replace(/\.text$/i, '').toUpperCase();
-            
             const safeContent = textContent.replace(/</g, "&lt;").replace(/>/g, "&gt;");
             const safeId = file.name.replace(/\./g, '-');
 
@@ -189,7 +241,6 @@ async function loadCommandsFromFile() {
     const table = document.getElementById('cmdTable');
     if(!table) return;
     try {
-        // ✅ FIXED: Eta shudhu commands.txt thekei load korbe
         const response = await fetch('commands.txt?v=' + new Date().getTime());
         const text = await response.text();
         const lines = text.split('\n');
