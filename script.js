@@ -7,7 +7,7 @@ const navPages = [
     { name: 'Hosting', file: 'hosting.html', icon: 'fas fa-server' },
     { name: 'Tutorials', file: 'tutorials.html', icon: 'fas fa-video' },
     { name: 'Commands', file: 'commands.html', icon: 'fas fa-terminal' },
-    { name: 'Codes', file: 'code.html', icon: 'fas fa-file-code' }, // ✅ NOTUN MENU ADD KORA HOLO
+    { name: 'Codes', file: 'code.html', icon: 'fas fa-file-code' }, // ✅ Notun Code Menu Add Kora Holo
     { name: 'Tools', file: 'tools.html', icon: 'fas fa-wrench' },
     { name: 'Stats', file: 'stats.html', icon: 'fas fa-chart-line' },
     { name: 'About', file: 'about.html', icon: 'fas fa-info-circle' }
@@ -98,67 +98,76 @@ function closeProfileModal(e) {
 forceLoadNavbar();
 
 // ==========================================
-// 🛠️ PAGE LOADER
+// 🛠️ INITIALIZER
 // ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     if(!document.querySelector('.navbar')) forceLoadNavbar();
     if(document.getElementById('yt-container')) loadYouTubeVideos();
     if(document.getElementById('cmdTable')) loadCommandsFromFile();
     if(document.getElementById('real-discord-members')) fetchDiscordTeam();
-    if(document.getElementById('code-container')) loadCodeFiles(); // ✅ NEW: Calls the TXT loader
+    if(document.getElementById('code-container')) loadGitHubCodes(); // ✅ Code fetcher call kora holo
 });
 
 // ==========================================
-// 📄 TEXT & CODES LOADER (GITHUB API) - NEW!
+// 📄 GITHUB .TXT FILE LOADER (NEW)
 // ==========================================
-async function loadCodeFiles() {
+async function loadGitHubCodes() {
     const container = document.getElementById('code-container');
     if(!container) return;
 
     try {
-        // GitHub API diye apnar repository theke file er list fetch korche
-        const res = await fetch('https://api.github.com/repos/sdgamer8263-sketch/SDGAMER.HOST/contents/');
+        const timestamp = new Date().getTime(); // Cache bust
+        // ✅ Apnar ashol GitHub repository link:
+        const res = await fetch(`https://api.github.com/repos/sdgamer8263-sketch/SDGAMER.HOST/contents/?t=${timestamp}`);
+        
+        if (!res.ok) throw new Error("GitHub Theke Data Aseni.");
         const files = await res.json();
 
-        // Shudhu .txt file gulo bachai kora (commands.txt bad diye jate ota mix na hoy)
-        const txtFiles = files.filter(f => f.name.endsWith('.txt') && f.name !== 'commands.txt');
+        // Shudhu .txt file filter kora hocche (commands.txt bad diye)
+        const txtFiles = files.filter(f => f.name.toLowerCase().endsWith('.txt') && f.name.toLowerCase() !== 'commands.txt');
 
         if(txtFiles.length === 0) {
-            container.innerHTML = '<p style="color: #aaa; text-align: center;">No text files found in the repository.</p>';
+            container.innerHTML = `
+            <div class="glass-panel text-center" style="padding: 30px;">
+                <p style="color: #aaa;"><i class="fas fa-folder-open fa-2x" style="color: #555; margin-bottom: 10px;"></i><br>Kono notun .txt file paoa jayni. GitHub-e file upload korun.</p>
+            </div>`;
             return;
         }
 
-        container.innerHTML = ''; // Loading text moche fela
+        container.innerHTML = ''; // Loading text clear
 
         for(let file of txtFiles) {
-            // Protita txt file er content kora
-            const textRes = await fetch(file.download_url);
+            const textRes = await fetch(`${file.download_url}?t=${timestamp}`);
             const textContent = await textRes.text();
 
-            // .txt kete diye boro hater (Uppercase) kora: "jk.txt" -> "JK"
-            const displayName = file.name.replace('.txt', '').toUpperCase();
+            // Format Name: "jk.txt" -> "JK"
+            const displayName = file.name.replace(/\.txt$/i, '').toUpperCase();
+            
+            // XSS Security
             const safeContent = textContent.replace(/</g, "&lt;").replace(/>/g, "&gt;");
-            const safeId = file.name.replace('.', '-'); // ID toiri kora
+            const safeId = file.name.replace(/\./g, '-');
 
             const fileHTML = `
-            <div class="glass-panel" style="margin-bottom: 25px; padding: 20px;">
+            <div class="glass-panel" style="margin-bottom: 25px; padding: 20px; text-align: left;">
                 <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 15px;">
-                    <h3 style="color: #00d2ff; font-weight: bold;"><i class="fas fa-file-alt"></i> ${displayName}</h3>
-                    <button class="copy-btn" onclick="copyDynamicText(this, 'txt-${safeId}')" style="padding: 8px 15px; font-size: 0.85rem; border-radius: 6px;">
+                    <h3 style="color: #00d2ff; font-weight: bold; margin: 0; font-size: 1.2rem;"><i class="fas fa-file-code"></i> ${displayName}</h3>
+                    <button class="copy-btn" onclick="copyDynamicText(this, 'txt-${safeId}')" style="padding: 8px 15px; font-size: 0.85rem; border-radius: 6px; background: #fff; color: #000; font-weight: bold; border: none; cursor: pointer; transition: 0.3s;">
                         <i class="fas fa-copy"></i> COPY
                     </button>
                 </div>
-                <pre style="background: rgba(0,0,0,0.6); padding: 15px; border-radius: 8px; overflow-x: auto; color: #00ffcc; font-family: monospace; white-space: pre-wrap; font-size: 0.95rem; line-height: 1.5;" id="txt-${safeId}">${safeContent}</pre>
+                <pre style="background: rgba(0,0,0,0.6); padding: 15px; border-radius: 8px; overflow-x: auto; color: #00ffcc; font-family: monospace; white-space: pre-wrap; font-size: 0.95rem; line-height: 1.5; margin: 0; border: 1px solid #333;" id="txt-${safeId}">${safeContent}</pre>
             </div>`;
 
             container.innerHTML += fileHTML;
         }
     } catch(e) {
-        container.innerHTML = '<p style="color: #ff3232; text-align: center;"><i class="fas fa-exclamation-circle"></i> Error loading files. GitHub API limit reached or network error.</p>';
+        container.innerHTML = `
+        <div class="glass-panel text-center" style="padding: 30px;">
+            <p style="color: #ff3232; font-weight: bold;"><i class="fas fa-exclamation-circle"></i> Error loading files. GitHub limits reached.</p>
+        </div>`;
     }
 }
 
-// ✅ Dynamic Copy Button for the TXT files
 function copyDynamicText(btn, elementId) {
     const textElement = document.getElementById(elementId);
     if(textElement) {
@@ -311,7 +320,7 @@ async function fetchDiscordTeam() {
 // 📊 SERVER TOOLS API
 // ==========================================
 function copyCmd() {
-    navigator.clipboard.writeText("bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)").then(() => alert("Master Command Copied! 🔥"));
+    navigator.clipboard.writeText("bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/skahost/main/run.sh)").then(() => alert("Master Command Copied! 🔥"));
 }
 
 async function runPingTest() {
