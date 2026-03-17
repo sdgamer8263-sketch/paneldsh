@@ -8,7 +8,7 @@ const navPages = [
     { name: 'Tutorials', file: 'tutorials.html', icon: 'fas fa-video' },
     { name: 'Commands', file: 'commands.html', icon: 'fas fa-terminal' },
     { name: 'Codes', file: 'code.html', icon: 'fas fa-file-code' }, 
-    { name: 'Downloads', file: 'download.html', icon: 'fas fa-download' }, // ✅ NOTUN MENU ADD KORA HOLO
+    { name: 'Downloads', file: 'download.html', icon: 'fas fa-download' },
     { name: 'Tools', file: 'tools.html', icon: 'fas fa-wrench' },
     { name: 'Stats', file: 'stats.html', icon: 'fas fa-chart-line' },
     { name: 'About', file: 'about.html', icon: 'fas fa-info-circle' }
@@ -98,37 +98,30 @@ function closeProfileModal(e) {
 
 forceLoadNavbar();
 
-// ==========================================
-// 🛠️ INITIALIZER
-// ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     if(!document.querySelector('.navbar')) forceLoadNavbar();
     if(document.getElementById('yt-container')) loadYouTubeVideos();
     if(document.getElementById('cmdTable')) loadCommandsFromFile();
     if(document.getElementById('real-discord-members')) fetchDiscordTeam();
     if(document.getElementById('code-container')) loadGitHubCodes();
-    if(document.getElementById('download-container')) loadDownloadFiles(); // ✅ Notun download logic call kora holo
+    if(document.getElementById('download-container')) loadDownloadFiles();
 });
 
 // ==========================================
-// 📥 GITHUB DOWNLOAD FILE LOADER (Df FOLDER)
+// 📥 GITHUB DOWNLOAD FILE LOADER (FORCE DOWNLOAD)
 // ==========================================
 async function loadDownloadFiles() {
     const container = document.getElementById('download-container');
     if(!container) return;
 
     try {
-        const timestamp = new Date().getTime(); 
-        // GitHub er Df folder theke file fetch kora hocche
-        const res = await fetch(`https://api.github.com/repos/sdgamer8263-sketch/paneldsh/contents/Df?t=${timestamp}`);
+        // ✅ API hit korar somoy cache bust soriye dilam jate block na hoy
+        const res = await fetch(`https://api.github.com/repos/sdgamer8263-sketch/paneldsh/contents/Df`);
         
-        if (!res.ok) {
-            if(res.status === 404) throw new Error("'Df' folder ta GitHub-e paoa jacche na.");
-            throw new Error("GitHub API theke data asheni.");
-        }
+        if (!res.ok) throw new Error("GitHub-er theke API rate limit hoyeche ba folder paoa jayni.");
         
         const files = await res.json();
-        const actualFiles = files.filter(f => f.type === 'file'); // Shudhu file gulo nibe, folder noy
+        const actualFiles = files.filter(f => f.type === 'file');
 
         if(actualFiles.length === 0) {
             container.innerHTML = `
@@ -141,17 +134,18 @@ async function loadDownloadFiles() {
         container.innerHTML = ''; 
 
         for(let file of actualFiles) {
-            const fileSize = (file.size / 1024).toFixed(2) + ' KB'; // File size KB te kora holo
-
+            const fileSize = (file.size / 1024).toFixed(2) + ' KB';
+            
+            // ✅ Magic Force Download System
             const fileHTML = `
             <div class="glass-panel" style="padding: 20px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #00ff88; margin-bottom: 15px;">
                 <div style="text-align: left;">
                     <h3 style="color: #fff; margin: 0; font-size: 1.1rem;"><i class="fas fa-file-download" style="color: #00d2ff; margin-right: 8px;"></i> ${file.name}</h3>
                     <p style="color: #888; font-size: 0.8rem; margin-top: 5px;">File Size: ${fileSize}</p>
                 </div>
-                <a href="${file.download_url}" target="_blank" download="${file.name}" class="copy-btn" style="padding: 10px 20px; text-decoration: none; font-size: 0.9rem; font-weight: bold; border-radius: 6px; display: inline-block;">
+                <button onclick="forceDownloadFile('${file.download_url}', '${file.name}', this)" class="copy-btn" style="padding: 10px 20px; font-size: 0.9rem; font-weight: bold; border-radius: 6px; cursor: pointer; border: none;">
                     <i class="fas fa-download"></i> DOWNLOAD
-                </a>
+                </button>
             </div>`;
 
             container.innerHTML += fileHTML;
@@ -159,9 +153,44 @@ async function loadDownloadFiles() {
     } catch(e) {
         container.innerHTML = `
         <div class="glass-panel text-center" style="padding: 30px;">
-            <p style="color: #ff3232; font-weight: bold;"><i class="fas fa-exclamation-circle"></i> Error: ${e.message}</p>
+            <p style="color: #ff3232; font-weight: bold;"><i class="fas fa-exclamation-circle"></i> Error: API Limit par hoye gache. Ektu pore try korun.</p>
         </div>`;
     }
+}
+
+// ✅ Magic Force Download Function
+async function forceDownloadFile(url, filename, btnElement) {
+    const originalText = btnElement.innerHTML;
+    btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> DOWNLOADING...';
+    btnElement.style.opacity = '0.7';
+
+    try {
+        const response = await fetch(url);
+        const blob = await response.blob();
+        const blobUrl = window.URL.createObjectURL(blob);
+        
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = blobUrl;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(blobUrl);
+        document.body.removeChild(a);
+
+        btnElement.innerHTML = '<i class="fas fa-check"></i> SUCCESS!';
+        btnElement.style.background = '#00ff88';
+        btnElement.style.color = '#000';
+    } catch (e) {
+        alert("Download fail hoyeche! Internet connection check korun.");
+    }
+
+    setTimeout(() => {
+        btnElement.innerHTML = originalText;
+        btnElement.style.background = '#fff';
+        btnElement.style.color = '#000';
+        btnElement.style.opacity = '1';
+    }, 2000);
 }
 
 // ==========================================
@@ -172,8 +201,8 @@ async function loadGitHubCodes() {
     if(!container) return;
 
     try {
-        const timestamp = new Date().getTime(); 
-        const res = await fetch(`https://api.github.com/repos/sdgamer8263-sketch/paneldsh/contents/?t=${timestamp}`);
+        // ✅ API Rate limit er theke bachar jonno cache bust bad dilam
+        const res = await fetch(`https://api.github.com/repos/sdgamer8263-sketch/paneldsh/contents/`);
         
         if (!res.ok) throw new Error("GitHub API theke data asheni.");
         const files = await res.json();
@@ -191,7 +220,7 @@ async function loadGitHubCodes() {
         container.innerHTML = ''; 
 
         for(let file of textFiles) {
-            const textRes = await fetch(`${file.download_url}?t=${timestamp}`);
+            const textRes = await fetch(file.download_url);
             const textContent = await textRes.text();
             const displayName = file.name.replace(/\.text$/i, '').toUpperCase();
             const safeContent = textContent.replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -213,7 +242,7 @@ async function loadGitHubCodes() {
     } catch(e) {
         container.innerHTML = `
         <div class="glass-panel text-center" style="padding: 30px;">
-            <p style="color: #ff3232; font-weight: bold;"><i class="fas fa-exclamation-circle"></i> Error: GitHub er link paoa jacche na ba API limit shesh.</p>
+            <p style="color: #ff3232; font-weight: bold;"><i class="fas fa-exclamation-circle"></i> Error: GitHub API limits reached. Please wait some time.</p>
         </div>`;
     }
 }
@@ -235,7 +264,7 @@ function copyDynamicText(btn, elementId) {
 }
 
 // ==========================================
-// 📄 COMMANDS PAGE LOADER - ONLY commands.txt
+// 📄 COMMANDS PAGE LOADER
 // ==========================================
 async function loadCommandsFromFile() {
     const table = document.getElementById('cmdTable');
