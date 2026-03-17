@@ -96,8 +96,18 @@ function closeProfileModal(e) {
     if(e.target.id === 'profileModal') toggleProfileModal();
 }
 
-forceLoadNavbar();
+// 🌊 SCROLL NAVBAR EFFECT
+window.addEventListener('scroll', () => {
+    const navbar = document.querySelector('.navbar');
+    if (navbar) {
+        if (window.scrollY > 40) navbar.classList.add('scrolled');
+        else navbar.classList.remove('scrolled');
+    }
+});
 
+// ==========================================
+// 🛠️ ALL LOADERS & INITIALIZERS
+// ==========================================
 document.addEventListener("DOMContentLoaded", () => {
     if(!document.querySelector('.navbar')) forceLoadNavbar();
     if(document.getElementById('yt-container')) loadYouTubeVideos();
@@ -105,118 +115,125 @@ document.addEventListener("DOMContentLoaded", () => {
     if(document.getElementById('real-discord-members')) fetchDiscordTeam();
     if(document.getElementById('code-container')) loadGitHubCodes();
     if(document.getElementById('download-container')) loadDownloadFiles();
+    if(document.getElementById('custom-chat-box')) {
+        fetchCustomDiscordChat();
+        setInterval(fetchCustomDiscordChat, 5000); 
+    }
 });
 
 // ==========================================
-// 📥 GITHUB DOWNLOAD FILE LOADER (FORCE DOWNLOAD)
+// 🚀 CUSTOM DISCORD LIVE CHAT FETCHER
+// ==========================================
+async function fetchCustomDiscordChat() {
+    const chatBox = document.getElementById('custom-chat-box');
+    if(!chatBox) return;
+
+    // ✅ Apnar ashol Render App URL set kora hoyeche
+    const renderApiUrl = 'https://ska-discord-bot.onrender.com/api/chat';
+
+    try {
+        const res = await fetch(renderApiUrl);
+        if(!res.ok) throw new Error("API failed");
+        const messages = await res.json();
+
+        chatBox.innerHTML = ''; 
+
+        if(messages.length === 0) {
+            chatBox.innerHTML = '<p style="color: #8e9297; text-align: center;">No messages yet.</p>';
+            return;
+        }
+
+        messages.forEach(msg => {
+            const date = new Date(msg.time);
+            const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+            const msgHTML = `
+            <div style="display: flex; gap: 15px; margin-bottom: 10px;">
+                <img src="${msg.avatar}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(0,255,136,0.3);">
+                <div>
+                    <div style="display: flex; align-items: baseline; gap: 10px;">
+                        <span style="color: #00ff88; font-weight: bold; font-size: 0.95rem;">${msg.user}</span>
+                        <span style="color: #72767d; font-size: 0.75rem;">Today at ${timeString}</span>
+                    </div>
+                    <div style="color: #dcddde; font-size: 0.9rem; margin-top: 2px; line-height: 1.4;">
+                        ${msg.text}
+                    </div>
+                </div>
+            </div>`;
+            chatBox.innerHTML += msgHTML;
+        });
+        chatBox.scrollTop = chatBox.scrollHeight;
+    } catch(e) {
+        console.log("Chat fetch failed:", e);
+        // Silent error handling for smooth UX
+    }
+}
+
+// ==========================================
+// 📥 GITHUB DOWNLOAD FILE LOADER (Df FOLDER)
 // ==========================================
 async function loadDownloadFiles() {
     const container = document.getElementById('download-container');
     if(!container) return;
 
     try {
-        // ✅ API hit korar somoy cache bust soriye dilam jate block na hoy
         const res = await fetch(`https://api.github.com/repos/sdgamer8263-sketch/paneldsh/contents/Df`);
-        
-        if (!res.ok) throw new Error("GitHub-er theke API rate limit hoyeche ba folder paoa jayni.");
+        if (!res.ok) throw new Error("API Limit ba folder nei.");
         
         const files = await res.json();
         const actualFiles = files.filter(f => f.type === 'file');
 
-        if(actualFiles.length === 0) {
-            container.innerHTML = `
-            <div class="glass-panel text-center" style="padding: 30px;">
-                <p style="color: #aaa;"><i class="fas fa-folder-open fa-2x" style="color: #555; margin-bottom: 10px;"></i><br>'Df' folder e kono file paoa jayni.</p>
-            </div>`;
-            return;
-        }
-
+        if(actualFiles.length === 0) return container.innerHTML = '<p style="color: #aaa; text-align:center;">No files found.</p>';
         container.innerHTML = ''; 
 
         for(let file of actualFiles) {
             const fileSize = (file.size / 1024).toFixed(2) + ' KB';
-            
-            // ✅ Magic Force Download System
             const fileHTML = `
             <div class="glass-panel" style="padding: 20px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #00ff88; margin-bottom: 15px;">
                 <div style="text-align: left;">
                     <h3 style="color: #fff; margin: 0; font-size: 1.1rem;"><i class="fas fa-file-download" style="color: #00d2ff; margin-right: 8px;"></i> ${file.name}</h3>
-                    <p style="color: #888; font-size: 0.8rem; margin-top: 5px;">File Size: ${fileSize}</p>
+                    <p style="color: #a8e6cf; font-size: 0.8rem; margin-top: 5px;">Size: ${fileSize}</p>
                 </div>
-                <button onclick="forceDownloadFile('${file.download_url}', '${file.name}', this)" class="copy-btn" style="padding: 10px 20px; font-size: 0.9rem; font-weight: bold; border-radius: 6px; cursor: pointer; border: none;">
+                <button onclick="forceDownloadFile('${file.download_url}', '${file.name}', this)" class="copy-btn" style="padding: 10px 20px; border-radius: 6px;">
                     <i class="fas fa-download"></i> DOWNLOAD
                 </button>
             </div>`;
-
             container.innerHTML += fileHTML;
         }
-    } catch(e) {
-        container.innerHTML = `
-        <div class="glass-panel text-center" style="padding: 30px;">
-            <p style="color: #ff3232; font-weight: bold;"><i class="fas fa-exclamation-circle"></i> Error: API Limit par hoye gache. Ektu pore try korun.</p>
-        </div>`;
-    }
+    } catch(e) { container.innerHTML = '<p style="color: red; text-align:center;">Error Loading Downloads.</p>'; }
 }
 
-// ✅ Magic Force Download Function
 async function forceDownloadFile(url, filename, btnElement) {
     const originalText = btnElement.innerHTML;
     btnElement.innerHTML = '<i class="fas fa-spinner fa-spin"></i> DOWNLOADING...';
-    btnElement.style.opacity = '0.7';
-
     try {
         const response = await fetch(url);
         const blob = await response.blob();
         const blobUrl = window.URL.createObjectURL(blob);
-        
         const a = document.createElement('a');
-        a.style.display = 'none';
-        a.href = blobUrl;
-        a.download = filename;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(blobUrl);
-        document.body.removeChild(a);
-
+        a.style.display = 'none'; a.href = blobUrl; a.download = filename;
+        document.body.appendChild(a); a.click();
+        window.URL.revokeObjectURL(blobUrl); document.body.removeChild(a);
         btnElement.innerHTML = '<i class="fas fa-check"></i> SUCCESS!';
-        btnElement.style.background = '#00ff88';
-        btnElement.style.color = '#000';
-    } catch (e) {
-        alert("Download fail hoyeche! Internet connection check korun.");
-    }
-
-    setTimeout(() => {
-        btnElement.innerHTML = originalText;
-        btnElement.style.background = '#fff';
-        btnElement.style.color = '#000';
-        btnElement.style.opacity = '1';
-    }, 2000);
+        btnElement.style.background = '#00ff88'; btnElement.style.color = '#000';
+    } catch (e) { alert("Download failed!"); }
+    setTimeout(() => { btnElement.innerHTML = originalText; btnElement.style.background = '#fff'; btnElement.style.color = '#000'; }, 2000);
 }
 
 // ==========================================
-// 📄 GITHUB .TEXT FILE LOADER (CODES PAGE)
+// 📄 GITHUB .TEXT FILE LOADER
 // ==========================================
 async function loadGitHubCodes() {
     const container = document.getElementById('code-container');
     if(!container) return;
 
     try {
-        // ✅ API Rate limit er theke bachar jonno cache bust bad dilam
         const res = await fetch(`https://api.github.com/repos/sdgamer8263-sketch/paneldsh/contents/`);
-        
-        if (!res.ok) throw new Error("GitHub API theke data asheni.");
+        if (!res.ok) throw new Error("API limits.");
         const files = await res.json();
-
         const textFiles = files.filter(f => f.name.toLowerCase().endsWith('.text'));
 
-        if(textFiles.length === 0) {
-            container.innerHTML = `
-            <div class="glass-panel text-center" style="padding: 30px;">
-                <p style="color: #aaa;"><i class="fas fa-folder-open fa-2x" style="color: #555; margin-bottom: 10px;"></i><br>Kono .text file paoa jayni. GitHub-e file upload korun (e.g. lapsus.text).</p>
-            </div>`;
-            return;
-        }
-
+        if(textFiles.length === 0) return container.innerHTML = '<p style="color:#aaa;text-align:center;">No .text files found.</p>';
         container.innerHTML = ''; 
 
         for(let file of textFiles) {
@@ -228,23 +245,17 @@ async function loadGitHubCodes() {
 
             const fileHTML = `
             <div class="glass-panel" style="margin-bottom: 25px; padding: 20px; text-align: left;">
-                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; margin-bottom: 15px;">
-                    <h3 style="color: #00d2ff; font-weight: bold; margin: 0; font-size: 1.2rem;"><i class="fas fa-file-code"></i> ${displayName}</h3>
-                    <button class="copy-btn" onclick="copyDynamicText(this, 'txt-${safeId}')" style="padding: 8px 15px; font-size: 0.85rem; border-radius: 6px; background: #fff; color: #000; font-weight: bold; border: none; cursor: pointer; transition: 0.3s;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(0,255,136,0.2); padding-bottom: 15px; margin-bottom: 15px;">
+                    <h3 style="color: #00ff88; font-weight: bold; margin: 0; font-size: 1.2rem;"><i class="fas fa-file-code"></i> ${displayName}</h3>
+                    <button class="copy-btn" onclick="copyDynamicText(this, 'txt-${safeId}')" style="padding: 8px 15px; border-radius: 6px;">
                         <i class="fas fa-copy"></i> COPY
                     </button>
                 </div>
-                <pre style="background: rgba(0,0,0,0.6); padding: 15px; border-radius: 8px; overflow-x: auto; color: #00ffcc; font-family: monospace; white-space: pre-wrap; font-size: 0.95rem; line-height: 1.5; margin: 0; border: 1px solid #333;" id="txt-${safeId}">${safeContent}</pre>
+                <pre style="background: rgba(0,0,0,0.6); padding: 15px; border-radius: 8px; overflow-x: auto; color: #00ffcc; font-family: monospace; font-size: 0.95rem;" id="txt-${safeId}">${safeContent}</pre>
             </div>`;
-
             container.innerHTML += fileHTML;
         }
-    } catch(e) {
-        container.innerHTML = `
-        <div class="glass-panel text-center" style="padding: 30px;">
-            <p style="color: #ff3232; font-weight: bold;"><i class="fas fa-exclamation-circle"></i> Error: GitHub API limits reached. Please wait some time.</p>
-        </div>`;
-    }
+    } catch(e) { container.innerHTML = '<p style="color:red;text-align:center;">API Fetch Error.</p>'; }
 }
 
 function copyDynamicText(btn, elementId) {
@@ -253,18 +264,14 @@ function copyDynamicText(btn, elementId) {
         navigator.clipboard.writeText(textElement.innerText).then(() => {
             const originalText = btn.innerHTML;
             btn.innerHTML = '<i class="fas fa-check"></i> COPIED!';
-            btn.style.background = '#00ff88';
-            btn.style.color = '#000';
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.style.background = '#fff';
-            }, 2000);
+            btn.style.background = '#00ff88'; btn.style.color = '#000';
+            setTimeout(() => { btn.innerHTML = originalText; btn.style.background = '#fff'; }, 2000);
         });
     }
 }
 
 // ==========================================
-// 📄 COMMANDS PAGE LOADER
+// 📄 COMMANDS PARSER
 // ==========================================
 async function loadCommandsFromFile() {
     const table = document.getElementById('cmdTable');
@@ -292,29 +299,19 @@ async function loadCommandsFromFile() {
                     <td>${title}</td>
                     <td><code>${command}</code></td>
                     <td style="text-align: right;">
-                        <button class="tbl-copy-btn" onclick="copyTableCmd(this, '${safeCommand}')">
-                            <i class="fas fa-copy"></i>
-                        </button>
+                        <button class="tbl-copy-btn" onclick="copyTableCmd(this, '${safeCommand}')"><i class="fas fa-copy"></i></button>
                     </td>
                 </tr>`;
             }
         });
         table.innerHTML = tableHTML;
-    } catch(e) { table.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Failed to load commands.txt file.</td></tr>`; }
+    } catch(e) { table.innerHTML = `<tr><td colspan="4" style="color:red; text-align:center;">Failed to load commands.txt</td></tr>`; }
 }
 
 function copyTableCmd(btn, cmd) {
     navigator.clipboard.writeText(cmd).then(() => {
-        btn.innerHTML = '<i class="fas fa-check"></i>';
-        btn.style.color = '#00ff88';
-        btn.style.borderColor = '#00ff88';
-        btn.style.background = 'rgba(0,255,136,0.1)';
-        setTimeout(() => {
-            btn.innerHTML = '<i class="fas fa-copy"></i>';
-            btn.style.color = '#aaa';
-            btn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
-            btn.style.background = 'rgba(255, 255, 255, 0.05)';
-        }, 2000);
+        btn.innerHTML = '<i class="fas fa-check"></i>'; btn.style.color = '#00ff88'; btn.style.borderColor = '#00ff88'; btn.style.background = 'rgba(0,255,136,0.1)';
+        setTimeout(() => { btn.innerHTML = '<i class="fas fa-copy"></i>'; btn.style.color = '#a8e6cf'; btn.style.borderColor = 'rgba(0,255,136,0.2)'; btn.style.background = 'rgba(0,255,136,0.05)'; }, 2000);
     });
 }
 
@@ -325,10 +322,7 @@ function filterCategory(category, btnElement) {
     let tr = document.getElementById("cmdTable").getElementsByTagName("tr");
     for (let i = 1; i < tr.length; i++) {
         let catTd = tr[i].getElementsByTagName("td")[0];
-        if (catTd) {
-            let catText = catTd.innerText.toUpperCase().trim();
-            tr[i].style.display = (category === 'ALL' || catText === category) ? "" : "none";
-        }
+        if (catTd) tr[i].style.display = (category === 'ALL' || catTd.innerText.toUpperCase().trim() === category) ? "" : "none";
     }
 }
 
@@ -353,10 +347,8 @@ async function loadYouTubeVideos() {
     if(!container) return;
     container.innerHTML = '<p style="color: #aaa;">Fetching videos... <i class="fas fa-spinner fa-spin"></i></p>';
     try {
-        const channelId = 'UCCGkhiwOobIoOqvGSlB1v8Q'; 
-        const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
-        const finalUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`;
-        const res = await fetch(finalUrl);
+        const rssUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=UCCGkhiwOobIoOqvGSlB1v8Q`;
+        const res = await fetch(`https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(rssUrl)}`);
         const data = await res.json();
         if(data.status === 'ok' && data.items.length > 0) {
             container.innerHTML = ''; 
@@ -365,13 +357,13 @@ async function loadYouTubeVideos() {
                 if(videoId && videoId.includes('&')) videoId = videoId.split('&')[0]; 
                 if(videoId) {
                     container.innerHTML += `<div class="video-embed">
-                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen style="border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);"></iframe>
+                        <iframe width="100%" height="200" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen style="border-radius: 8px; border: 1px solid rgba(0,255,136,0.2);"></iframe>
                         <h4 class="mt-10" style="color: #fff; font-size: 0.95rem;">${video.title}</h4>
                     </div>`;
                 }
             });
-        } else { container.innerHTML = '<p style="color: #aaa;">No videos found.</p>'; }
-    } catch(e) { container.innerHTML = '<p style="color: red;">Error loading YouTube videos. Refresh the page.</p>'; }
+        }
+    } catch(e) { container.innerHTML = '<p style="color: red;">Error loading YouTube videos.</p>'; }
 }
 
 // ==========================================
@@ -387,12 +379,10 @@ async function fetchDiscordTeam() {
         if(data.members && data.members.length > 0) {
             data.members.forEach(m => {
                 let statusClass = m.status === 'online' ? 'status-online' : (m.status === 'idle' ? 'status-idle' : 'status-dnd');
-                container.innerHTML += `<div class="member-card"><img src="${m.avatar_url}" alt="${m.username}"><h4 style="color: #fff;"><span class="status-dot ${statusClass}"></span> ${m.username}</h4><p style="color: #aaa; font-size: 0.8rem; margin-top: 5px;">Server Member</p></div>`;
+                container.innerHTML += `<div class="member-card"><img src="${m.avatar_url}" alt="${m.username}"><h4 style="color: #fff;"><span class="status-dot ${statusClass}"></span> ${m.username}</h4><p style="color: #a8e6cf; font-size: 0.8rem; margin-top: 5px;">Server Member</p></div>`;
             });
-        } else {
-            container.innerHTML = '<p style="color:#aaa;">No members currently online.</p>';
         }
-    } catch (e) { container.innerHTML = `<p style="color:red;">Error fetching team data. Is Widget enabled?</p>`; }
+    } catch (e) { container.innerHTML = `<p style="color:red;">Error fetching team data.</p>`; }
 }
 
 // ==========================================
@@ -401,117 +391,45 @@ async function fetchDiscordTeam() {
 function copyCmd() {
     navigator.clipboard.writeText("bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)").then(() => alert("Master Command Copied! 🔥"));
 }
-
 async function runPingTest() {
-    let urlInput = document.getElementById("ping-ip");
+    let url = document.getElementById("ping-ip").value.trim();
     let resultDiv = document.getElementById("ping-result");
-    if (!urlInput || !resultDiv) return;
-    
-    let url = urlInput.value.trim();
-    if(!url) { 
-        resultDiv.style.display = "block"; 
-        resultDiv.innerHTML = "<span style='color:orange;'><i class='fas fa-exclamation-triangle'></i> Please enter a URL first.</span>"; 
-        return; 
-    }
-    
+    if(!url) return resultDiv.innerHTML = "<span style='color:orange;'>Please enter a URL.</span>", resultDiv.style.display="block";
     if(!url.startsWith('http')) url = 'https://' + url;
-    resultDiv.style.display = "block"; 
-    resultDiv.innerHTML = "Pinging server... <i class='fas fa-spinner fa-spin'></i>";
-    
+    resultDiv.style.display = "block"; resultDiv.innerHTML = "Pinging...";
     let start = Date.now();
     try {
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 8000); 
-        await fetch(url, { mode: 'no-cors', cache: 'no-store', signal: controller.signal });
-        clearTimeout(timeoutId);
-        
+        await fetch(url, { mode: 'no-cors', cache: 'no-store' });
         let latency = Date.now() - start;
         let color = latency < 200 ? '#00ff88' : (latency < 600 ? 'orange' : '#ff3232');
-        let icon = latency < 600 ? 'fa-check-circle' : 'fa-exclamation-circle';
-        
-        resultDiv.innerHTML = `
-            <span style="color:#aaa;">Status:</span> <span style="color:#00ff88; font-weight:bold;">ONLINE</span> <br> 
-            <span style="color:#aaa;">Response Time:</span> <span style="color:${color}; font-weight:bold; font-size:1.1rem;">${latency}ms</span> <i class="fas ${icon}" style="color:${color};"></i>
-        `;
-    } catch(e) { 
-        resultDiv.innerHTML = `<span style="color:#ff3232; font-weight:bold;"><i class="fas fa-times-circle"></i> Ping Failed or Host Unreachable.</span>`; 
-    }
+        resultDiv.innerHTML = `<span style="color:#aaa;">Status:</span> <span style="color:#00ff88;">ONLINE</span> <br> <span style="color:#aaa;">Response:</span> <span style="color:${color}; font-weight:bold;">${latency}ms</span>`;
+    } catch(e) { resultDiv.innerHTML = `<span style="color:#ff3232; font-weight:bold;">Ping Failed.</span>`; }
 }
 
 async function checkMCStatus() {
     let ip = document.getElementById("mc-ip").value.trim();
     let port = document.getElementById("mc-port").value.trim();
     let resultDiv = document.getElementById("mc-result");
-    
-    if(!ip) { 
-        resultDiv.style.display = "block"; 
-        resultDiv.innerHTML = "<span style='color:orange;'><i class='fas fa-exclamation-triangle'></i> Please enter Server IP.</span>"; 
-        return; 
-    }
-    
+    if(!ip) return resultDiv.innerHTML = "<span style='color:orange;'>Enter Server IP.</span>", resultDiv.style.display="block";
     let fullAddress = port ? `${ip}:${port}` : ip;
-    resultDiv.style.display = "block"; 
-    resultDiv.innerHTML = "Fetching server details... <i class='fas fa-spinner fa-spin'></i>";
-    
+    resultDiv.style.display = "block"; resultDiv.innerHTML = "Fetching...";
     try {
         let res = await fetch(`https://api.mcsrvstat.us/3/${fullAddress}`);
         let data = await res.json();
-        
-        if(data.online) {
-            let onlinePlayers = data.players ? data.players.online : 0;
-            let maxPlayers = data.players ? data.players.max : 0;
-            let version = data.version || "Unknown";
-            let cleanMotd = data.motd ? data.motd.clean.join('<br>') : "No MOTD provided";
-            
-            resultDiv.innerHTML = `
-                <div><strong>Status:</strong> <span style="color:#00ff88;">ONLINE <i class="fas fa-check-circle"></i></span></div>
-                <div><strong>IP:</strong> <span style="color:#00d2ff;">${data.ip || ip}:${data.port || port}</span></div>
-                <div><strong>Players:</strong> <span style="color:#ffcc00;">${onlinePlayers}/${maxPlayers}</span></div>
-                <div><strong>Version:</strong> <span style="color:#fff;">${version}</span></div>
-                <div style="margin-top:10px; border-top:1px solid #333; padding-top:10px;">
-                    <strong>MOTD:</strong><br><span style="color:#ccc; font-family:monospace;">${cleanMotd}</span>
-                </div>`;
-        } else { 
-            resultDiv.innerHTML = `<strong>Status:</strong> <span style="color:#ff3232;">OFFLINE <i class="fas fa-times-circle"></i></span>`; 
-        }
-    } catch(e) { 
-        resultDiv.innerHTML = `<span style="color:red;"><i class="fas fa-exclamation-circle"></i> Error connecting to API.</span>`; 
-    }
+        if(data.online) resultDiv.innerHTML = `<div><strong>Status:</strong> <span style="color:#00ff88;">ONLINE</span></div><div><strong>Players:</strong> <span style="color:#ffcc00;">${data.players.online}/${data.players.max}</span></div><div><strong>Version:</strong> <span style="color:#fff;">${data.version || 'Unknown'}</span></div>`;
+        else resultDiv.innerHTML = `<strong>Status:</strong> <span style="color:#ff3232;">OFFLINE</span>`;
+    } catch(e) { resultDiv.innerHTML = `<span style="color:red;">Error.</span>`; }
 }
 
 async function checkPaperBuild() {
     let ver = document.getElementById("paper-ver").value.trim();
     let resultDiv = document.getElementById("paper-result");
-    if(!ver) {
-        resultDiv.style.display = "block"; 
-        resultDiv.innerHTML = "<span style='color:orange;'><i class='fas fa-exclamation-triangle'></i> Please enter version.</span>"; 
-        return;
-    }
-    resultDiv.style.display = "block"; 
-    resultDiv.innerHTML = "Fetching latest build... <i class='fas fa-spinner fa-spin'></i>";
+    if(!ver) return resultDiv.innerHTML = "<span style='color:orange;'>Enter version.</span>", resultDiv.style.display="block";
+    resultDiv.style.display = "block"; resultDiv.innerHTML = "Fetching...";
     try {
         let res = await fetch(`https://api.papermc.io/v2/projects/paper/versions/${ver}`);
-        if(res.status === 404) {
-            resultDiv.innerHTML = `<span style="color:#ff3232;"><i class="fas fa-times-circle"></i> Version not found.</span>`;
-            return;
-        }
+        if(res.status === 404) return resultDiv.innerHTML = `<span style="color:#ff3232;">Version not found.</span>`;
         let data = await res.json();
-        let latestBuild = data.builds[data.builds.length - 1];
-        resultDiv.innerHTML = `Latest Build for ${ver}: <br><span style="color:#00ffcc; font-size:1.5rem; font-weight:bold;">#${latestBuild}</span> <i class="fas fa-check-circle" style="color:#00ff88;"></i>`;
-    } catch(e) { 
-        resultDiv.innerHTML = `<span style="color:red;"><i class="fas fa-exclamation-circle"></i> Error fetching data.</span>`; 
-    }
+        resultDiv.innerHTML = `Latest Build: <br><span style="color:#00ffcc; font-size:1.5rem; font-weight:bold;">#${data.builds[data.builds.length - 1]}</span>`;
+    } catch(e) { resultDiv.innerHTML = `<span style="color:red;">Error fetching data.</span>`; }
 }
-// ==========================================
-// 🌊 AUTO-ADJUSTABLE NAVBAR SCROLL EFFECT
-// ==========================================
-window.addEventListener('scroll', () => {
-    const navbar = document.querySelector('.navbar');
-    if (navbar) {
-        if (window.scrollY > 40) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-    }
-});
