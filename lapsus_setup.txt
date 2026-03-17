@@ -1,0 +1,33 @@
+==================================================
+        LAPSUS CLIENT DASHBOARD SETUP
+==================================================
+
+# PANEL CONFIGURATION FILE
+Download the required egg file (egg-node-js-generic.json) 
+and upload it to your panel.
+
+--------------------------------------------------
+# 1 - STARTUP
+--------------------------------------------------
+- Git Repo Address:
+https://github.com/nobita329/LapsusClient.git
+
+--------------------------------------------------
+# 2 - DOCKER IMAGE
+--------------------------------------------------
+- Supported versions: node.js 20, 21
+
+--------------------------------------------------
+# 3 - MAIN FILE
+--------------------------------------------------
+index.js
+
+--------------------------------------------------
+# DISCORD AUTHENTICATION
+--------------------------------------------------
+- Create or add application:
+https://discord.com/developers/applications
+
+- Callback URL:
+https://dash.yourdomin.com/callback
+
