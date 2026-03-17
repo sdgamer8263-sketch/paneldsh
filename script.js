@@ -502,3 +502,16 @@ async function checkPaperBuild() {
         resultDiv.innerHTML = `<span style="color:red;"><i class="fas fa-exclamation-circle"></i> Error fetching data.</span>`; 
     }
 }
+// ==========================================
+// 🌊 AUTO-ADJUSTABLE NAVBAR SCROLL EFFECT
+// ==========================================
+window.addEventListener('scroll', () => {
+    const navbar = document.querySelector('.navbar');
+    if (navbar) {
+        if (window.scrollY > 40) {
+            navbar.classList.add('scrolled');
+        } else {
+            navbar.classList.remove('scrolled');
+        }
+    }
+});
