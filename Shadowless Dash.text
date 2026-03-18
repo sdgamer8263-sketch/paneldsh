@@ -7,7 +7,7 @@ https://shadowless-web.vercel.app/#get-started
 sudo apt update && sudo apt install -y nodejs npm
 2. Download:  git clone https://github.com/XaloraLabs/ShadowlessDash.git
 3. Install Dependencies:  cd ShadowlessDash && npm install
-4. Configure: Configure the ```settings.json
+4. Configure: Configure the  " settings.json "
 5. Run:    node index.js
            npm install
            npm start
