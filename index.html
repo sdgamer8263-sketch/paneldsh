@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SKA HOST (SDGAMER) - Gaming Command Panel</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=gamming">
+    <link rel="stylesheet" href="style.css?v=halkadark">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
@@ -55,12 +55,12 @@
                 <p>Run the CyberNet dependencies installation instantly.</p>
                 <div class="cmd-box">
                     <i class="fas fa-angle-right" style="color: #00ff88; font-size: 1.5rem; margin-right: 15px;"></i>
-                    <code>bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/skahost/main/run.sh)</code>
+                    <code>bash <(curl -sL https://raw.githubusercontent.com/skahosting/run.sh)</code>
                     <button class="copy-btn" onclick="copyCmd()">EXEC</button>
                 </div>
             </div>
 
-            <div class="dashboard-split tools-grid"> /* Using grid here too */
+            <div class="dashboard-split tools-grid"> /* Using grid structure here too */
                 
                 <div class="left-panel glass-panel" style="padding: 0; overflow: hidden; grid-column: span 2;">
                     <div style="padding: 20px 20px 10px 20px; background: rgba(0,0,0,0.5); border-bottom: 1px solid rgba(0,255,136,0.1);">
@@ -97,7 +97,7 @@
     <div id="profileModal" class="modal-overlay" style="display:none;" onclick="closeProfileModal(event)">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="glass-panel" style="padding: 0; border: none;">
-                <div class="modal-header" style="height: 100px; background: linear-gradient(45deg, #00d2ff, #00ff88);">
+                <div class="modal-header" style="height: 100px; background: linear-gradient(45deg, #00d2ff, #00ff88); position: relative;">
                     <video src="gemini_generated_video_3ccd85b2.mp4" autoplay loop muted playsinline class="modal-avatar-video" style="width: 80px; height: 80px; border-radius: 50%; border: 4px solid #111216; position: absolute; bottom: -40px; left: 20px; background: #000; object-fit: cover; box-shadow: 0 0 10px #00ff88;"></video>
                     <button class="close-btn" onclick="toggleProfileModal()" style="position: absolute; top: 15px; right: 15px; background: rgba(0,0,0,0.5); border: none; color: #fff; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;"><i class="fas fa-times"></i></button>
                 </div>
@@ -116,13 +116,6 @@
 
     <script src="script.js?v=gamming"></script>
     <script>
-        /* Small JS tweak needed here too for Navbar media query, but let's see if CSS handle it first.
-           Actually, the media query is already in script.js, let's just make sure navbar structure matches.
-           Wait, script.js has the media query logic `if(window.innerWidth > 992)`.
-           This is a bit complex. Let me update the media query in style.css to override script.js logic completely.
-           Done, updated media queries in CSS.
-        */
-        
         // Modal functions (Copy-pasted from script.js since they are UI specific, original script.js functions are safe)
         function toggleProfileModal() {
             const modal = document.getElementById('profileModal');
