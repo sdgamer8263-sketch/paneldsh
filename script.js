@@ -114,21 +114,23 @@ document.addEventListener("DOMContentLoaded", () => {
     if(document.getElementById('cmdTable')) loadCommandsFromFile();
     if(document.getElementById('real-discord-members')) fetchDiscordTeam();
     if(document.getElementById('code-container')) loadGitHubCodes();
-    if(document.getElementById('download-container')) loadDownloadFiles();
+    
+    // Download File Manager start path: 'Df'
+    if(document.getElementById('download-container')) loadDownloadFiles('Df');
+    
     if(document.getElementById('custom-chat-box')) {
         fetchCustomDiscordChat();
-        setInterval(fetchCustomDiscordChat, 5000); // 5 sec por por live chat refresh
+        setInterval(fetchCustomDiscordChat, 5000); 
     }
 });
 
 // ==========================================
-// 🚀 CUSTOM DISCORD LIVE CHAT FETCHER (ALL CHANNELS)
+// 🚀 CUSTOM DISCORD LIVE CHAT FETCHER
 // ==========================================
 async function fetchCustomDiscordChat() {
     const chatBox = document.getElementById('custom-chat-box');
     if(!chatBox) return;
 
-    // ✅ Apnar ashol Render Bot URL
     const renderApiUrl = 'https://ska-discord-bot.onrender.com/api/chat';
 
     try {
@@ -138,7 +140,7 @@ async function fetchCustomDiscordChat() {
 
         chatBox.innerHTML = ''; 
 
-        if(!messages || messages.length === 0) {
+        if(messages.length === 0) {
             chatBox.innerHTML = '<p style="color: #8e9297; text-align: center;">No messages yet.</p>';
             return;
         }
@@ -146,19 +148,16 @@ async function fetchCustomDiscordChat() {
         messages.forEach(msg => {
             const date = new Date(msg.time);
             const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
-            // Handle missing channel name for safety
-            const channelName = msg.channelName ? msg.channelName : "general";
 
             const msgHTML = `
-            <div style="display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">
-                <img src="${msg.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(0,255,136,0.3);">
+            <div style="display: flex; gap: 15px; margin-bottom: 10px;">
+                <img src="${msg.avatar}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(0,255,136,0.3);">
                 <div>
-                    <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
+                    <div style="display: flex; align-items: baseline; gap: 10px;">
                         <span style="color: #00ff88; font-weight: bold; font-size: 0.95rem;">${msg.user}</span>
-                        <span style="color: #72767d; font-size: 0.75rem;"><i class="fas fa-hashtag"></i>${channelName} • ${timeString}</span>
+                        <span style="color: #72767d; font-size: 0.75rem;">Today at ${timeString}</span>
                     </div>
-                    <div style="color: #dcddde; font-size: 0.9rem; margin-top: 5px; line-height: 1.4; word-break: break-word;">
+                    <div style="color: #dcddde; font-size: 0.9rem; margin-top: 2px; line-height: 1.4;">
                         ${msg.text}
                     </div>
                 </div>
@@ -167,43 +166,92 @@ async function fetchCustomDiscordChat() {
         });
         chatBox.scrollTop = chatBox.scrollHeight;
     } catch(e) {
-        console.log("Chat fetch failed:", e);
-        // Error hole silent thakbe, next 5 seconds por abar try korbe
+        // Silent error handling for smooth UX
     }
 }
 
 // ==========================================
-// 📥 GITHUB DOWNLOAD FILE LOADER (Df FOLDER)
+// 📥 GITHUB DOWNLOAD FILE MANAGER (Subfolders Support) - PRO LEVEL 🔥
 // ==========================================
-async function loadDownloadFiles() {
+async function loadDownloadFiles(currentPath) {
     const container = document.getElementById('download-container');
     if(!container) return;
 
+    // Loading Animation
+    container.innerHTML = `
+    <div class="glass-panel text-center" style="padding: 40px;">
+        <p style="color: #00ff88; font-size: 1.2rem;"><i class="fas fa-spinner fa-spin"></i> Fetching /${currentPath}...</p>
+    </div>`;
+
     try {
-        const res = await fetch(`https://api.github.com/repos/sdgamer8263-sketch/paneldsh/contents/Df`);
-        if (!res.ok) throw new Error("API Limit ba folder nei.");
+        const res = await fetch(`https://api.github.com/repos/sdgamer8263-sketch/paneldsh/contents/${currentPath}`);
+        if (!res.ok) throw new Error("API Limit ba path pawa jacche na.");
         
-        const files = await res.json();
-        const actualFiles = files.filter(f => f.type === 'file');
+        const items = await res.json();
+        
+        // Folder ar File ke alada kora
+        const folders = items.filter(f => f.type === 'dir');
+        const files = items.filter(f => f.type === 'file');
 
-        if(actualFiles.length === 0) return container.innerHTML = '<p style="color: #aaa; text-align:center;">No files found.</p>';
-        container.innerHTML = ''; 
+        let html = '';
 
-        for(let file of actualFiles) {
+        // ✅ Back Button System (Jodi Df er theke bhitore dhuke jay)
+        if (currentPath !== 'Df') {
+            const pathParts = currentPath.split('/');
+            pathParts.pop(); // Last folder ta kete dilam
+            const parentPath = pathParts.join('/'); // Pura path toiri
+            
+            html += `
+            <div style="margin-bottom: 20px; display: flex; align-items: center; gap: 15px;">
+                <button onclick="loadDownloadFiles('${parentPath}')" class="filter-btn active" style="padding: 10px 20px;">
+                    <i class="fas fa-arrow-left"></i> BACK
+                </button>
+                <span style="color: #a8e6cf; font-size: 0.9rem; font-family: monospace;">Path: /${currentPath}</span>
+            </div>`;
+        } else {
+            html += `
+            <div style="margin-bottom: 20px;">
+                <span style="color: #a8e6cf; font-size: 0.9rem; font-family: monospace;"><i class="fas fa-home"></i> Root: /Df</span>
+            </div>`;
+        }
+
+        if(folders.length === 0 && files.length === 0) {
+            html += '<div class="glass-panel text-center"><p style="color: #aaa;">This folder is empty.</p></div>';
+        }
+
+        // ✅ 1. Render Folders (Clickable to open)
+        for(let folder of folders) {
+            html += `
+            <div class="glass-panel" style="padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #00d2ff; margin-bottom: 15px; cursor: pointer; transition: 0.3s;" onclick="loadDownloadFiles('${folder.path}')" onmouseover="this.style.background='rgba(0, 210, 255, 0.1)'" onmouseout="this.style.background='rgba(20, 20, 25, 0.85)'">
+                <div style="text-align: left;">
+                    <h3 style="color: #fff; margin: 0; font-size: 1.1rem;"><i class="fas fa-folder" style="color: #00d2ff; margin-right: 8px;"></i> ${folder.name}</h3>
+                </div>
+                <button style="background: rgba(0, 210, 255, 0.1); color: #00d2ff; border: 1px solid rgba(0, 210, 255, 0.3); padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; pointer-events: none;">
+                    OPEN
+                </button>
+            </div>`;
+        }
+
+        // ✅ 2. Render Files (Downloadable)
+        for(let file of files) {
             const fileSize = (file.size / 1024).toFixed(2) + ' KB';
-            const fileHTML = `
+            html += `
             <div class="glass-panel" style="padding: 20px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid #00ff88; margin-bottom: 15px;">
                 <div style="text-align: left;">
-                    <h3 style="color: #fff; margin: 0; font-size: 1.1rem;"><i class="fas fa-file-download" style="color: #00d2ff; margin-right: 8px;"></i> ${file.name}</h3>
+                    <h3 style="color: #fff; margin: 0; font-size: 1.1rem;"><i class="fas fa-file-alt" style="color: #a8e6cf; margin-right: 8px;"></i> ${file.name}</h3>
                     <p style="color: #a8e6cf; font-size: 0.8rem; margin-top: 5px;">Size: ${fileSize}</p>
                 </div>
                 <button onclick="forceDownloadFile('${file.download_url}', '${file.name}', this)" class="copy-btn" style="padding: 10px 20px; border-radius: 6px;">
                     <i class="fas fa-download"></i> DOWNLOAD
                 </button>
             </div>`;
-            container.innerHTML += fileHTML;
         }
-    } catch(e) { container.innerHTML = '<p style="color: red; text-align:center;">Error Loading Downloads.</p>'; }
+
+        container.innerHTML = html;
+
+    } catch(e) { 
+        container.innerHTML = '<p style="color: #ff3232; text-align:center; font-weight: bold;">Error Loading Folder. API limits reached.</p>'; 
+    }
 }
 
 async function forceDownloadFile(url, filename, btnElement) {
