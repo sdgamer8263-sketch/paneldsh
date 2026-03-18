@@ -117,18 +117,18 @@ document.addEventListener("DOMContentLoaded", () => {
     if(document.getElementById('download-container')) loadDownloadFiles();
     if(document.getElementById('custom-chat-box')) {
         fetchCustomDiscordChat();
-        setInterval(fetchCustomDiscordChat, 5000); 
+        setInterval(fetchCustomDiscordChat, 5000); // 5 sec por por live chat refresh
     }
 });
 
 // ==========================================
-// 🚀 CUSTOM DISCORD LIVE CHAT FETCHER
+// 🚀 CUSTOM DISCORD LIVE CHAT FETCHER (ALL CHANNELS)
 // ==========================================
 async function fetchCustomDiscordChat() {
     const chatBox = document.getElementById('custom-chat-box');
     if(!chatBox) return;
 
-    // ✅ Apnar ashol Render App URL set kora hoyeche
+    // ✅ Apnar ashol Render Bot URL
     const renderApiUrl = 'https://ska-discord-bot.onrender.com/api/chat';
 
     try {
@@ -138,7 +138,7 @@ async function fetchCustomDiscordChat() {
 
         chatBox.innerHTML = ''; 
 
-        if(messages.length === 0) {
+        if(!messages || messages.length === 0) {
             chatBox.innerHTML = '<p style="color: #8e9297; text-align: center;">No messages yet.</p>';
             return;
         }
@@ -146,16 +146,19 @@ async function fetchCustomDiscordChat() {
         messages.forEach(msg => {
             const date = new Date(msg.time);
             const timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            // Handle missing channel name for safety
+            const channelName = msg.channelName ? msg.channelName : "general";
 
             const msgHTML = `
-            <div style="display: flex; gap: 15px; margin-bottom: 10px;">
-                <img src="${msg.avatar}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(0,255,136,0.3);">
+            <div style="display: flex; gap: 15px; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">
+                <img src="${msg.avatar || 'https://cdn.discordapp.com/embed/avatars/0.png'}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid rgba(0,255,136,0.3);">
                 <div>
-                    <div style="display: flex; align-items: baseline; gap: 10px;">
+                    <div style="display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap;">
                         <span style="color: #00ff88; font-weight: bold; font-size: 0.95rem;">${msg.user}</span>
-                        <span style="color: #72767d; font-size: 0.75rem;">Today at ${timeString}</span>
+                        <span style="color: #72767d; font-size: 0.75rem;"><i class="fas fa-hashtag"></i>${channelName} • ${timeString}</span>
                     </div>
-                    <div style="color: #dcddde; font-size: 0.9rem; margin-top: 2px; line-height: 1.4;">
+                    <div style="color: #dcddde; font-size: 0.9rem; margin-top: 5px; line-height: 1.4; word-break: break-word;">
                         ${msg.text}
                     </div>
                 </div>
@@ -165,7 +168,7 @@ async function fetchCustomDiscordChat() {
         chatBox.scrollTop = chatBox.scrollHeight;
     } catch(e) {
         console.log("Chat fetch failed:", e);
-        // Silent error handling for smooth UX
+        // Error hole silent thakbe, next 5 seconds por abar try korbe
     }
 }
 
@@ -391,6 +394,7 @@ async function fetchDiscordTeam() {
 function copyCmd() {
     navigator.clipboard.writeText("bash <(curl -sL https://raw.githubusercontent.com/sdgamer8263-sketch/SDGAMER.HOST/main/run.sh)").then(() => alert("Master Command Copied! 🔥"));
 }
+
 async function runPingTest() {
     let url = document.getElementById("ping-ip").value.trim();
     let resultDiv = document.getElementById("ping-result");
