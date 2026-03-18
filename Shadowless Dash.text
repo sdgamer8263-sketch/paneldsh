@@ -1,0 +1,26 @@
+For information:-
+
+https://shadowless-web.vercel.app/#get-started
+
+# Installation Guide
+1. Requirements: Node.js, npm, and a running Pterodactyl Panel.
+sudo apt update && sudo apt install -y nodejs npm
+2. Download:  git clone https://github.com/XaloraLabs/ShadowlessDash.git
+3. Install Dependencies:  cd ShadowlessDash && npm install
+4. Configure: Configure the ```settings.json
+5. Run:    node index.js
+           npm install
+           npm start
+
+# pterodactyl Setup
+---------------------------------------------------------
+1 -
+     https://github.com/XaloraLabs/ShadowlessDash.git
+
+2 - 
+     app.js
+3 -  
+     https://dash.yourdomin.com/callback
+4 - 
+     https://discord.com/developers/applications
+           
