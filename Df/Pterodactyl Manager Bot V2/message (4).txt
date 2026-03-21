@@ -1,0 +1,344 @@
+import discord
+from discord.ext import commands
+import aiohttp
+import json
+import os
+import random
+import string
+from datetime import datetime
+
+intents = discord.Intents.default()
+intents.message_content = True
+intents.members = True
+
+bot = commands.Bot(command_prefix='pt!', intents=intents, help_command=None)
+bot.owner_id = None
+
+ptero_config = {'setup': False}
+ptero_headers = {}
+ptero_base_url = ""
+ptero_app_base_url = ""
+node_id = 1
+
+# Your real egg IDs from the panel
+egg_ids = {
+    "vanilla": 4,
+    "paper":   5,
+    "spigot":  6,   # Change this to your actual Spigot egg ID after importing
+}
+
+class PterodactylAPI:
+    def __init__(self):
+        self.session = None
+
+    async def _ensure_session(self):
+        if self.session is None or self.session.closed:
+            connector = aiohttp.TCPConnector(ssl=False)
+            self.session = aiohttp.ClientSession(connector=connector)
+
+    async def request(self, method: str, endpoint: str, base_url=None, **kwargs):
+        await self._ensure_session()
+        url_base = base_url or ptero_base_url
+        url = f"{url_base}{endpoint}"
+        async with self.session.request(method, url, headers=ptero_headers, **kwargs) as resp:
+            try:
+                data = await resp.json(content_type=None)
+            except:
+                data = await resp.text()
+            return {'status': resp.status, 'data': data}
+
+ptero_api = PterodactylAPI()
+
+async def send_dm_to_owner(message: str):
+    if bot.owner_id:
+        try:
+            owner = await bot.fetch_user(bot.owner_id)
+            await owner.send(f"**[LOG {datetime.now().strftime('%Y-%m-%d %H:%M:%S IST')}]**\n{message}")
+        except:
+            pass
+
+@bot.event
+async def on_ready():
+    print(f"Logged in as {bot.user} | Pterodactyl Manager")
+    print(f"Owner ID: {bot.owner_id}")
+    await bot.change_presence(activity=discord.Game(name="pt!help | Pterodactyl"))
+    load_config()
+
+def load_config():
+    global ptero_headers, ptero_base_url, ptero_app_base_url, ptero_config, node_id
+    try:
+        with open('ptero_config.json', 'r') as f:
+            data = json.load(f)
+            key = data["key"]
+            panel_url = data["url"].rstrip('/')
+            ptero_base_url = panel_url + "/api/client"
+            ptero_app_base_url = panel_url + "/api/application"
+            ptero_headers = {
+                'Authorization': f'Bearer {key}',
+                'Accept': 'Application/vnd.pterodactyl.v1+json',
+                'Content-Type': 'application/json'
+            }
+            node_id = data.get("node", 1)
+            ptero_config['setup'] = True
+            print(f"Config loaded | Node {node_id}")
+    except FileNotFoundError:
+        print("No config found — use pt!setup")
+    except Exception as e:
+        print(f"Config error: {e}")
+
+async def check_setup(ctx):
+    if not ptero_config['setup']:
+        await ctx.send("❌ Pterodactyl not configured. Run `pt!setup` first.")
+        raise commands.CommandError("Setup pending")
+
+# ─── Setup ───
+@bot.command()
+async def setup(ctx, url: str, key: str, node: int = 1):
+    if ctx.author.id != bot.owner_id:
+        return await ctx.send("❌ Only bot owner can run setup.")
+    global ptero_headers, ptero_base_url, ptero_app_base_url, node_id
+    panel_url = url.rstrip('/')
+    ptero_base_url = panel_url + "/api/client"
+    ptero_app_base_url = panel_url + "/api/application"
+    ptero_headers = {
+        'Authorization': f'Bearer {key}',
+        'Accept': 'Application/vnd.pterodactyl.v1+json',
+        'Content-Type': 'application/json'
+    }
+    node_id = node
+    try:
+        with open('ptero_config.json', 'w') as f:
+            json.dump({'url': url, 'key': key, 'node': node}, f, indent=2)
+        ptero_config['setup'] = True
+        await ctx.send(f"✅ Setup successful\nPanel: `{url}`\nNode: **{node}**")
+    except Exception as e:
+        await ctx.send(f"❌ Failed to save config: {str(e)}")
+
+# ─── Power Commands ───
+@bot.command()
+@commands.before_invoke(check_setup)
+async def start(ctx, server_id: str):
+    result = await ptero_api.request('POST', f'/servers/{server_id}/power', json={'signal': 'start'})
+    await handle_power(ctx, result, "started")
+
+@bot.command()
+@commands.before_invoke(check_setup)
+async def stop(ctx, server_id: str):
+    result = await ptero_api.request('POST', f'/servers/{server_id}/power', json={'signal': 'stop'})
+    await handle_power(ctx, result, "stopped")
+
+@bot.command()
+@commands.before_invoke(check_setup)
+async def restart(ctx, server_id: str):
+    result = await ptero_api.request('POST', f'/servers/{server_id}/power', json={'signal': 'restart'})
+    await handle_power(ctx, result, "restarted")
+
+@bot.command()
+@commands.before_invoke(check_setup)
+async def kill(ctx, server_id: str):
+    result = await ptero_api.request('POST', f'/servers/{server_id}/power', json={'signal': 'kill'})
+    await handle_power(ctx, result, "killed")
+
+async def handle_power(ctx, result, action):
+    if result['status'] in (200, 204):
+        await ctx.send(f"✅ Server **{action}** successfully!")
+    else:
+        error_text = json.dumps(result.get('data'), indent=2, ensure_ascii=False)
+        await ctx.send(f"❌ Power action failed ({result['status']})\n```json\n{error_text}```")
+
+# ─── Status ───
+@bot.command()
+@commands.before_invoke(check_setup)
+async def status(ctx, server_id: str):
+    result = await ptero_api.request('GET', f'/servers/{server_id}/resources')
+    if result['status'] != 200:
+        return await ctx.send(f"❌ Failed to get status ({result['status']})\n```json\n{json.dumps(result.get('data'), indent=2)}```")
+
+    attr = result['data']['attributes']
+    state = attr.get('current_state', 'Unknown').capitalize()
+    res = attr.get('resources', {})
+
+    color = 0x2ecc71 if state == "Running" else 0xe74c3c
+
+    embed = discord.Embed(title=f"Server {server_id} • {state}", color=color)
+    embed.add_field(name="CPU", value=f"{res.get('cpu_absolute', 0):.1f}%", inline=True)
+    embed.add_field(name="RAM", value=f"{res.get('memory_bytes', 0)/1024**2:.0f} MB", inline=True)
+    embed.add_field(name="Disk", value=f"{res.get('disk_bytes', 0)/1024**2:.0f} MB", inline=True)
+    await ctx.send(embed=embed)
+
+# ─── Delete ───
+@bot.command()
+@commands.before_invoke(check_setup)
+async def delete(ctx, server_id: str, confirm: str = ""):
+    if ctx.author.id != bot.owner_id:
+        return await ctx.send("❌ Owner only")
+    if confirm.lower() not in ('--force', 'force', 'yes', 'y', 'delete'):
+        await ctx.send("Confirm deletion: `pt!delete <serverid> --force`")
+        return
+
+    result = await ptero_api.request('DELETE', f'/servers/{server_id}', base_url=ptero_app_base_url)
+    if result['status'] in (200, 204, 404):
+        await ctx.send(f"🗑️ Server `{server_id}` deleted (or already gone)")
+    else:
+        await ctx.send(f"❌ Delete failed ({result['status']})\n```json\n{json.dumps(result.get('data'), indent=2, ensure_ascii=False)}```")
+
+# ─── Create User ───
+@bot.command()
+@commands.before_invoke(check_setup)
+async def createuser(ctx, username: str, email: str, first_name: str, last_name: str):
+    if ctx.author.id != bot.owner_id:
+        return await ctx.send("❌ Owner only")
+
+    password = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
+
+    payload = {
+        "email": email,
+        "username": username,
+        "first_name": first_name,
+        "last_name": last_name,
+        "password": password,
+        "root_admin": False,
+        "use_totp": False
+    }
+
+    result = await ptero_api.request('POST', '/users', base_url=ptero_app_base_url, json=payload)
+
+    if result['status'] in (200, 201):
+        try:
+            user_data = result['data']['attributes']
+            user_id = user_data.get('id', 'Unknown')
+            embed = discord.Embed(title="User Created Successfully", color=0x2ecc71)
+            embed.add_field(name="Pterodactyl User ID", value=f"**{user_id}**", inline=False)
+            embed.add_field(name="Username", value=username, inline=True)
+            embed.add_field(name="Email", value=email, inline=True)
+            embed.add_field(name="Full Name", value=f"{first_name} {last_name}", inline=True)
+            embed.add_field(name="Password", value=f"||{password}||", inline=False)
+            embed.set_footer(text="Use this ID in pt!mc | Send password securely")
+            await ctx.send(embed=embed)
+        except:
+            await ctx.send("User created, but ID could not be read. Check panel → Users.")
+    else:
+        err = json.dumps(result.get('data', {}), indent=2, ensure_ascii=False)
+        await ctx.send(f"❌ User creation failed ({result['status']})\n```json\n{err}```")
+
+# ─── Minecraft Quick Create ───
+@bot.command()
+@commands.before_invoke(check_setup)
+async def mc(ctx, ptero_user_id: int, egg_type: str, ram: str = "3072", disk: str = "15000", cpu: str = "150", version: str = "latest"):
+    if ctx.author.id != bot.owner_id:
+        return await ctx.send("❌ Owner only command")
+
+    egg_type = egg_type.lower()
+    supported = ["vanilla", "paper", "spigot"]
+    if egg_type not in supported:
+        return await ctx.send(f"Supported types: `vanilla`, `paper`, `spigot`")
+
+    egg = egg_ids.get(egg_type)
+    if not egg:
+        return await ctx.send(f"Egg ID for {egg_type} not configured")
+
+    server_name = f"mc-{egg_type}-{ptero_user_id}-{random.randint(1000,9999)}"
+
+    startup = (
+        "java -Xms128M -Xmx{{SERVER_MEMORY}}M "
+        "-XX:+UseG1GC -XX:+ParallelRefProcEnabled -XX:MaxGCPauseMillis=200 "
+        "-XX:+UnlockExperimentalVMOptions -XX:+DisableExplicitGC -XX:+AlwaysPreTouch "
+        "-XX:G1NewSizePercent=30 -XX:G1MaxNewSizePercent=40 -XX:G1HeapRegionSize=8M "
+        "-XX:G1ReservePercent=20 -XX:G1HeapWastePercent=5 -XX:G1MixedGCCountTarget=4 "
+        "-XX:InitiatingHeapOccupancyPercent=15 -XX:G1MixedGCLiveThresholdPercent=90 "
+        "-XX:G1RSetUpdatingPauseTimePercent=5 -XX:SurvivorRatio=32 -XX:+PerfDisableSharedMem "
+        "-XX:MaxTenuringThreshold=1 "
+        "-Dusing.aikars.flags=https://mcflags.emc.gs -Daikars.new.flags=true "
+        "-jar {{SERVER_JARFILE}} nogui"
+    )
+
+    environment = {
+        "SERVER_JARFILE": "server.jar" if egg_type == "vanilla" else "spigot.jar" if egg_type == "spigot" else "paper.jar",
+        "TYPE": egg_type.upper(),
+        "MC_VERSION": version if version != "latest" else ""
+    }
+
+    if egg_type in ["paper", "spigot"]:
+        environment["BUILD_NUMBER"] = "latest"
+
+    payload = {
+        "name": server_name,
+        "user": ptero_user_id,
+        "nest": 1,
+        "egg": egg,
+        "docker_image": "ghcr.io/pterodactyl/yolks:java_21",
+        "startup": startup,
+        "limits": {
+            "memory": int(ram),
+            "swap": 0,
+            "disk": int(disk),
+            "io": 500,
+            "cpu": int(cpu)
+        },
+        "feature_limits": {
+            "databases": 1,
+            "backups": 2,
+            "allocations": 1
+        },
+        "environment": environment,
+        "deploy": {
+            "locations": [node_id],
+            "dedicated_ip": False,
+            "port_range": []
+        }
+    }
+
+    await ctx.send(f"Creating **{egg_type.upper()}** server for Pterodactyl User ID **{ptero_user_id}**...")
+
+    result = await ptero_api.request('POST', '/servers', base_url=ptero_app_base_url, json=payload)
+
+    if result['status'] in (200, 201):
+        try:
+            attrs = result['data']['attributes']
+            sid = attrs.get('identifier', '???')
+            await ctx.send(
+                f"🎉 **{egg_type.upper()} Server Created Successfully!**\n"
+                f"→ Name: `{server_name}`\n"
+                f"→ Identifier: `{sid}`\n"
+                f"→ Owner (Ptero ID): `{ptero_user_id}`\n"
+                f"→ Resources: {ram} MB RAM | {disk} MB Disk | {cpu}% CPU\n\n"
+                f"Next step: Check **Network** tab in panel for allocated port."
+            )
+        except:
+            await ctx.send("Server created, but response parsing failed. Check panel manually.")
+    else:
+        err = json.dumps(result.get('data', {}), indent=2, ensure_ascii=False)
+        await ctx.send(f"❌ Server creation failed (HTTP {result['status']})\n```json\n{err}```")
+
+# ─── Help ───
+@bot.command()
+async def help(ctx):
+    embed = discord.Embed(title="🦖 Pterodactyl Manager Bot V2", color=0x2ecc71)
+    embed.add_field(name="Power & Status", value="`pt!start` `pt!stop` `pt!restart` `pt!kill` `pt!status` `<serverid>`", inline=False)
+    if ctx.author.id == bot.owner_id:
+        embed.add_field(
+            name="Owner Commands",
+            value=(
+                "`pt!setup <url> <key> [node]`\n"
+                "`pt!delete <serverid> --force`\n"
+                "`pt!createuser <username> <email> <first> <last>`\n"
+                "`pt!mc <userid> vanilla/paper/spigot [ram] [disk] [cpu] [version]`"
+            ),
+            inline=False
+        )
+    await ctx.send(embed=embed)
+
+if __name__ == "__main__":
+    print("\nPterodactyl Manager Bot V2 - Startup")
+    print("───────────────────────────────────\n")
+    token = input("Enter Discord bot token: ").strip()
+    if not token:
+        print("No token entered. Exiting.")
+        exit(1)
+    owner_str = input("Enter Bot Owner Discord ID: ").strip()
+    if not owner_str.isdigit():
+        print("Owner ID must be a number. Exiting.")
+        exit(1)
+    bot.owner_id = int(owner_str)
+    print(f"→ Owner set to: {bot.owner_id}\n")
+    bot.run(token)
