@@ -1,0 +1,13 @@
+# How To Get Pterodactyl Manager Bot V2
+
+### Installation Cmds.
+``apt update && apt install nano -y && apt install python3-pip -y ``
+ ``pip install discord pynacl psutil dotenv``
+
+``nano bot.py``
+``paste the code.``
+
+``discord developer portal-https://discord.com/developers/applications``
+
+
+Youtube video link- https://youtu.be/Ocx1Z5picEE
