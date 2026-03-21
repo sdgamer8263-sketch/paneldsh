@@ -1,0 +1,278 @@
+import discord
+from discord.ext import commands
+import aiohttp
+import json
+import os
+import random
+from dotenv import load_dotenv
+import string
+
+load_dotenv()
+
+intents = discord.Intents.default()
+intents.message_content = True
+bot = commands.Bot(command_prefix='pt!', intents=intents, help_command=None)
+
+bot.owner_id = 1455801921150386298
+ptero_config = {'setup': False}
+ptero_headers = {}
+ptero_base_url = ""
+node_id = 1
+
+class PterodactylAPI:
+    async def request(self, method, endpoint, **kwargs):
+        connector = aiohttp.TCPConnector(ssl=False)
+        async with aiohttp.ClientSession(connector=connector) as session:
+            async with session.request(method, f"{ptero_base_url}{endpoint}",
+                                       headers=ptero_headers, **kwargs) as resp:
+                try:
+                    data = await resp.json()
+                except:
+                    data = await resp.text()
+                return {'status': resp.status, 'data': data}
+
+    async def get_servers(self):
+        return await self.request('GET', '/servers')
+
+    async def get_node_allocations(self):
+        return await self.request('GET', f'/nodes/{node_id}/allocations')
+
+    async def get_server(self, server_id):
+        return await self.request('GET', f'/servers/{server_id}')
+
+    async def server_action(self, server_id, action):
+        return await self.request('POST', f'/servers/{server_id}/{action}')
+
+    async def delete_server(self, server_id):
+        return await self.request('DELETE', f'/servers/{server_id}')
+
+ptero_api = PterodactylAPI()
+
+@bot.event
+async def on_ready():
+    print(f"✅ {bot.user} - FULL PANEL CONTROL!")
+    await bot.change_presence(activity=discord.Game(name="pt!help | Full Control"))
+    load_config()
+
+def load_config():
+    global ptero_headers, ptero_base_url, ptero_config, node_id
+    try:
+        with open('ptero_config.json', 'r') as f:
+            data = json.load(f)
+            ptero_headers = {
+                'Authorization': f'Bearer {data["key"]}',
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            }
+            ptero_base_url = data["url"].rstrip('/') + "/api/application"
+            node_id = data.get("node", 1)
+            ptero_config['setup'] = True
+            print(f"✅ FULL CONTROL READY!")
+    except:
+        pass
+
+@bot.command()
+async def setup(ctx, url: str, key: str, node: int = 1):
+    global ptero_headers, ptero_base_url, node_id
+    ptero_headers = {
+        'Authorization': f'Bearer {key}',
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+    }
+    ptero_base_url = url.rstrip('/') + "/api/application"
+    node_id = node
+    
+    with open('ptero_config.json', 'w') as f:
+        json.dump({'url': url, 'key': key, 'node': node}, f)
+    
+    ptero_config['setup'] = True
+    await ctx.send(f"✅ **FULL PANEL CONTROL** | Node **{node}**")
+
+# 🔥 CREATE USER
+@bot.command()
+@commands.is_owner()
+async def createuser(ctx, username: str, email: str, first: str, last: str):
+    if not ptero_config['setup']:
+        return await ctx.send("❌ Setup first!")
+    
+    password = ''.join(random.choices(string.ascii_letters + string.digits, k=12))
+    payload = {
+        "username": username,
+        "email": email,
+        "first_name": first,
+        "last_name": last,
+        "language": "en"
+    }
+    
+    result = await ptero_api.request('POST', '/users', json=payload)
+    if result.get('status') == 201:
+        user_id = result['data']['attributes']['id']
+        await ctx.send(f"✅ **USER CREATED** 👤\n"
+                      f"🆔 `{user_id}` | `{username}`\n"
+                      f"📧 `{email}`\n"
+                      f"🔑 `{password}`")
+    else:
+        await ctx.send(f"❌ `{result.get('status')}`\n```{result}```")
+
+# 🔥 CREATE SERVER
+async def get_free_allocation():
+    alloc_resp = await ptero_api.get_node_allocations()
+    if alloc_resp['status'] != 200: return None
+    
+    all_alloc_ids = [str(alloc['attributes']['id']) for alloc in alloc_resp['data']['data']]
+    
+    servers_resp = await ptero_api.get_servers()
+    used_allocs = set()
+    if servers_resp['status'] == 200:
+        for server in servers_resp['data']['data']:
+            try:
+                alloc = server['attributes']['allocation']
+                if isinstance(alloc, dict):
+                    used_allocs.add(str(alloc['default']))
+                else:
+                    used_allocs.add(str(alloc))
+            except: pass
+    
+    free_allocs = [aid for aid in all_alloc_ids if aid not in used_allocs]
+    return free_allocs[0] if free_allocs else None
+
+@bot.command()
+async def mc(ctx, user_id: int, server_type: str, ram: int = 2048, disk: int = 10000, cpu: int = 100):
+    if not ptero_config['setup']: return await ctx.send("❌ Setup!")
+    
+    server_type = server_type.lower()
+    egg_map = {"paper": 5, "spigot": 4, "vanilla": 3}
+    if server_type not in egg_map: return await ctx.send("❌ `paper/spigot/vanilla`")
+    
+    alloc_id = await get_free_allocation()
+    if not alloc_id: return await ctx.send("❌ No free slots!")
+    
+    env = {"SERVER_JARFILE": "server.jar", "EULA": "TRUE"}
+    if server_type in ["paper", "spigot"]: env["BUILD_NUMBER"] = "latest"
+    
+    payload = {
+        "name": f"{server_type}-{user_id}-{random.randint(1000,9999)}",
+        "user": user_id, "egg": egg_map[server_type],
+        "docker_image": "ghcr.io/pterodactyl/yolks:java_21",
+        "startup": "java -Xms128M -Xmx{{SERVER_MEMORY}}M -jar {{SERVER_JARFILE}} nogui",
+        "limits": {"memory": ram, "swap": 0, "disk": disk, "io": 500, "cpu": cpu},
+        "feature_limits": {"databases": 0, "allocations": 1, "backups": 0},
+        "environment": env,
+        "allocation": {"default": int(alloc_id)}
+    }
+    
+    result = await ptero_api.request('POST', '/servers', json=payload)
+    status = result.get('status')
+    if status in [200, 201, 202]:
+        srv_id = result['data']['attributes']['id']
+        await ctx.send(f"✅ **SERVER CREATED** 🎮\n🆔 `{srv_id}` | 💾 `{ram}MB`")
+    else:
+        await ctx.send(f"❌ `{status}`\n```{result}```")
+
+# 🔥 SERVER CONTROLS
+@bot.command()
+async def start(ctx, server_id: int):
+    if not ptero_config['setup']: return await ctx.send("❌ Setup!")
+    result = await ptero_api.server_action(server_id, 'power')
+    if result.get('status') == 204:
+        await ctx.send(f"✅ **SERVER {server_id} STARTED** ▶️")
+    else:
+        await ctx.send(f"❌ **START FAILED** `{result.get('status')}`")
+
+@bot.command()
+async def stop(ctx, server_id: int):
+    if not ptero_config['setup']: return await ctx.send("❌ Setup!")
+    result = await ptero_api.server_action(server_id, 'send')
+    payload = {"signal": "SIGTERM"}
+    stop_result = await ptero_api.request('POST', f'/servers/{server_id}/command', json=payload)
+    if stop_result.get('status') == 204:
+        await ctx.send(f"✅ **SERVER {server_id} STOPPING** ⏹️")
+    else:
+        await ctx.send(f"❌ **STOP FAILED**")
+
+@bot.command()
+async def restart(ctx, server_id: int):
+    if not ptero_config['setup']: return await ctx.send("❌ Setup!")
+    result = await ptero_api.server_action(server_id, 'restart')
+    if result.get('status') == 204:
+        await ctx.send(f"✅ **SERVER {server_id} RESTARTING** 🔄")
+    else:
+        await ctx.send(f"❌ **RESTART FAILED**")
+
+@bot.command()
+async def kill(ctx, server_id: int):
+    if not ptero_config['setup']: return await ctx.send("❌ Setup!")
+    result = await ptero_api.server_action(server_id, 'kill')
+    if result.get('status') == 204:
+        await ctx.send(f"✅ **SERVER {server_id} KILLED** 💀")
+    else:
+        await ctx.send(f"❌ **KILL FAILED**")
+
+@bot.command()
+@commands.is_owner()
+async def delete(ctx, server_id: int):
+    if not ptero_config['setup']: return await ctx.send("❌ Setup!")
+    result = await ptero_api.delete_server(server_id)
+    if result.get('status') == 204:
+        await ctx.send(f"✅ **SERVER {server_id} DELETED** 🗑️")
+    else:
+        await ctx.send(f"❌ **DELETE FAILED** `{result.get('status')}`")
+
+# 🔥 SERVER INFO
+@bot.command()
+async def info(ctx, server_id: int):
+    if not ptero_config['setup']: return await ctx.send("❌ Setup!")
+    result = await ptero_api.get_server(server_id)
+    if result.get('status') == 200:
+        srv = result['data']['attributes']
+        embed = discord.Embed(title=f"📊 Server {server_id}", color=0x00ff00)
+        embed.add_field(name="Name", value=srv['name'], inline=True)
+        embed.add_field(name="Owner", value=srv['user'], inline=True)
+        embed.add_field(name="RAM", value=f"{srv['limits']['memory']}MB", inline=True)
+        embed.add_field(name="Status", value=srv['status'] or "Unknown", inline=True)
+        await ctx.send(embed=embed)
+    else:
+        await ctx.send(f"❌ Server **{server_id}** not found!")
+
+# 🔥 DEBUG & STATUS
+@bot.command(name="debug")
+async def debug(ctx):
+    servers = await ptero_api.get_servers()
+    allocs = await ptero_api.get_node_allocations()
+    
+    used = set()
+    if servers['status'] == 200:
+        for s in servers['data']['data']:
+            try:
+                alloc = s['attributes']['allocation']
+                if isinstance(alloc, dict): used.add(str(alloc['default']))
+                else: used.add(str(alloc))
+            except: pass
+    
+    total = len(allocs['data']['data']) if allocs['status'] == 200 else 0
+    free = total - len(used)
+    
+    embed = discord.Embed(title="🔍 PANEL STATUS", color=0x00ff00)
+    embed.add_field(name="Servers", value=len(servers['data']['data']) if servers['status']==200 else 0, inline=True)
+    embed.add_field(name="Total Slots", value=total, inline=True)
+    embed.add_field(name="🟢 FREE", value=free, inline=True)
+    await ctx.send(embed=embed)
+
+@bot.command(name="help")
+async def help_cmd(ctx):
+    embed = discord.Embed(title="🦖 PTERODACTYL PANEL MANAGER", color=0x00ff00)
+    embed.add_field(name="🔧 `pt!setup <url> <key> 1`", value="Setup", inline=False)
+    embed.add_field(name="👤 `pt!createuser name email first last`", value="New User", inline=False)
+    embed.add_field(name="🎮 `pt!mc (userid) paper/spigot/vanila (ram) (disk) (cpu)`", value="New Server", inline=False)
+    embed.add_field(name="▶️ `pt!start 5`", value="Start Server", inline=False)
+    embed.add_field(name="⏹️ `pt!stop 5`", value="Stop Server", inline=False)
+    embed.add_field(name="🔄 `pt!restart 5`", value="Restart", inline=False)
+    embed.add_field(name="💀 `pt!kill 5`", value="Force Kill", inline=False)
+    embed.add_field(name="🗑️ `pt!delete 5` (Owner)", value="Delete", inline=False)
+    embed.add_field(name="📊 `pt!info 5`", value="Server Info", inline=False)
+    embed.add_field(name="🔍 `pt!debug`", value="Status", inline=False)
+    await ctx.send(embed=embed)
+
+if __name__ == "__main__":
+    token = os.getenv('DISCORD_TOKEN') or input("Token: ")
+    bot.run(token)
