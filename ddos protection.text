@@ -1,0 +1,1 @@
+(http.host eq "panel " and starts_with(http.request.uri.path, "/api/")) or (http.host in {"node2..host" })
