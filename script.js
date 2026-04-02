@@ -9,7 +9,7 @@ const navPages = [
     { name: 'Commands', file: 'commands.html', icon: 'fas fa-terminal' },
     { name: 'Codes', file: 'code.html', icon: 'fas fa-file-code' }, 
     { name: 'Downloads', file: 'download.html', icon: 'fas fa-download' },
-    { name: 'MCPE Addon', file: 'mcpe addon.html', icon: 'fas fa-download' },
+    { name: 'ADDON-EXTENSION DOWNLOAD', file: 'addon-extention download.html', icon: 'fas fa-gamepad' },
     { name: 'Tools', file: 'tools.html', icon: 'fas fa-wrench' },
     { name: 'Stats', file: 'stats.html', icon: 'fas fa-chart-line' },
     { name: 'About', file: 'about.html', icon: 'fas fa-info-circle' }
