@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SKA HOST - MCPE Addons</title>
+    <link rel="stylesheet" href="style.css?v=addon">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="navbar-container"></div>
+
+    <div class="main-container">
+        <div class="page-header">
+            <div class="ph-left">
+                <h2>MCPE ADDONS & FILES</h2>
+                <p>Directly synced from Official Google Drive Storage</p>
+            </div>
+            <div class="ph-right">
+                <span class="online-badge" style="border-color: #00d2ff; color: #00d2ff; background: rgba(0, 210, 255, 0.1);">
+                    <span class="dot" style="background: #00d2ff; box-shadow: 0 0 10px #00d2ff;"></span> SYNCED
+                </span>
+            </div>
+        </div>
+
+        <section class="active-section">
+            <div class="glass-panel" style="padding: 25px;">
+                <h3 style="color: #00ff88; margin-bottom: 20px; border-bottom: 1px solid rgba(0,255,136,0.2); padding-bottom: 10px;">
+                    <i class="fab fa-google-drive"></i> Cloud Drive Files
+                </h3>
+                
+                <div id="drive-files-container" style="display: flex; flex-direction: column; gap: 15px;">
+                    <p style="color: #aaa; text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Fetching files from Drive...</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="script.js?v=addon"></script>
+
+    <script>
+        // 🚨 APNAR DRIVE FOLDER ID & API KEY (Set kora ache)
+        const FOLDER_ID = '13aHOHsX0W9F--CS-5-qBOKGEuDJ3TmRP';
+        const API_KEY = 'AIzaSyDtz8_0YElTwMk2geoCQCwYQqN05FlyMPc'; 
+
+        async function loadDriveFiles() {
+            const container = document.getElementById('drive-files-container');
+            const url = `https://www.googleapis.com/drive/v3/files?q='${FOLDER_ID}'+in+parents&fields=files(id,name,mimeType,size)&key=${API_KEY}`;
+            
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                
+                if(data.error) {
+                    console.error(data.error);
+                    container.innerHTML = `<p style="color: #ff3232; text-align: center;">Error loading files: ${data.error.message}</p>`;
+                    return;
+                }
+
+                if(!data.files || data.files.length === 0) {
+                    container.innerHTML = '<p style="color: #aaa; text-align: center;">No files found in this folder.</p>';
+                    return;
+                }
+
+                container.innerHTML = ''; // Loading text muche dilam
+
+                data.files.forEach(file => {
+                    const isFolder = file.mimeType === 'application/vnd.google-apps.folder';
+                    
+                    // Folder hole Blue, File/Zip hole Green
+                    const icon = isFolder ? 'fas fa-folder-open' : 'fas fa-file-archive';
+                    const iconColor = isFolder ? '#00d2ff' : '#00ff88'; 
+                    const actionText = isFolder ? 'OPEN' : 'DOWNLOAD';
+                    const actionIcon = isFolder ? 'fas fa-external-link-alt' : 'fas fa-download';
+                    
+                    let actionUrl = '';
+                    if(isFolder) {
+                        actionUrl = `https://drive.google.com/drive/folders/${file.id}`;
+                    } else {
+                        actionUrl = `https://drive.google.com/uc?export=download&id=${file.id}`; // Direct Download Link
+                    }
+
+                    const fileSize = file.size ? (file.size / 1024 / 1024).toFixed(2) + ' MB' : 'Folder';
+
+                    const html = `
+                    <div style="background: rgba(0,0,0,0.6); border: 1px solid rgba(0,255,136,0.1); padding: 15px 20px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; transition: 0.3s;" onmouseover="this.style.borderColor='#00ff88'" onmouseout="this.style.borderColor='rgba(0,255,136,0.1)'">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <i class="${icon}" style="font-size: 1.8rem; color: ${iconColor};"></i>
+                            <div>
+                                <h4 style="color: #fff; margin: 0; font-size: 1rem; text-transform: none;">${file.name}</h4>
+                                <span style="color: #888; font-size: 0.75rem; font-weight: bold;">Size: ${fileSize}</span>
+                            </div>
+                        </div>
+                        <a href="${actionUrl}" target="_blank" class="tbl-copy-btn" style="text-decoration: none; font-weight: bold; background: rgba(0, 255, 136, 0.05); color: ${iconColor}; border-color: ${iconColor};">
+                            <i class="${actionIcon}"></i> ${actionText}
+                        </a>
+                    </div>
+                    `;
+                    container.innerHTML += html;
+                });
+
+            } catch(err) {
+                container.innerHTML = '<p style="color: #ff3232; text-align: center;">Network Error! Drive theke file asche na.</p>';
+            }
+        }
+        
+        loadDriveFiles();
+    </script>
+</body>
+</html>
