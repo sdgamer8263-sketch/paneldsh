@@ -487,23 +487,9 @@ async function checkPaperBuild() {
     } catch(e) { resultDiv.innerHTML = `<span style="color:red;">Error fetching data.</span>`; }
 }
 document.addEventListener("DOMContentLoaded", function() {
-    // EKHANE APNAR DRIVE FILE ID-TI BOSAN
-    const fileID = "1uc3Tple8vadOwZhOhGAtqj1__e6Rwm1s"; 
-
-    // Preview Link Setup
-    const previewFrame = document.getElementById("drivePreview");
-    previewFrame.src = `https://drive.google.com/file/d/${fileID}/preview`;
-
-    // Download Button Setup
-    const downloadBtn = document.getElementById("driveDownload");
-    downloadBtn.addEventListener("click", function() {
-        const directLink = `https://drive.google.com/uc?export=download&id=${fileID}`;
-        
-        downloadBtn.innerText = "Processing...";
-        window.location.href = directLink;
-
-        setTimeout(() => {
-            downloadBtn.innerText = "Download Now";
-        }, 3000);
-    });
+    // 3.5 second por loading screen jabe ar folder dekhabe
+    setTimeout(() => {
+        document.getElementById('cf-screen').style.display = 'none';
+        document.getElementById('main-content').style.display = 'flex';
+    }, 3500);
 });
