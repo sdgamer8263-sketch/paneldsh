@@ -486,3 +486,49 @@ async function checkPaperBuild() {
         resultDiv.innerHTML = `Latest Build: <br><span style="color:#00ffcc; font-size:1.5rem; font-weight:bold;">#${data.builds[data.builds.length - 1]}</span>`;
     } catch(e) { resultDiv.innerHTML = `<span style="color:red;">Error fetching data.</span>`; }
 }
+function forceLoadNavbar() {
+    const container = document.getElementById('navbar-container');
+    if(!container) return;
+
+    // ✅ FIX: Decode spaces (%20) and match EXACT filename
+    let currentPath = decodeURIComponent(window.location.pathname).toLowerCase();
+    let fileName = currentPath.split('/').pop(); 
+    if (!fileName || fileName.trim() === '') fileName = 'index.html';
+
+    // ✅ Exact match check korbe, endsWith noy
+    let activePage = navPages.find(p => p.file.toLowerCase() === fileName);
+    
+    if(!activePage) {
+        activePage = navPages[0]; 
+    }
+
+    let navHTML = `
+    <nav class="navbar">
+        <div class="logo">
+            <video src="gemini_generated_video_3ccd85b2.mp4" autoplay loop muted playsinline class="logo-video"></video>
+            <div class="logo-text">
+                <span class="main-title">SKA HOST</span>
+                <span class="sub-title">DASHBOARD</span>
+            </div>
+        </div>
+        <ul class="nav-links">`;
+
+    navPages.forEach(page => {
+        let activeClass = (page.name === activePage.name) ? 'active-tab' : '';
+        navHTML += `<li><a href="${page.file}" class="${activeClass}"><i class="${page.icon}"></i> ${page.name}</a></li>`;
+    });
+
+    navHTML += `
+        </ul>
+        <div class="user-profile" onclick="toggleProfileModal()">
+            <div class="user-text">
+                <span class="user-name">SDGAMER</span>
+                <span class="user-role">ADMIN</span>
+            </div>
+            <video src="gemini_generated_video_3ccd85b2.mp4" autoplay loop muted playsinline class="user-profile-video"></video>
+        </div>
+    </nav>`;
+
+    container.innerHTML = navHTML;
+    createProfileModal();
+}
