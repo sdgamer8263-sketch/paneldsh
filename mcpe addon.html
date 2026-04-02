@@ -3,82 +3,89 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Addon Preview - SKA HOST</title>
+    <title>Drive Folder Files - SKA HOST</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #0d1117;
             color: #c9d1d9;
             margin: 0;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 20px;
+            min-height: 100vh;
+            justify-content: center;
         }
-        .header {
+
+        /* --- Cloudflare Protection Screen CSS --- */
+        #cf-screen {
             text-align: center;
-            margin-bottom: 20px;
+            max-width: 600px;
+            padding: 40px;
+            background-color: #161b22;
+            border-radius: 12px;
+            border: 1px solid #30363d;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        h1 { color: #58a6ff; margin: 0; }
-        .file-viewer {
+        #cf-screen h2 { color: #58a6ff; margin-bottom: 20px; font-size: 28px;}
+        #cf-screen p { font-size: 16px; color: #8b949e; margin-bottom: 10px; }
+        .cf-spinner {
+            border: 4px solid #30363d;
+            border-top: 4px solid #58a6ff;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .cf-small { font-size: 12px !important; color: #484f58 !important; margin-top: 30px;}
+
+        /* --- Main Content CSS --- */
+        #main-content {
+            display: none; /* Prothome hide thakbe */
             width: 100%;
             max-width: 800px;
-            height: 500px;
+            justify-content: center;
+        }
+        .container {
             background-color: #161b22;
-            border: 2px solid #30363d;
-            border-radius: 10px;
-            overflow: hidden;
-            margin-bottom: 20px;
-        }
-        iframe {
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #30363d;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
             width: 100%;
-            height: 100%;
+        }
+        h1 { color: #58a6ff; text-align: center; font-size: 24px; margin-bottom: 20px; margin-top: 0; }
+        
+        /* Iframe styling for Drive Folder */
+        .drive-folder-view {
+            width: 100%;
+            height: 500px;
             border: none;
-        }
-        .download-section {
-            width: 100%;
-            max-width: 400px;
-        }
-        .btn {
-            background-color: #238636;
-            color: white;
-            padding: 15px;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            transition: 0.3s;
-        }
-        .btn:hover { background-color: #2ea043; }
-        .footer {
-            margin-top: 30px;
-            font-size: 12px;
-            color: #8b949e;
+            border-radius: 8px;
+            background-color: #fff; /* Drive iframe background sada hoy tai */
         }
     </style>
 </head>
 <body>
 
-    <div class="header">
-        <h1>SKA HOSTING</h1>
-        <p>Elemental Weapon & Power Addon File</p>
+    <div id="cf-screen">
+        <h2>SKA HOSTING</h2>
+        <p>Checking your browser before accessing...</p>
+        <div class="cf-spinner"></div>
+        <p>This process is automatic. Your browser will redirect to your requested content shortly.</p>
+        <p class="cf-small">DDoS Protection by SKA HOST</p>
     </div>
 
-    <div class="file-viewer">
-        <iframe id="drivePreview" src=""></iframe>
-    </div>
-
-    <div class="download-section">
-        <button id="driveDownload" class="btn">Download Now</button>
-    </div>
-
-    <div class="footer">
-        Powered by SKA HOST (SDGAMER)
+    <div id="main-content">
+        <div class="container">
+            <h1>SKA HOSTING File Manager</h1>
+            <iframe class="drive-folder-view" src="https://drive.google.com/embeddedfolderview?id=1uc3Tple8vadOwZhOhGAtqj1__e6Rwm1s#list"></iframe>
+        </div>
     </div>
 
     <script src="script.js"></script>
 </body>
 </html>
-
