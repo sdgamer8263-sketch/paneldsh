@@ -486,10 +486,3 @@ async function checkPaperBuild() {
         resultDiv.innerHTML = `Latest Build: <br><span style="color:#00ffcc; font-size:1.5rem; font-weight:bold;">#${data.builds[data.builds.length - 1]}</span>`;
     } catch(e) { resultDiv.innerHTML = `<span style="color:red;">Error fetching data.</span>`; }
 }
-document.addEventListener("DOMContentLoaded", function() {
-    // 3.5 second por loading screen jabe ar folder dekhabe
-    setTimeout(() => {
-        document.getElementById('cf-screen').style.display = 'none';
-        document.getElementById('main-content').style.display = 'flex';
-    }, 3500);
-});
