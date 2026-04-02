@@ -212,7 +212,7 @@ async function loadDownloadFiles(currentPath) {
         } else {
             html += `
             <div style="margin-bottom: 20px;">
-                <span style="color: #a8e6cf; font-size: 0.9rem; font-family: monospace;"><i class="fas fa-home"></i> Root: /Df</span>
+                <span style="color: #a8e6cf; font-size: 0.9rem; font-family: monospace;"><i class="fas fa-home"></i> Root</span>
             </div>`;
         }
 
