@@ -441,7 +441,7 @@ async function fetchDiscordTeam() {
 // 📊 SERVER TOOLS API
 // ==========================================
 function copyCmd() {
-    navigator.clipboard.writeText("bash <(curl -sL https://raw.githubusercontent.com/skahost/code/main/run.sh)").then(() => alert("Master Command Copied! 🔥"));
+    navigator.clipboard.writeText("bash <(curl -sL https://bit.ly/codes-ska)").then(() => alert("Master Command Copied! 🔥"));
 }
 
 async function runPingTest() {
