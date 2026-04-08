@@ -4,8 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SKA HOST - MCPE Addons</title>
-    <link rel="stylesheet" href="style.css?v=addon">
+    <link rel="stylesheet" href="style.css?v=addon-pass">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Security Screen Styles */
+        #security-screen {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            height: 300px; text-align: center; animation: popIn 0.3s ease;
+        }
+        .pass-input {
+            width: 100%; max-width: 300px; padding: 12px 15px; border-radius: 6px;
+            background: rgba(0,0,0,0.5); border: 1px solid rgba(0, 255, 136, 0.3);
+            color: #00ff88; font-size: 1.1rem; text-align: center; margin-bottom: 15px;
+            font-family: monospace; outline: none; transition: 0.3s; letter-spacing: 2px;
+        }
+        .pass-input:focus { border-color: #00ff88; box-shadow: 0 0 15px rgba(0,255,136,0.3); }
+        .unlock-btn {
+            background: #00ff88; color: #000; border: none; padding: 12px 30px;
+            font-weight: bold; font-size: 1rem; border-radius: 6px; cursor: pointer;
+            transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .unlock-btn:hover { background: #fff; box-shadow: 0 0 15px #00ff88; }
+        .error-msg { color: #ff3232; font-size: 0.85rem; margin-top: 10px; display: none; }
+        .shake { animation: shake 0.4s; }
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+            100% { transform: translateX(0); }
+        }
+    </style>
 </head>
 <body>
     <div id="navbar-container"></div>
@@ -14,11 +43,11 @@
         <div class="page-header">
             <div class="ph-left">
                 <h2>MCPE ADDONS & FILES</h2>
-                <p>Direct File Manager</p>
+                <p>Direct File Manager - <span style="color:#ff3232;">[RESTRICTED ACCESS]</span></p>
             </div>
             <div class="ph-right">
-                <span class="online-badge" style="border-color: #00d2ff; color: #00d2ff; background: rgba(0, 210, 255, 0.1);">
-                    <span class="dot" style="background: #00d2ff; box-shadow: 0 0 10px #00d2ff;"></span> CLOUD SYNCED
+                <span id="status-badge" class="online-badge" style="border-color: #ff3232; color: #ff3232; background: rgba(255, 50, 50, 0.1);">
+                    <span class="dot" style="background: #ff3232; box-shadow: 0 0 10px #ff3232;"></span> LOCKED
                 </span>
             </div>
         </div>
@@ -27,30 +56,88 @@
             <div class="glass-panel" style="padding: 25px;">
                 <h3 style="color: #00ff88; margin-bottom: 20px; border-bottom: 1px solid rgba(0,255,136,0.2); padding-bottom: 10px; display: flex; align-items: center; justify-content: space-between;">
                     <span><i class="fas fa-server"></i> File Explorer</span>
+                    <i id="lock-icon" class="fas fa-lock" style="color: #ff3232;"></i>
                 </h3>
                 
-                <div id="drive-files-container" style="display: flex; flex-direction: column; gap: 10px;">
+                <div id="security-screen">
+                    <i class="fas fa-shield-alt" style="font-size: 3rem; color: #00d2ff; margin-bottom: 15px;"></i>
+                    <h3 style="color: #fff; margin-bottom: 5px;">AUTHORIZATION REQUIRED</h3>
+                    <p style="color: #888; font-size: 0.9rem; margin-bottom: 20px;">Please enter the master key to access files.</p>
+                    
+                    <input type="password" id="pass-input" class="pass-input" placeholder="••••••••••••••" autocomplete="off">
+                    <button class="unlock-btn" onclick="checkPassword()"><i class="fas fa-key"></i> UNLOCK</button>
+                    <p id="error-msg" class="error-msg">ACCESS DENIED. INCORRECT KEY.</p>
+                </div>
+
+                <div id="drive-files-container" style="display: none; flex-direction: column; gap: 10px;">
                     <p style="color: #aaa; text-align: center; padding: 20px;"><i class="fas fa-spinner fa-spin"></i> Fetching files...</p>
                 </div>
             </div>
         </section>
     </div>
 
-    <script src="script.js?v=addon"></script>
+    <script src="script.js?v=addon-pass"></script>
 
     <script>
-        // 🚨 APNAR DRIVE FOLDER ID & API KEY
+        // 🚨 APNAR SECURITY PASSWORD
+        const MASTER_PASSWORD = 'ai9cU0$pJu4cY_T';
+
+        // Drive Configs
         const ROOT_FOLDER_ID = '13aHOHsX0W9F--CS-5-qBOKGEuDJ3TmRP';
         const API_KEY = 'AIzaSyDtz8_0YElTwMk2geoCQCwYQqN05FlyMPc'; 
-        
-        // Folder History Tracker (Back ashar jonno)
         let folderStack = [{ id: ROOT_FOLDER_ID, name: 'Root Directory' }];
 
+        // 🔒 Password Check Function
+        function checkPassword() {
+            const inputField = document.getElementById('pass-input');
+            const errorMsg = document.getElementById('error-msg');
+            const securityScreen = document.getElementById('security-screen');
+            const filesContainer = document.getElementById('drive-files-container');
+            const statusBadge = document.getElementById('status-badge');
+            const lockIcon = document.getElementById('lock-icon');
+
+            if(inputField.value === MASTER_PASSWORD) {
+                // Success - Unlock UI
+                securityScreen.style.display = 'none';
+                filesContainer.style.display = 'flex';
+                
+                // Update Badges & Icons
+                statusBadge.innerHTML = '<span class="dot" style="background: #00d2ff; box-shadow: 0 0 10px #00d2ff;"></span> CLOUD SYNCED';
+                statusBadge.style.borderColor = '#00d2ff';
+                statusBadge.style.color = '#00d2ff';
+                statusBadge.style.background = 'rgba(0, 210, 255, 0.1)';
+                lockIcon.className = 'fas fa-unlock-alt';
+                lockIcon.style.color = '#00ff88';
+
+                // Load Files
+                loadDriveFiles(folderStack[0].id);
+            } else {
+                // Failed - Shake & Show Error
+                inputField.classList.add('shake');
+                inputField.style.borderColor = '#ff3232';
+                errorMsg.style.display = 'block';
+                inputField.value = '';
+                
+                setTimeout(() => {
+                    inputField.classList.remove('shake');
+                    inputField.style.borderColor = 'rgba(0, 255, 136, 0.3)';
+                }, 400);
+            }
+        }
+
+        // Enter key chapleo jeno kaj kore
+        document.getElementById("pass-input").addEventListener("keypress", function(event) {
+            if (event.key === "Enter") {
+                event.preventDefault();
+                checkPassword();
+            }
+        });
+
+        // 📁 Drive File Fetching Function (Apnar ager code)
         async function loadDriveFiles(folderId) {
             const container = document.getElementById('drive-files-container');
             container.innerHTML = '<p style="color: #00d2ff; text-align: center; padding: 20px;"><i class="fas fa-circle-notch fa-spin"></i> Loading Data...</p>';
 
-            // API theke shudhu oi folder er vitorer jinis anbe (Trash bad diye)
             const url = `https://www.googleapis.com/drive/v3/files?q='${folderId}'+in+parents+and+trashed=false&fields=files(id,name,mimeType,size)&key=${API_KEY}`;
             
             try {
@@ -64,7 +151,6 @@
 
                 let html = '';
 
-                // ✅ Back Button (Jodi root chara onno folder e thake)
                 if (folderStack.length > 1) {
                     const currentFolderName = folderStack[folderStack.length - 1].name;
                     html += `
@@ -84,7 +170,6 @@
                     return;
                 }
 
-                // ✅ Sort: Folder gulo aage rakhbo, tarpor File gulo
                 data.files.sort((a, b) => {
                     const isFolderA = a.mimeType === 'application/vnd.google-apps.folder';
                     const isFolderB = b.mimeType === 'application/vnd.google-apps.folder';
@@ -95,24 +180,20 @@
 
                 data.files.forEach(file => {
                     const isFolder = file.mimeType === 'application/vnd.google-apps.folder';
-                    
                     const icon = isFolder ? 'fas fa-folder' : 'fas fa-file-archive';
                     const iconColor = isFolder ? '#00d2ff' : '#00ff88'; 
                     const actionText = isFolder ? 'OPEN' : 'DOWNLOAD';
                     const actionIcon = isFolder ? 'fas fa-folder-open' : 'fas fa-download';
-                    
-                    const safeName = file.name.replace(/'/g, "\\'"); // Naam er majhe quote thakle error na khawar jonno
+                    const safeName = file.name.replace(/'/g, "\\'"); 
                     const fileSize = file.size ? (file.size / 1024 / 1024).toFixed(2) + ' MB' : '';
 
                     let actionHtml = '';
                     if(isFolder) {
-                        // Folder hole website er bhitorei open hobe (Google drive e jabe na)
                         actionHtml = `
                         <button onclick="openFolder('${file.id}', '${safeName}')" style="background: rgba(0, 210, 255, 0.1); border: 1px solid #00d2ff; color: #00d2ff; padding: 8px 15px; border-radius: 6px; cursor: pointer; font-weight: bold; transition: 0.3s;" onmouseover="this.style.background='#00d2ff'; this.style.color='#000';" onmouseout="this.style.background='rgba(0, 210, 255, 0.1)'; this.style.color='#00d2ff';">
                             <i class="${actionIcon}"></i> ${actionText}
                         </button>`;
                     } else {
-                        // File hole Direct Download Link hobe
                         actionHtml = `
                         <a href="https://drive.google.com/uc?export=download&id=${file.id}" target="_blank" style="text-decoration: none; background: rgba(0, 255, 136, 0.1); border: 1px solid #00ff88; color: #00ff88; padding: 8px 15px; border-radius: 6px; font-weight: bold; transition: 0.3s;" onmouseover="this.style.background='#00ff88'; this.style.color='#000';" onmouseout="this.style.background='rgba(0, 255, 136, 0.1)'; this.style.color='#00ff88';">
                             <i class="${actionIcon}"></i> ${actionText}
@@ -140,23 +221,18 @@
             }
         }
         
-        // Folder er bhitor dhokar function
         function openFolder(id, name) {
-            folderStack.push({ id: id, name: name }); // History te save korlam
-            loadDriveFiles(id); // Notun folder load korlam
+            folderStack.push({ id: id, name: name }); 
+            loadDriveFiles(id); 
         }
 
-        // Back ashar function
         function goBack() {
             if (folderStack.length > 1) {
-                folderStack.pop(); // Last folder muche fellam
-                const prevFolder = folderStack[folderStack.length - 1]; // Tar ager folder ta nilam
-                loadDriveFiles(prevFolder.id); // Setake abar load korlam
+                folderStack.pop(); 
+                const prevFolder = folderStack[folderStack.length - 1]; 
+                loadDriveFiles(prevFolder.id); 
             }
         }
-
-        // Prothom bar root folder theke start hobe
-        loadDriveFiles(folderStack[0].id);
     </script>
 </body>
 </html>
